@@ -11,25 +11,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3b487372-c637-4a83-ac0c-814539e09e9e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ACM.Git/.dockerignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ACM.Git/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ACM.Http/.dockerignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ACM.Http/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APC.Ingestion/.dockerignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APC.Ingestion/APC.Ingestion.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APC.Ingestion/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APC.Kernel/APC.Kernel.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APC.sln" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APM.Npm/.dockerignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APM.Npm/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APM.Nuget/.dockerignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/APM.Nuget/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.APO/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.APO/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Linus Berg" />
+      </list>
+    </option>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/APC.Kernel/IProcessor.cs" root0="FORCE_HIGHLIGHTING" />
@@ -56,6 +50,11 @@
     "WebServerToolWindowFactoryState": "false",
     "settings.editor.selected.configurable": "preferences.keymap",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "Markdown"
+    ]
   }
 }]]></component>
   <component name="RunManager" selected="Compound.APO">
@@ -158,8 +157,16 @@
       <option name="presentableId" value="Default" />
       <updated>1662574553815</updated>
       <workItem from="1662574563880" duration="266000" />
-      <workItem from="1662574844993" duration="10124000" />
+      <workItem from="1662574844993" duration="10748000" />
     </task>
+    <task id="LOCAL-00001" summary="Initial">
+      <created>1662585148965</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1662585148965</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -356,6 +363,12 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Initial commit." />
+    <MESSAGE value="Initial" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
