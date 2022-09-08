@@ -3,7 +3,7 @@ using APC.Kernel;
 
 IHost host = Host.CreateDefaultBuilder(args)
   .ConfigureServices(services => {
-    services.RegisterIngestion();
+    services.RegisterIngestion(new Engine());
     services.AddHostedService<Worker>();
   })
   .Build();

@@ -6,15 +6,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-APO.Ingestion-0A046F41-F574-457B-9050-E5AB07383604</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>APO.Ingestion</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MassTransit" Version="8.0.7-develop.575"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
+        <PackageReference Include="MassTransit" Version="8.0.7-develop.575" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
+        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj" />
     </ItemGroup>
 </Project>

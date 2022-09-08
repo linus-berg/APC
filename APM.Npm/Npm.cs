@@ -8,9 +8,6 @@ public class Npm : INpm {
   private const string REGISTRY_ = "https://registry.npmjs.org/";
   private readonly RestClient client_ = new(REGISTRY_);
 
-  public Npm() {
-  }
-
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     Metadata metadata = await GetMetadata(artifact.Id);
     if (metadata.versions.Count == artifact.Versions.Count) {
@@ -21,7 +18,7 @@ public class Npm : INpm {
     return artifact;
   }
 
-  private async Task ProcessArtifactVersions(Artifact artifact,
+  private void ProcessArtifactVersions(Artifact artifact,
     Metadata metadata) {
     foreach (KeyValuePair<string, Package> kv in metadata.versions) {
       if (artifact.HasVersion(kv.Key)) {
@@ -34,13 +31,13 @@ public class Npm : INpm {
         Uri = package.dist.tarball,
         Version = kv.Key
       };
-      await AddDependencies(version, package.dependencies);
-      await AddDependencies(version, package.peerDependencies);
+      AddDependencies(version, package.dependencies);
+      AddDependencies(version, package.peerDependencies);
+      artifact.AddVersion(version);
     }
   }
 
-  private async Task
-    AddDependencies(ArtifactVersion version, Dictionary<string, string> dependencies) {
+  private void AddDependencies(ArtifactVersion version, Dictionary<string, string> dependencies) {
     if (dependencies == null) return;
     foreach (KeyValuePair<string, string> package in dependencies)
       version.AddDependency(package.Key);
