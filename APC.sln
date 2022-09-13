@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Kernel", "APC.Kernel\AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Ingestion", "APC.Ingestion\APC.Ingestion.csproj", "{82CCE986-8484-48DB-96F7-75626DBC0692}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Infrastructure", "APC.Infrastructure\APC.Infrastructure.csproj", "{7353339D-781E-486B-9FFE-07DFE82C7F96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{82CCE986-8484-48DB-96F7-75626DBC0692}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82CCE986-8484-48DB-96F7-75626DBC0692}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82CCE986-8484-48DB-96F7-75626DBC0692}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7353339D-781E-486B-9FFE-07DFE82C7F96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7353339D-781E-486B-9FFE-07DFE82C7F96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7353339D-781E-486B-9FFE-07DFE82C7F96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7353339D-781E-486B-9FFE-07DFE82C7F96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1D3F65E7-586A-43ED-AF6F-FC4D85339EDD} = {A18E3550-98A2-4ACE-BA84-7029DF67B443}

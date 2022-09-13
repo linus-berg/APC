@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj"/>
         <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
     </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
-using APC.Kernel.Models;
+using APC.Infrastructure.Models;
 
 namespace APM.Npm;
 
 public interface INpm {
-  public Task<Artifact> ProcessArtifact(Artifact artifact);
+  public Task<Artifact> ProcessArtifact(string name);
 }

@@ -8,9 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MassTransit" Version="8.0.7-develop.575" />
-        <PackageReference Include="MassTransit.Abstractions" Version="8.0.7-develop.575" />
-        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.7-develop.575" />
+        <PackageReference Include="MassTransit" Version="8.0.7-develop.575"/>
+        <PackageReference Include="MassTransit.Abstractions" Version="8.0.7-develop.575"/>
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.7-develop.575"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-using APC.Kernel.Models;
+using APC.Infrastructure.Models;
 using APM.Npm.Models;
 using RestSharp;
 
@@ -8,12 +8,12 @@ public class Npm : INpm {
   private const string REGISTRY_ = "https://registry.npmjs.org/";
   private readonly RestClient client_ = new(REGISTRY_);
 
-  public async Task<Artifact> ProcessArtifact(Artifact artifact) {
-    Metadata metadata = await GetMetadata(artifact.Id);
-    if (metadata.versions.Count == artifact.Versions.Count) {
-      return artifact;
-    }
-
+  public async Task<Artifact> ProcessArtifact(string name) {
+    Metadata metadata = await GetMetadata(name);
+    Artifact artifact = new Artifact() {
+      name = name,
+      module = "npm"
+    };
     ProcessArtifactVersions(artifact, metadata);
     return artifact;
   }
@@ -21,26 +21,26 @@ public class Npm : INpm {
   private void ProcessArtifactVersions(Artifact artifact,
     Metadata metadata) {
     foreach (KeyValuePair<string, Package> kv in metadata.versions) {
-      if (artifact.HasVersion(kv.Key)) {
-        continue;
-      }
+      if (artifact.HasVersion(kv.Key)) continue;
 
       Package package = kv.Value;
-      ArtifactVersion version = new ArtifactVersion() {
-        Id = artifact.Id,
-        Uri = package.dist.tarball,
-        Version = kv.Key
+      ArtifactVersion version = new() {
+        artifact_id = artifact.id,
+        location = package.dist.tarball,
+        version = kv.Key
       };
-      AddDependencies(version, package.dependencies);
-      AddDependencies(version, package.peerDependencies);
+      AddDependencies(artifact, version, package.dependencies);
+      AddDependencies(artifact, version, package.peerDependencies);
       artifact.AddVersion(version);
     }
   }
 
-  private void AddDependencies(ArtifactVersion version, Dictionary<string, string> dependencies) {
+  private void AddDependencies(Artifact artifact, ArtifactVersion version, Dictionary<string, string> dependencies) {
     if (dependencies == null) return;
-    foreach (KeyValuePair<string, string> package in dependencies)
-      version.AddDependency(package.Key);
+    foreach (KeyValuePair<string, string> package in dependencies) {
+        artifact.AddDependency(package.Key);
+        version.AddDependency(package.Key);
+    }
   }
 
   private async Task<Metadata> GetMetadata(string id) {

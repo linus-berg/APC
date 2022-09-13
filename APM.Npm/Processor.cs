@@ -1,6 +1,6 @@
+using APC.Infrastructure.Models;
 using APC.Kernel;
 using APC.Kernel.Messages;
-using APC.Kernel.Models;
 using MassTransit;
 
 namespace APM.Npm;
@@ -13,10 +13,11 @@ public class Processor : IProcessor {
   }
 
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
-    Artifact artifact = context.Message.Artifact;
-    Console.WriteLine($"PROCESSING: {artifact.Id}");
-    await context.Send(Endpoints.APC_INGEST, new ArtifactProcessedRequest() {
-      Artifact = await npm_.ProcessArtifact(artifact)
+    string name = context.Message.Name;
+    Console.WriteLine($"PROCESSING: {name}");
+    Artifact artifact = await npm_.ProcessArtifact(name);
+    await context.Send(Endpoints.APC_INGEST, new ArtifactProcessedRequest {
+      Artifact = artifact
     });
   }
 }

@@ -9,11 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MassTransit" Version="8.0.7-develop.575" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="MassTransit" Version="8.0.7-develop.575"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj" />
+        <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj"/>
+        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
     </ItemGroup>
 </Project>
