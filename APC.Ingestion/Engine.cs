@@ -47,7 +47,6 @@ public class Engine : IConsumer<ArtifactProcessedRequest> {
       await db_.UpdateArtifact(db_artifact, artifact);
     }
     await db_.Commit();
-
     await Collect(context);
     
     /* Process all dependencies not already processed in this context */
@@ -57,9 +56,9 @@ public class Engine : IConsumer<ArtifactProcessedRequest> {
         Console.WriteLine($"Hit cache {artifact.name}:{dependency}");
         continue;
       }
+      await cache_.AddToCache(dependency, request.Context);
       Console.WriteLine($"Found new dependency {dependency}");
       /* Memorize this dependency */
-      await cache_.AddToCache(dependency, request.Context);
       await Process(context, dependency);
     }
   }

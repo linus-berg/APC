@@ -46,6 +46,7 @@ public class Nuget : INuget {
         location = u,
         version = v
       };
+      AddDependencies(artifact, a_v, version.DependencySets);
     }
   }
   

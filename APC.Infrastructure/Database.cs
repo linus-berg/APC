@@ -99,7 +99,12 @@ public class Database : IDisposable {
       transaction: transaction_
     )).ToDictionary(av => av.version);
   }
-  
+
+  public async Task<IEnumerable<Artifact>> GetArtifacts(string module) {
+    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module", new { module },
+      transaction_);
+  }
+
   private void ReleaseUnmanagedResources() {
     // TODO release unmanaged resources here
   }
