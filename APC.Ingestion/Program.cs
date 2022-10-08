@@ -1,6 +1,7 @@
 using APC.Infrastructure;
 using APC.Ingestion;
 using MassTransit;
+using StackExchange.Redis;
 
 IHost host = Host.CreateDefaultBuilder(args)
   .ConfigureServices(services => {
@@ -14,7 +15,10 @@ IHost host = Host.CreateDefaultBuilder(args)
         cfg.ConfigureEndpoints(ctx);
       });
     });
+    
+    services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
     services.AddScoped<Database>();
+    services.AddSingleton<RedisCache>();
     services.AddHostedService<Worker>();
   })
   .Build();

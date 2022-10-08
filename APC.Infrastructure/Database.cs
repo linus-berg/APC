@@ -1,4 +1,5 @@
-﻿using APC.Infrastructure.Models;
+﻿using System.Transactions;
+using APC.Infrastructure.Models;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
@@ -6,13 +7,15 @@ using Npgsql;
 
 namespace APC.Infrastructure;
 
-public class Database {
+public class Database : IDisposable {
   private readonly NpgsqlConnection db_;
+  private NpgsqlTransaction transaction_;
   private readonly string DB_STR_ = "Host=localhost;Username=postgres;Password=mysecret;Database=apc-ingestion";
 
   public Database() {
     db_ = new NpgsqlConnection(DB_STR_);
     Open();
+    transaction_ = db_.BeginTransaction();
   }
 
   private void Open() {
@@ -20,13 +23,18 @@ public class Database {
   }
 
   ~Database() {
-    db_.Close();
+    Dispose(false);
+  }
+
+  public async Task Commit() {
+    await transaction_.CommitAsync();
+    transaction_ = await db_.BeginTransactionAsync();
   }
 
 
   public async Task AddArtifact(Artifact artifact) {
     Artifact db_artifact = await GetArtifactByName(artifact.name);
-    if (db_artifact == null) artifact.id = await db_.InsertAsync(artifact);
+    if (db_artifact == null) artifact.id = await db_.InsertAsync(artifact, transaction_);
     foreach (ArtifactVersion version in artifact.versions.Values) await AddArtifactVersion(artifact, version);
     foreach (string dependency in artifact.dependencies) await AddArtifactDependency(artifact, dependency);
   }
@@ -36,12 +44,28 @@ public class Database {
       name = dependency,
       artifact_id = artifact.id
     };
-    dep.id = await db_.InsertAsync(dep);
+    dep.id = await db_.InsertAsync(dep, transaction_);
     return dep;
+  }
+
+  public async Task UpdateArtifact(Artifact current, Artifact updated) {
+    await UpdateArtifactVersions(current, updated);
+  }
+
+  public async Task UpdateArtifactVersions(Artifact current, Artifact updated) {
+    Dictionary<string, ArtifactVersion> current_versions = await GetVersions(current.id);
+    Dictionary<string, ArtifactVersion> updated_versions = updated.versions;
+    Dictionary<string, ArtifactVersion> new_versions;
+
+    foreach (KeyValuePair<string, ArtifactVersion> kv in updated_versions) {
+      if (!current_versions.ContainsKey(kv.Key)) {
+        await AddArtifactVersion(current, kv.Value);
+      }
+    }
   }
   public async Task AddArtifactVersion(Artifact artifact, ArtifactVersion version) {
     version.artifact_id = artifact.id;
-    version.id = await db_.InsertAsync(version);
+    version.id = await db_.InsertAsync(version, transaction_);
   }
 
   public async Task<Artifact> GetArtifactByName(string name) {
@@ -54,17 +78,13 @@ public class Database {
             name = @name",
       new {
         name
-      }
+      },
+      transaction: transaction_
     );
   }
 
-  public async Task<HashSet<string>> GetDependencies(int artifact_id) {
-    return (await db_.QueryAsync<string>(@"SELECT name FROM artifact_dependencies WHERE artifact_id = @artifact_id", new {
-      artifact_id
-    })).ToHashSet();
-  }
-  public async Task<HashSet<ArtifactVersion>> GetVersions(int artifact_id) {
-    HashSet<ArtifactVersion> v = (await db_.QueryAsync<ArtifactVersion>(
+  public async Task<Dictionary<string, ArtifactVersion>> GetVersions(int artifact_id) {
+    return (await db_.QueryAsync<ArtifactVersion>(
       @"
             SELECT 
                 * 
@@ -75,27 +95,25 @@ public class Database {
          ",
       new {
         artifact_id,
-      }
-    )).ToHashSet();
-    return v;
+      },
+      transaction: transaction_
+    )).ToDictionary(av => av.version);
+  }
+  
+  private void ReleaseUnmanagedResources() {
+    // TODO release unmanaged resources here
   }
 
-  public async Task<ArtifactVersion> GetVersion(int artifact_id, string version) {
-    ArtifactVersion v = await db_.QueryFirstOrDefaultAsync<ArtifactVersion>(
-      @"
-            SELECT 
-                * 
-            FROM 
-                artifact_versions 
-            WHERE 
-                artifact_id = @artifact_id 
-              AND 
-                version = @version",
-      new {
-        artifact_id,
-        version
-      }
-    );
-    return v;
+  private void Dispose(bool disposing) {
+    ReleaseUnmanagedResources();
+    if (disposing) {
+      transaction_.Dispose();
+      db_.Dispose();
+    }
+  }
+
+  public void Dispose() {
+    Dispose(true);
+    GC.SuppressFinalize(this);
   }
 }

@@ -6,7 +6,7 @@ namespace APC.Ingestion;
 public class EngineDefinition : ConsumerDefinition<Engine> {
   public EngineDefinition() {
     EndpointName = Endpoints.APC_INGEST.ToString().Replace("queue:", "");
-    ConcurrentMessageLimit = 1;
+    ConcurrentMessageLimit = 10;
   }
 
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,

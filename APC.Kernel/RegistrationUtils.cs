@@ -8,7 +8,17 @@ public static class RegistrationUtils {
     sc.AddMassTransit(mt => {
       mt.UsingRabbitMq((ctx, cfg) => {
         SetupRabbitMq(cfg);
-        cfg.ReceiveEndpoint($"{name}-module", e => { e.Instance(processor); });
+        cfg.ReceiveEndpoint($"apm-{name}", e => { e.Instance(processor); });
+        cfg.ConfigureEndpoints(ctx);
+      });
+    });
+    return sc;
+  }
+  public static IServiceCollection RegisterCollector(this IServiceCollection sc, string name, ICollector collector) {
+    sc.AddMassTransit(mt => {
+      mt.UsingRabbitMq((ctx, cfg) => {
+        SetupRabbitMq(cfg);
+        cfg.ReceiveEndpoint($"acm-{name}", e => { e.Instance(collector); });
         cfg.ConfigureEndpoints(ctx);
       });
     });
