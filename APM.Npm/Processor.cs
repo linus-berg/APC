@@ -17,7 +17,7 @@ public class Processor : IProcessor {
     Console.WriteLine($"PROCESSING: {name}");
     try {
       Artifact artifact = await npm_.ProcessArtifact(name);
-      await context.Send(Endpoints.APC_INGEST, new ArtifactProcessedRequest {
+      await context.Send(Endpoints.APC_INGEST_PROCESSED, new ArtifactProcessedRequest {
         Context = context.Message.Context,
         Artifact = artifact
       });

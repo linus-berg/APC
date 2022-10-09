@@ -48,20 +48,21 @@ public class Database : IDisposable {
     return dep;
   }
 
-  public async Task UpdateArtifact(Artifact current, Artifact updated) {
-    await UpdateArtifactVersions(current, updated);
+  public async Task<bool> UpdateArtifact(Artifact current, Artifact updated) {
+    return await UpdateArtifactVersions(current, updated);
   }
 
-  public async Task UpdateArtifactVersions(Artifact current, Artifact updated) {
+  public async Task<bool> UpdateArtifactVersions(Artifact current, Artifact updated) {
     Dictionary<string, ArtifactVersion> current_versions = await GetVersions(current.id);
     Dictionary<string, ArtifactVersion> updated_versions = updated.versions;
-    Dictionary<string, ArtifactVersion> new_versions;
-
+    bool has_updated = false;  
     foreach (KeyValuePair<string, ArtifactVersion> kv in updated_versions) {
       if (!current_versions.ContainsKey(kv.Key)) {
         await AddArtifactVersion(current, kv.Value);
+        has_updated = true;
       }
     }
+    return has_updated;
   }
   public async Task AddArtifactVersion(Artifact artifact, ArtifactVersion version) {
     version.artifact_id = artifact.id;

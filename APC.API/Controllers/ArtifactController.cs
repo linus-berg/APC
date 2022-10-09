@@ -1,5 +1,7 @@
 using APC.Infrastructure;
 using APC.Infrastructure.Models;
+using APC.Kernel.Messages;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APC.API.Controllers; 
@@ -8,9 +10,11 @@ namespace APC.API.Controllers;
 [ApiController]
 public class ArtifactController : ControllerBase {
   private readonly Database db_;
+  private readonly ISendEndpointProvider bus_;
 
-  public ArtifactController(Database db) {
+  public ArtifactController(Database db, ISendEndpointProvider bus) {
     db_ = db;
+    bus_ = bus;
   }
 
   // GET: api/Artifact
@@ -21,7 +25,9 @@ public class ArtifactController : ControllerBase {
 
   // POST: api/Artifact
   [HttpPost]
-  public void Post([FromBody] string value) {
+  public async Task Post([FromBody] ArtifactIngestRequest request) {
+    ISendEndpoint endpoint = await bus_.GetSendEndpoint(APC.Kernel.Endpoints.APC_INGEST_UNPROCESSED);
+    endpoint.Send<ArtifactIngestRequest>(request);
   }
 
   // DELETE: api/Artifact/5

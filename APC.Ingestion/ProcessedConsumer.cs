@@ -40,15 +40,21 @@ public class Engine : IConsumer<ArtifactProcessedRequest> {
     Artifact db_artifact = await db_.GetArtifactByName(artifact.name);
    
     /* If not in db add */
+    bool updated;
     if (db_artifact == null) {
       await db_.AddArtifact(artifact);
       Console.WriteLine($"Added: {artifact.name}");
+      updated = true;
     } else {
-      await db_.UpdateArtifact(db_artifact, artifact);
+      updated = await db_.UpdateArtifact(db_artifact, artifact);
     }
-    await db_.Commit();
-    await Collect(context);
-    
+
+    if (updated) {
+      await db_.Commit();
+      await Collect(context);
+    } else {
+      return;
+    }
     /* Process all dependencies not already processed in this context */
     HashSet<string> dependencies = artifact.dependencies;
     foreach (string dependency in dependencies) {
