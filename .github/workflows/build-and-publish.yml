@@ -45,7 +45,7 @@ jobs:
           file: ./${{ matrix.services.directory }}/Dockerfile
           # Note: tags has to be all lower-case
           tags: |
-            ghcr.io/linus-berg/APC/${{ matrix.services.name }}:latest
+            ghcr.io/linus-berg/apc/${{ matrix.services.name }}:latest
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/master' }}
 
