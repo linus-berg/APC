@@ -5,11 +5,11 @@ using MassTransit;
 
 namespace APC.Ingestion;
 
-public class Engine : IConsumer<ArtifactProcessedRequest> {
+public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
   private readonly RedisCache cache_;
   private readonly Database db_;
 
-  public Engine(Database db, RedisCache cache) {
+  public ProcessedConsumer(Database db, RedisCache cache) {
     db_ = db;
     cache_ = cache;
   }
