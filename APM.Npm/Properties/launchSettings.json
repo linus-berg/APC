@@ -4,7 +4,11 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development"
+        "DOTNET_ENVIRONMENT": "Development",
+        "APC_RABBIT_MQ_HOST": "localhost",
+        "APC_RABBIT_MQ_USER": "guest",
+        "APC_RABBIT_MQ_PASS": "guest",
+        "APC_REDIS_HOST": "localhost"
       }
     }
   }

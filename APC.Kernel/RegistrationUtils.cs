@@ -27,9 +27,9 @@ public static class RegistrationUtils {
   }
 
   private static void SetupRabbitMq(IRabbitMqBusFactoryConfigurator cfg) {
-    cfg.Host("localhost", "/", h => {
-      h.Username("guest");
-      h.Password("guest");
+    cfg.Host(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_HOST), "/", h => {
+      h.Username(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_USER));
+      h.Password(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_PASS));
     });
   }
 }

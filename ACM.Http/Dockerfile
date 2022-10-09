@@ -4,6 +4,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["ACM.Http/ACM.Http.csproj", "ACM.Http/"]
+COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 RUN dotnet restore "ACM.Http/ACM.Http.csproj"
 COPY . .
 WORKDIR "/src/ACM.Http"

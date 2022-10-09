@@ -13,8 +13,20 @@ jobs:
     strategy:
       matrix: 
         services:
-          - name: apc.ingestion
+          - name: ingestion
             directory: APC.Ingestion
+
+          - name: api
+            directory: APC.API
+
+          - name: apm/npm
+            directory: APM.Npm
+
+          - name: apm/nuget
+            directory: APM.Nuget
+
+          - name: acm/http
+            directory: ACM.Http
 
     name: Build Docker image and push to repositories
     # run only when code is compiling and tests are passing

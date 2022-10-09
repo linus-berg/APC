@@ -6,6 +6,8 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["APC.API/APC.API.csproj", "APC.API/"]
+COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
 RUN dotnet restore "APC.API/APC.API.csproj"
 COPY . .
 WORKDIR "/src/APC.API"

@@ -1,30 +1,18 @@
 ﻿{
   "$schema": "https://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:3552",
-      "sslPort": 44367
-    }
-  },
   "profiles": {
     "APC.API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchBrowser": false,
       "applicationUrl": "https://localhost:4000;http://localhost:4001",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "APC_RABBIT_MQ_HOST": "localhost",
+        "APC_RABBIT_MQ_USER": "guest",
+        "APC_RABBIT_MQ_PASS": "guest",
+        "APC_REDIS_HOST": "localhost",
+        "APC_PGSQL_STR": "Host=localhost;Username=postgres;Password=mysecret;Database=apc-ingestion"
       }
     }
   }

@@ -1,21 +1,27 @@
-﻿using APC.Infrastructure.Models;
+﻿using System.Data;
+using APC.Infrastructure.Models;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.IdentityModel.Protocols;
 using Npgsql;
 
 namespace APC.Infrastructure;
 
 public class Database : IDisposable {
   private readonly NpgsqlConnection db_;
-  private readonly string DB_STR_ = "Host=localhost;Username=postgres;Password=mysecret;Database=apc-ingestion";
+  private static readonly string DB_STR_;
   private NpgsqlTransaction transaction_;
 
+  static Database() {
+    string c_str = Environment.GetEnvironmentVariable("APC_PGSQL_STR");
+    DB_STR_ = c_str ?? throw new NoNullAllowedException("Database connection string is null, set APC_PGSQL_STR.");
+  }
   public Database() {
     db_ = new NpgsqlConnection(DB_STR_);
     Open();
     transaction_ = db_.BeginTransaction();
   }
-
+  
   public void Dispose() {
     Dispose(true);
     GC.SuppressFinalize(this);

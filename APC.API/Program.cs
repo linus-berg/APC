@@ -1,4 +1,5 @@
 using APC.Infrastructure;
+using APC.Kernel;
 using MassTransit;
 using StackExchange.Redis;
 
@@ -7,15 +8,15 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddMassTransit(b => {
   b.UsingRabbitMq((ctx, cfg) => {
-    cfg.Host("localhost", "/", h => {
-      h.Username("guest");
-      h.Password("guest");
+    cfg.Host(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_HOST), "/", h => {
+      h.Username(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_USER));
+      h.Password(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_PASS));
     });
     cfg.ConfigureEndpoints(ctx);
   });
 });
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetAPCVar(Configuration.APC_VAR.APC_REDIS_HOST)));
 builder.Services.AddScoped<Database>();
 builder.Services.AddSingleton<RedisCache>();
 

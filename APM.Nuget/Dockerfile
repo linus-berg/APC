@@ -4,6 +4,8 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["APM.Nuget/APM.Nuget.csproj", "APM.Nuget/"]
+COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
 RUN dotnet restore "APM.Nuget/APM.Nuget.csproj"
 COPY . .
 WORKDIR "/src/APM.Nuget"
