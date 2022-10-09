@@ -10,6 +10,10 @@ on:
 jobs:
   # define job to build and publish docker image
   build-and-push-docker-image:
+    strategy:
+      matrix: 
+        services:
+          - APC.Ingestion
     name: Build Docker image and push to repositories
     # run only when code is compiling and tests are passing
     runs-on: ubuntu-latest
@@ -35,10 +39,11 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
-          context: ./APC.Ingestion
+          context: .
+          file: ./${{ matrix.services }}/Dockerfile
           # Note: tags has to be all lower-case
           tags: |
-            ghcr.io/linus-berg/apc/ingestion:latest
+            ghcr.io/linus-berg/${{ matrix.services }}:latest
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/master' }}
 
