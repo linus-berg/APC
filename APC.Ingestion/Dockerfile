@@ -4,6 +4,8 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["APC.Ingestion/APC.Ingestion.csproj", "APC.Ingestion/"]
+COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
 RUN dotnet restore "APC.Ingestion/APC.Ingestion.csproj"
 COPY . .
 WORKDIR "/src/APC.Ingestion"
