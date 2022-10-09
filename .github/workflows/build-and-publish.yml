@@ -13,7 +13,9 @@ jobs:
     strategy:
       matrix: 
         services:
-          - APC.Ingestion
+          - name: apc.ingestion
+            directory: APC.Ingestion
+
     name: Build Docker image and push to repositories
     # run only when code is compiling and tests are passing
     runs-on: ubuntu-latest
@@ -40,10 +42,10 @@ jobs:
         with:
           # relative path to the place where source code with Dockerfile is located
           context: .
-          file: ./${{ matrix.services }}/Dockerfile
+          file: ./${{ matrix.services.directory }}/Dockerfile
           # Note: tags has to be all lower-case
           tags: |
-            ghcr.io/linus-berg/${{ matrix.services }}:latest
+            ghcr.io/linus-berg/APC/${{ matrix.services.name }}:latest
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/master' }}
 
