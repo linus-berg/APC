@@ -19,4 +19,5 @@
 | APC_REDIS_HOST     | localhost |
 | APC_REDIS_USER     | -         |
 | APC_REDIS_PASS     | -         |
+| APC_PGSQL_STR      | -         |
 | APC_API_HOST       | -         |
