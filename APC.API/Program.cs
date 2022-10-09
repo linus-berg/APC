@@ -38,10 +38,8 @@ app.UseCors(b => {
   b.AllowAnyHeader();
   b.AllowAnyMethod();
 });
-app.UseHttpsRedirection();
 
+if (!app.Environment.IsDevelopment()) app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

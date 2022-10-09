@@ -1,10 +1,10 @@
-using Azure.Core;
 using StackExchange.Redis;
 
-namespace APC.Infrastructure; 
+namespace APC.Infrastructure;
 
 public class RedisCache {
   private readonly IConnectionMultiplexer redis_;
+
   public RedisCache(IConnectionMultiplexer redis) {
     redis_ = redis;
   }
@@ -16,11 +16,10 @@ public class RedisCache {
     db.KeyExpire(context.ToString(), TimeSpan.FromDays(2));
     return context;
   }
+
   public async Task<bool> InCache(string artifact, Guid context) {
     IDatabase db = redis_.GetDatabase();
-    if (!(await db.KeyExistsAsync(context.ToString()))) {
-      return false;
-    }
+    if (!await db.KeyExistsAsync(context.ToString())) return false;
     return await db.SetContainsAsync(context.ToString(), artifact);
   }
 

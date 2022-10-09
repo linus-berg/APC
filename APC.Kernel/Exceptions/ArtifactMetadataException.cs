@@ -1,4 +1,4 @@
-namespace APC.Kernel.Exceptions; 
+namespace APC.Kernel.Exceptions;
 
 public class ArtifactMetadataException : Exception {
   public ArtifactMetadataException() {

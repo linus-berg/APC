@@ -14,6 +14,7 @@ public static class RegistrationUtils {
     });
     return sc;
   }
+
   public static IServiceCollection RegisterCollector(this IServiceCollection sc, string name, ICollector collector) {
     sc.AddMassTransit(mt => {
       mt.UsingRabbitMq((ctx, cfg) => {

@@ -1,11 +1,9 @@
 using System.Text.RegularExpressions;
 
-namespace ACM.Kernel; 
+namespace ACM.Kernel;
 
 public class FileSystem {
-  private static string BASE_DIR_ = "/home/linusberg/Development/APC-Storage/";
-  public FileSystem() {
-  }
+  private static readonly string BASE_DIR_ = "/home/linusberg/Development/APC-Storage/";
 
   public void CreateDailyDeposit() {
     string daily_deposit = Path.Join(BASE_DIR_, "Daily");
@@ -18,16 +16,16 @@ public class FileSystem {
   }
 
   public void CreateDailyLink(string module, string uri_str) {
-    Uri uri = new Uri(uri_str);
+    Uri uri = new(uri_str);
     string location = CleanFilepath(uri.LocalPath);
     string daily_deposit = GetDailyDeposit();
     string link = Path.Join(daily_deposit, module, location);
     Directory.CreateDirectory(Path.GetDirectoryName(link));
     File.CreateSymbolicLink(link, GetArtifactPath(module, uri_str));
   }
- 
+
   public string GetArtifactPath(string module, string uri_str) {
-    Uri uri = new Uri(uri_str);
+    Uri uri = new(uri_str);
     string location = CleanFilepath(uri.LocalPath);
     CreateModuleDirectory(module);
     string path = GetModulePath(module, location);
@@ -36,9 +34,9 @@ public class FileSystem {
   }
 
   private string CleanFilepath(string location) {
-    return Regex.Replace(location, @"\/-\/", "/"); 
+    return Regex.Replace(location, @"\/-\/", "/");
   }
-  
+
   private string GetModulePath(string module, string filepath) {
     return Path.Join(GetModuleDir(module), filepath);
   }
@@ -46,7 +44,7 @@ public class FileSystem {
   private void CreateArtifactDirectory(string path) {
     Directory.CreateDirectory(path);
   }
-  
+
   private void CreateModuleDirectory(string module) {
     Directory.CreateDirectory(GetModuleDir(module));
   }
@@ -55,7 +53,7 @@ public class FileSystem {
   private string GetModuleDir(string module) {
     return Path.Join(BASE_DIR_, module);
   }
-  
+
   public bool Exists(string filepath) {
     return File.Exists(filepath);
   }

@@ -7,9 +7,11 @@ namespace APM.Nuget;
 
 public class Processor : IProcessor {
   private readonly INuget nuget_;
+
   public Processor(INuget nuget) {
     nuget_ = nuget;
   }
+
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     string name = context.Message.Name;
     Console.WriteLine($"PROCESSING: {name}");
@@ -19,7 +21,8 @@ public class Processor : IProcessor {
         Context = context.Message.Context,
         Artifact = artifact
       });
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       Console.WriteLine(e.Message);
     }
   }

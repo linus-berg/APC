@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" Version="2.0.123" />
-        <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0" />
-        <PackageReference Include="Npgsql" Version="6.0.6" />
-        <PackageReference Include="StackExchange.Redis" Version="2.6.66" />
+        <PackageReference Include="Dapper" Version="2.0.123"/>
+        <PackageReference Include="Dapper.Contrib" Version="2.0.78"/>
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0"/>
+        <PackageReference Include="Npgsql" Version="6.0.6"/>
+        <PackageReference Include="StackExchange.Redis" Version="2.6.66"/>
     </ItemGroup>
 
 </Project>

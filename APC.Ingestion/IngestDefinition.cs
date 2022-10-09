@@ -8,6 +8,7 @@ public class IngestDefinition : ConsumerDefinition<IngestConsumer> {
     EndpointName = Endpoints.APC_INGEST_UNPROCESSED.ToString().Replace("queue:", "");
     ConcurrentMessageLimit = 10;
   }
+
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
     IConsumerConfigurator<IngestConsumer> consumerConfigurator) {
     // configure message retry with millisecond intervals

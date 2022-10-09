@@ -1,21 +1,24 @@
-﻿using System.Transactions;
-using APC.Infrastructure.Models;
+﻿using APC.Infrastructure.Models;
 using Dapper;
 using Dapper.Contrib.Extensions;
-using Microsoft.Data.SqlClient;
 using Npgsql;
 
 namespace APC.Infrastructure;
 
 public class Database : IDisposable {
   private readonly NpgsqlConnection db_;
-  private NpgsqlTransaction transaction_;
   private readonly string DB_STR_ = "Host=localhost;Username=postgres;Password=mysecret;Database=apc-ingestion";
+  private NpgsqlTransaction transaction_;
 
   public Database() {
     db_ = new NpgsqlConnection(DB_STR_);
     Open();
     transaction_ = db_.BeginTransaction();
+  }
+
+  public void Dispose() {
+    Dispose(true);
+    GC.SuppressFinalize(this);
   }
 
   private void Open() {
@@ -33,14 +36,14 @@ public class Database : IDisposable {
 
 
   public async Task AddArtifact(Artifact artifact) {
-    Artifact db_artifact = await GetArtifactByName(artifact.name);
+    Artifact db_artifact = await GetArtifactByName(artifact.name, artifact.module);
     if (db_artifact == null) artifact.id = await db_.InsertAsync(artifact, transaction_);
     foreach (ArtifactVersion version in artifact.versions.Values) await AddArtifactVersion(artifact, version);
     foreach (string dependency in artifact.dependencies) await AddArtifactDependency(artifact, dependency);
   }
 
   public async Task<ArtifactDependency> AddArtifactDependency(Artifact artifact, string dependency) {
-    ArtifactDependency dep = new ArtifactDependency() {
+    ArtifactDependency dep = new() {
       name = dependency,
       artifact_id = artifact.id
     };
@@ -55,32 +58,34 @@ public class Database : IDisposable {
   public async Task<bool> UpdateArtifactVersions(Artifact current, Artifact updated) {
     Dictionary<string, ArtifactVersion> current_versions = await GetVersions(current.id);
     Dictionary<string, ArtifactVersion> updated_versions = updated.versions;
-    bool has_updated = false;  
-    foreach (KeyValuePair<string, ArtifactVersion> kv in updated_versions) {
+    bool has_updated = false;
+    foreach (KeyValuePair<string, ArtifactVersion> kv in updated_versions)
       if (!current_versions.ContainsKey(kv.Key)) {
         await AddArtifactVersion(current, kv.Value);
         has_updated = true;
       }
-    }
+
     return has_updated;
   }
+
   public async Task AddArtifactVersion(Artifact artifact, ArtifactVersion version) {
     version.artifact_id = artifact.id;
     version.id = await db_.InsertAsync(version, transaction_);
   }
 
-  public async Task<Artifact> GetArtifactByName(string name) {
+  public async Task<Artifact> GetArtifactByName(string name, string module) {
     return await db_.QueryFirstOrDefaultAsync<Artifact>(@"
         SELECT 
             * 
         FROM 
             artifacts 
         WHERE 
-            name = @name",
+            name = @name AND module = @module",
       new {
-        name
+        name,
+        module
       },
-      transaction: transaction_
+      transaction_
     );
   }
 
@@ -95,9 +100,9 @@ public class Database : IDisposable {
                 artifact_id = @artifact_id
          ",
       new {
-        artifact_id,
+        artifact_id
       },
-      transaction: transaction_
+      transaction_
     )).ToDictionary(av => av.version);
   }
 
@@ -116,10 +121,5 @@ public class Database : IDisposable {
       transaction_.Dispose();
       db_.Dispose();
     }
-  }
-
-  public void Dispose() {
-    Dispose(true);
-    GC.SuppressFinalize(this);
   }
 }

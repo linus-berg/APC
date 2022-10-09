@@ -1,8 +1,5 @@
 namespace ACM.Http; 
-using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
+
 internal class RemoteFile {
   private const int BUFFER_SIZE = 8192;
   private static readonly HttpClient CLIENT_ = new();
@@ -17,10 +14,10 @@ internal class RemoteFile {
     HttpResponseMessage response =
       await CLIENT_.GetAsync(URL_, HttpCompletionOption.ResponseHeadersRead);
     if (response.Content.Headers.ContentLength == null) return false;
-    long size = (long) response.Content.Headers.ContentLength;
+    long size = (long)response.Content.Headers.ContentLength;
     using Stream s = await response.Content.ReadAsStreamAsync();
     try {
-      await ProcessStream(s, (int) size, tmp_file);
+      await ProcessStream(s, (int)size, tmp_file);
     }
     catch (Exception e) {
       Console.WriteLine(e);
@@ -30,13 +27,11 @@ internal class RemoteFile {
     }
 
     /* If downloaded file size matches remote, its complete */
-    if (new FileInfo(tmp_file).Length == size) {
+    if (new FileInfo(tmp_file).Length == size)
       /* Rename */
       File.Move(tmp_file, filepath);
-    }
-    else {
+    else
       File.Delete(tmp_file);
-    }
 
     return true;
   }

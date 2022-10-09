@@ -13,6 +13,7 @@ public class Artifact {
   public string name { get; set; }
   public string module { get; set; }
   public ArtifactStatus status { get; set; } = ArtifactStatus.PROCESSING;
+  public bool root { get; set; } = false;
 
   [Computed] public Dictionary<string, ArtifactVersion> versions { get; set; }
 
@@ -23,22 +24,18 @@ public class Artifact {
   }
 
   public HashSet<string> DependencyDiff(HashSet<string> dependencies_in_db) {
-    HashSet<string> diff = new HashSet<string>();
-    foreach (string dep in dependencies) {
-      if (!dependencies_in_db.Contains(dep)) {
+    HashSet<string> diff = new();
+    foreach (string dep in dependencies)
+      if (!dependencies_in_db.Contains(dep))
         diff.Add(dep);
-      }
-    }
     return diff;
   }
-  
+
   public HashSet<string> VersionDiff(HashSet<ArtifactVersion> versions_in_db) {
-    HashSet<string> diff = new HashSet<string>();
-    foreach (KeyValuePair<string, ArtifactVersion> version in versions) {
-      if (versions_in_db.All(v => v.version != version.Key)) {
+    HashSet<string> diff = new();
+    foreach (KeyValuePair<string, ArtifactVersion> version in versions)
+      if (versions_in_db.All(v => v.version != version.Key))
         diff.Add(version.Key);
-      }
-    }
     return diff;
   }
 

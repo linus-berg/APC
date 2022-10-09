@@ -11,7 +11,7 @@ public class Processor : IProcessor {
   public Processor(INpm npm) {
     npm_ = npm;
   }
-  
+
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     string name = context.Message.Name;
     Console.WriteLine($"PROCESSING: {name}");
@@ -21,7 +21,8 @@ public class Processor : IProcessor {
         Context = context.Message.Context,
         Artifact = artifact
       });
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       Console.WriteLine(e.Message);
     }
   }

@@ -11,10 +11,8 @@ public class Npm : INpm {
 
   public async Task<Artifact> ProcessArtifact(string name) {
     Metadata metadata = await GetMetadata(name);
-    if (metadata == null) {
-      throw new ArtifactMetadataException($"Could not get metadata: {name}");
-    }
-    Artifact artifact = new Artifact() {
+    if (metadata == null) throw new ArtifactMetadataException($"Could not get metadata: {name}");
+    Artifact artifact = new() {
       name = name,
       module = "npm"
     };
@@ -42,8 +40,8 @@ public class Npm : INpm {
   private void AddDependencies(Artifact artifact, ArtifactVersion version, Dictionary<string, string> dependencies) {
     if (dependencies == null) return;
     foreach (KeyValuePair<string, string> package in dependencies) {
-        artifact.AddDependency(package.Key);
-        version.AddDependency(package.Key);
+      artifact.AddDependency(package.Key);
+      version.AddDependency(package.Key);
     }
   }
 

@@ -8,7 +8,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     services.AddMassTransit(b => {
       b.AddConsumer<Engine>(typeof(ProcessedDefinition));
       b.AddConsumer<IngestConsumer>(typeof(IngestDefinition));
-      
+
       b.UsingRabbitMq((ctx, cfg) => {
         cfg.Host("localhost", "/", h => {
           h.Username("guest");
@@ -17,7 +17,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         cfg.ConfigureEndpoints(ctx);
       });
     });
-    
+
     services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
     services.AddScoped<Database>();
     services.AddSingleton<RedisCache>();

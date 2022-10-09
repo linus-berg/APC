@@ -4,18 +4,19 @@ using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
+using ILogger = NuGet.Common.ILogger;
 
-namespace APM.Nuget; 
+namespace APM.Nuget;
 
 public class Nuget : INuget {
   private const string API_ = "https://api.nuget.org/v3/index.json";
   private const string NUGET_ = "https://api.nuget.org/v3-flatcontainer/";
   private readonly SourceCacheContext cache_;
+  private readonly CancellationToken ct_ = CancellationToken.None;
+  private readonly ILogger logger_;
   private readonly PackageMetadataResource meta_res_;
   private readonly SourceRepository repository_;
   private FindPackageByIdResource resource_;
-  private readonly NuGet.Common.ILogger logger_;
-  private readonly CancellationToken ct_ =CancellationToken.None;
 
   public Nuget() {
     repository_ = Repository.Factory.GetCoreV3(API_);
@@ -24,9 +25,9 @@ public class Nuget : INuget {
     cache_ = new SourceCacheContext();
     logger_ = NullLogger.Instance;
   }
+
   public async Task<Artifact> ProcessArtifact(string name) {
-    
-    Artifact artifact = new Artifact() {
+    Artifact artifact = new() {
       name = name,
       module = "nuget"
     };
@@ -37,7 +38,7 @@ public class Nuget : INuget {
 
   private async Task ProcessArtifactVersions(Artifact artifact) {
     IEnumerable<IPackageSearchMetadata> versions =
-        await GetMetadata(artifact.name);
+      await GetMetadata(artifact.name);
     foreach (IPackageSearchMetadata version in versions) {
       string v = version.Identity.Version.ToString();
       string u = NUGET_ + $"{artifact.name}/{v}/{artifact.name}.{v}.nupkg".ToLower();
@@ -49,24 +50,25 @@ public class Nuget : INuget {
       AddDependencies(artifact, a_v, version.DependencySets);
     }
   }
-  
-  private void AddDependencies(Artifact artifact, ArtifactVersion version, IEnumerable<PackageDependencyGroup> dependencies) {
+
+  private void AddDependencies(Artifact artifact, ArtifactVersion version,
+    IEnumerable<PackageDependencyGroup> dependencies) {
     if (dependencies == null) return;
-    foreach (PackageDependencyGroup x in dependencies) {
-      foreach (PackageDependency pkg in x.Packages) {
-        artifact.AddDependency(pkg.Id);
-        version.AddDependency(pkg.Id);
-      }
+    foreach (PackageDependencyGroup x in dependencies)
+    foreach (PackageDependency pkg in x.Packages) {
+      artifact.AddDependency(pkg.Id);
+      version.AddDependency(pkg.Id);
     }
   }
+
   private async Task<IEnumerable<IPackageSearchMetadata>> GetMetadata(string id) {
-      return await meta_res_.GetMetadataAsync(
-        id,
-        true,
-        false,
-        cache_,
-        logger_,
-        ct_
-      );
-    }
+    return await meta_res_.GetMetadataAsync(
+      id,
+      true,
+      false,
+      cache_,
+      logger_,
+      ct_
+    );
+  }
 }
