@@ -11,7 +11,9 @@ public class Npm : INpm {
 
   public async Task<Artifact> ProcessArtifact(string name) {
     Metadata metadata = await GetMetadata(name);
-    if (metadata == null) throw new ArtifactMetadataException($"Could not get metadata: {name}");
+    if (metadata == null) {
+      throw new ArtifactMetadataException($"Could not get metadata: {name}");
+    }
     Artifact artifact = new() {
       name = name,
       module = "npm"
@@ -22,6 +24,9 @@ public class Npm : INpm {
 
   private void ProcessArtifactVersions(Artifact artifact,
     Metadata metadata) {
+    if (metadata.versions == null) {
+      throw new ArtifactMetadataException("No versions found!");
+    }
     foreach (KeyValuePair<string, Package> kv in metadata.versions) {
       if (artifact.HasVersion(kv.Key)) continue;
 

@@ -22,7 +22,7 @@ public class Processor : IProcessor {
       });
     }
     catch (Exception e) {
-      Console.WriteLine(e.Message);
+      Console.WriteLine($"{name}->{e.Message}");
     }
   }
 }
