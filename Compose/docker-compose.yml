@@ -53,6 +53,8 @@ services:
   apc_api:
     image: ghcr.io/linus-berg/apc/api:latest
     container_name: apc-api
+    ports:
+      - 9000:80
     env_file:
       - "vars.env"
     depends_on:

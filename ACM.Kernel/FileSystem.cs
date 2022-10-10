@@ -7,6 +7,9 @@ namespace ACM.Kernel;
 public class FileSystem {
   private static readonly string BASE_DIR_ = Configuration.GetAPCVar(ApcVariable.APC_ACM_DIR);
 
+  static FileSystem() {
+    Console.WriteLine($"Storage Directory: {BASE_DIR_}");   
+  }
   public void CreateDailyDeposit() {
     string daily_deposit = Path.Join(BASE_DIR_, "Daily");
     Directory.CreateDirectory(GetDailyDeposit());

@@ -25,7 +25,6 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     bool updated;
     if (db_artifact == null) {
       await db_.AddArtifact(artifact);
-      Console.WriteLine($"Added: {artifact.name}");
       updated = true;
     }
     else {
@@ -44,12 +43,10 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     HashSet<string> dependencies = artifact.dependencies;
     foreach (string dependency in dependencies) {
       if (await cache_.InCache(dependency, request.Context)) {
-        Console.WriteLine($"Hit cache {artifact.name}:{dependency}");
         continue;
       }
 
       await cache_.AddToCache(dependency, request.Context);
-      Console.WriteLine($"Found new dependency {dependency}");
       /* Memorize this dependency */
       await Process(context, dependency);
     }
