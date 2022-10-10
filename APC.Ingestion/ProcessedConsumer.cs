@@ -19,20 +19,15 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
 
-    Artifact db_artifact = await db_.GetArtifactByName(artifact.name, artifact.module);
 
     /* If not in db add */
-    bool updated;
-    if (db_artifact == null) {
-      await db_.AddArtifact(artifact);
-      updated = true;
-    }
-    else {
-      updated = await db_.UpdateArtifact(db_artifact, artifact);
-    }
-
-    if (updated) {
-      await db_.Commit();
+    if (await TryInsertOrUpdateArtifact(artifact)) {
+      try {
+        await db_.Commit();
+      }
+      catch (Exception e) {
+        Console.WriteLine($"{artifact.name}->{e.Message}");
+      }
       await Collect(context);
     }
     else {
@@ -49,6 +44,22 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
       await cache_.AddToCache(dependency, request.Context);
       /* Memorize this dependency */
       await Process(context, dependency);
+    }
+  }
+
+  private async Task<bool> TryInsertOrUpdateArtifact(Artifact artifact) {
+    
+    Artifact db_artifact = await db_.GetArtifactByName(artifact.name, artifact.module);
+    try {
+      if (db_artifact != null) {
+        return await db_.UpdateArtifact(db_artifact, artifact);
+      }
+      await db_.AddArtifact(artifact);
+      return true;
+    }
+    catch (Exception e) {
+      Console.WriteLine($"{artifact.name}->{e.Message}");
+      return true;
     }
   }
 
