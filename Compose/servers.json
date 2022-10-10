@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "APC-postgres",
+            "Group": "Servers",
+            "Port": 5432,
+            "Username": "postgres",
+            "Host": "apc-ingest-db",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}

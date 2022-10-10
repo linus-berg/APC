@@ -1,9 +1,11 @@
+using System.Reflection;
 using System.Text.RegularExpressions;
+using APC.Kernel;
 
 namespace ACM.Kernel;
 
 public class FileSystem {
-  private static readonly string BASE_DIR_ = "/home/linusberg/Development/APC-Storage/";
+  private static readonly string BASE_DIR_ = Configuration.GetAPCVar(ApcVariable.APC_ACM_DIR);
 
   public void CreateDailyDeposit() {
     string daily_deposit = Path.Join(BASE_DIR_, "Daily");
@@ -12,7 +14,7 @@ public class FileSystem {
 
   private string GetDailyDeposit() {
     string daily_deposit = Path.Join(BASE_DIR_, "Daily");
-    return Path.Join(daily_deposit, DateTime.UtcNow.ToString("yyMMdd"));
+    return Path.Join(daily_deposit, DateTime.UtcNow.ToString("yyyy_MM_dd"));
   }
 
   public void CreateDailyLink(string module, string uri_str) {

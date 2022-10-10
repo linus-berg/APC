@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -11,15 +11,15 @@ IHost host = Host.CreateDefaultBuilder(args)
       b.AddConsumer<IngestConsumer>(typeof(IngestDefinition));
 
       b.UsingRabbitMq((ctx, cfg) => {
-        cfg.Host(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_HOST), "/", h => {
-          h.Username(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_USER));
-          h.Password(Configuration.GetAPCVar(Configuration.APC_VAR.APC_RABBIT_MQ_PASS));
+        cfg.Host(Configuration.GetAPCVar(ApcVariable.APC_RABBIT_MQ_HOST), "/", h => {
+          h.Username(Configuration.GetAPCVar(ApcVariable.APC_RABBIT_MQ_USER));
+          h.Password(Configuration.GetAPCVar(ApcVariable.APC_RABBIT_MQ_PASS));
         });
         cfg.ConfigureEndpoints(ctx);
       });
     });
 
-    services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetAPCVar(Configuration.APC_VAR.APC_REDIS_HOST)));
+    services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetAPCVar(ApcVariable.APC_REDIS_HOST)));
     services.AddScoped<Database>();
     services.AddSingleton<RedisCache>();
     services.AddHostedService<Worker>();
