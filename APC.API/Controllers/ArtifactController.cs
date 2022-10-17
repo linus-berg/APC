@@ -5,6 +5,7 @@ using APC.Kernel;
 using APC.Kernel.Messages;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
 
 namespace APC.API.Controllers;
 
@@ -27,8 +28,33 @@ public class ArtifactController : ControllerBase {
 
   // POST: api/Artifact
   [HttpPost]
-  public async Task Post([FromBody] ArtifactIngestRequest request) {
-    await SendToIngest(request);
+  public async Task<ActionResult> Post([FromBody] ArtifactInput input) {
+    Artifact artifact = await db_.GetArtifactByName(input.Name, input.Module);
+
+    if (artifact == null) {
+      await db_.AddArtifact(new Artifact() {
+        module = input.Module,
+        name = input.Name,
+        root = true,
+      });
+      await db_.Commit();
+    } else if (!artifact.root) {
+      artifact.root = true;
+      await db_.UpdateArtifact(artifact);
+      await db_.Commit();
+    }
+    else {
+      return Ok(new {
+        Message = $"{input.Module}/{input.Name} already Exists!"
+      });
+    }
+    ArtifactIngestRequest ingest_request = new ArtifactIngestRequest();
+    ingest_request.Artifacts.Add(input.Name);
+    ingest_request.Module = input.Module;
+    await SendToIngest(ingest_request);
+    return Ok(new {
+      Message = $"Added {input.Module}/{input.Name}"
+    });
   }
 
   // POST: api/Artifact/track

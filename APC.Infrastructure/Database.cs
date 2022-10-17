@@ -57,6 +57,10 @@ public class Database : IDisposable {
     return dep;
   }
 
+  public async Task<bool> UpdateArtifact(Artifact artifact) {
+    return await db_.UpdateAsync(artifact);
+  }
+
   public async Task<bool> UpdateArtifact(Artifact current, Artifact updated) {
     return await UpdateArtifactVersions(current, updated);
   }

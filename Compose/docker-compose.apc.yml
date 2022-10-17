@@ -1,44 +1,5 @@
 version: "3.8"
 services:
-# Infrastructure
-  apc-ingest-db:
-    image: postgres:13
-    container_name: apc-ingest-db
-    volumes:
-      - "./volumes/pg_init:/docker-entrypoint-initdb.d"
-      - "./volumes/pg_data:/var/lib/postgresql/data"
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD=mysecret
-  
-  apc-ingest-redis:
-    image: redis/redis-stack:latest
-    container_name: apc-ingest-redis
-    volumes:
-      - "./volumes/redis_data:/data"
-    ports:
-      - 6379:6379
-      - 8001:8001
-
-  apc-rabbitmq:
-    image: masstransit/rabbitmq
-    container_name: apc-rabbitmq
-    ports:
-      - 15672:15672
-      - 5672:5672
-      
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: apc-pgadmin
-    volumes:
-      - "./servers.json:/pgadmin4/servers.json"
-    ports:
-      - 8080:80
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=linus@local.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-
 # Artifact Complex --- 
   apc_ingestion:
     image: ghcr.io/linus-berg/apc/ingestion:latest
