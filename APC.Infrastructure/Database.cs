@@ -83,6 +83,10 @@ public class Database : IDisposable {
     version.id = await db_.InsertAsync(version, transaction_);
   }
 
+  public async Task<IEnumerable<string>> GetModules() {
+    return await db_.QueryAsync<string>("SELECT DISTINCT module FROM artifacts");
+  }
+
   public async Task<Artifact> GetArtifactByName(string name, string module) {
     return await db_.QueryFirstOrDefaultAsync<Artifact>(@"
         SELECT 

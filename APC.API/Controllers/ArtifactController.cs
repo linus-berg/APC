@@ -26,6 +26,11 @@ public class ArtifactController : ControllerBase {
     return await db_.GetArtifacts(module);
   }
 
+  [HttpGet("modules")]
+  public async Task<IEnumerable<string>> GetModules() {
+    return await db_.GetModules();
+  }
+
   // POST: api/Artifact
   [HttpPost]
   public async Task<ActionResult> Post([FromBody] ArtifactInput input) {
