@@ -1,4 +1,4 @@
-using APC.Infrastructure.Models;
+using APC.Services.Models;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;

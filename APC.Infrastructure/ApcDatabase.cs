@@ -1,5 +1,6 @@
 ﻿using System.Data;
-using APC.Infrastructure.Models;
+using APC.Services;
+using APC.Services.Models;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.IdentityModel.Protocols;
@@ -7,16 +8,16 @@ using Npgsql;
 
 namespace APC.Infrastructure;
 
-public class Database : IDisposable {
+public class ApcDatabase : IApcDatabase {
   private readonly NpgsqlConnection db_;
   private static readonly string DB_STR_;
   private NpgsqlTransaction transaction_;
 
-  static Database() {
+  static ApcDatabase() {
     string c_str = Environment.GetEnvironmentVariable("APC_PGSQL_STR");
     DB_STR_ = c_str ?? throw new NoNullAllowedException("Database connection string is null, set APC_PGSQL_STR.");
   }
-  public Database() {
+  public ApcDatabase() {
     db_ = new NpgsqlConnection(DB_STR_);
     Open();
     transaction_ = db_.BeginTransaction();
@@ -31,15 +32,18 @@ public class Database : IDisposable {
     db_.Open();
   }
 
-  ~Database() {
+  ~ApcDatabase() {
     Dispose(false);
+  }
+
+  public async Task<bool> DeleteArtifact(Artifact artifact) {
+    return await db_.DeleteAsync(artifact);
   }
 
   public async Task Commit() {
     await transaction_.CommitAsync();
     transaction_ = await db_.BeginTransactionAsync();
   }
-
 
   public async Task AddArtifact(Artifact artifact) {
     Artifact db_artifact = await GetArtifactByName(artifact.name, artifact.module);
@@ -48,7 +52,7 @@ public class Database : IDisposable {
     foreach (string dependency in artifact.dependencies) await AddArtifactDependency(artifact, dependency);
   }
 
-  public async Task<ArtifactDependency> AddArtifactDependency(Artifact artifact, string dependency) {
+  private async Task<ArtifactDependency> AddArtifactDependency(Artifact artifact, string dependency) {
     ArtifactDependency dep = new() {
       name = dependency,
       artifact_id = artifact.id
@@ -65,7 +69,7 @@ public class Database : IDisposable {
     return await UpdateArtifactVersions(current, updated);
   }
 
-  public async Task<bool> UpdateArtifactVersions(Artifact current, Artifact updated) {
+  private async Task<bool> UpdateArtifactVersions(Artifact current, Artifact updated) {
     Dictionary<string, ArtifactVersion> current_versions = await GetVersions(current.id);
     Dictionary<string, ArtifactVersion> updated_versions = updated.versions;
     bool has_updated = false;
@@ -78,7 +82,7 @@ public class Database : IDisposable {
     return has_updated;
   }
 
-  public async Task AddArtifactVersion(Artifact artifact, ArtifactVersion version) {
+  private async Task AddArtifactVersion(Artifact artifact, ArtifactVersion version) {
     version.artifact_id = artifact.id;
     version.id = await db_.InsertAsync(version, transaction_);
   }
@@ -103,7 +107,7 @@ public class Database : IDisposable {
     );
   }
 
-  public async Task<Dictionary<string, ArtifactVersion>> GetVersions(int artifact_id) {
+  private async Task<Dictionary<string, ArtifactVersion>> GetVersions(int artifact_id) {
     return (await db_.QueryAsync<ArtifactVersion>(
       @"
             SELECT 

@@ -7,9 +7,9 @@ namespace APC.Ingestion;
 public class IngestConsumer : IConsumer<ArtifactIngestRequest> {
   private readonly ILogger<Worker> _logger;
   private readonly IBus bus_;
-  private readonly RedisCache cache_;
+  private readonly ApcCache cache_;
 
-  public IngestConsumer(ILogger<Worker> logger, IBus bus, RedisCache cache) {
+  public IngestConsumer(ILogger<Worker> logger, IBus bus, ApcCache cache) {
     _logger = logger;
     bus_ = bus;
     cache_ = cache;

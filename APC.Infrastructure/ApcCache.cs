@@ -1,11 +1,12 @@
+using APC.Services;
 using StackExchange.Redis;
 
 namespace APC.Infrastructure;
 
-public class RedisCache {
+public class ApcCache : IApcCache {
   private readonly IConnectionMultiplexer redis_;
 
-  public RedisCache(IConnectionMultiplexer redis) {
+  public ApcCache(IConnectionMultiplexer redis) {
     redis_ = redis;
   }
 

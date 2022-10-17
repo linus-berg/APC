@@ -1,5 +1,5 @@
-using APC.Infrastructure.Models;
 using APC.Kernel.Exceptions;
+using APC.Services.Models;
 using APM.Npm.Models;
 using RestSharp;
 

@@ -17,8 +17,8 @@ builder.Services.AddMassTransit(b => {
 });
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetAPCVar(ApcVariable.APC_REDIS_HOST)));
-builder.Services.AddScoped<Database>();
-builder.Services.AddSingleton<RedisCache>();
+builder.Services.AddScoped<ApcDatabase>();
+builder.Services.AddSingleton<ApcCache>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

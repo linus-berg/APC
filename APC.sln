@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Infrastructure", "APC.I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.API", "APC.API\APC.API.csproj", "{DA193AFC-630E-4C2D-8D1C-924F27923DF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Services", "APC.Services\APC.Services.csproj", "{F247538C-E5D2-4F45-964F-FB048BD4B2B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{DA193AFC-630E-4C2D-8D1C-924F27923DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA193AFC-630E-4C2D-8D1C-924F27923DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA193AFC-630E-4C2D-8D1C-924F27923DF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F247538C-E5D2-4F45-964F-FB048BD4B2B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F247538C-E5D2-4F45-964F-FB048BD4B2B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F247538C-E5D2-4F45-964F-FB048BD4B2B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F247538C-E5D2-4F45-964F-FB048BD4B2B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1D3F65E7-586A-43ED-AF6F-FC4D85339EDD} = {A18E3550-98A2-4ACE-BA84-7029DF67B443}

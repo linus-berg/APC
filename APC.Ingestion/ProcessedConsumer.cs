@@ -1,15 +1,16 @@
 using APC.Infrastructure;
-using APC.Infrastructure.Models;
 using APC.Kernel.Messages;
+using APC.Services;
+using APC.Services.Models;
 using MassTransit;
 
 namespace APC.Ingestion;
 
 public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
-  private readonly RedisCache cache_;
-  private readonly Database db_;
+  private readonly IApcCache cache_;
+  private readonly IApcDatabase db_;
 
-  public ProcessedConsumer(Database db, RedisCache cache) {
+  public ProcessedConsumer(IApcDatabase db, IApcCache cache) {
     db_ = db;
     cache_ = cache;
   }

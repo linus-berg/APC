@@ -1,7 +1,7 @@
 using ACM.Kernel;
-using APC.Infrastructure.Models;
 using APC.Kernel;
 using APC.Kernel.Messages;
+using APC.Services.Models;
 using MassTransit;
 
 namespace ACM.Http;

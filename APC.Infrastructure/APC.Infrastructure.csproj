@@ -14,4 +14,8 @@
         <PackageReference Include="StackExchange.Redis" Version="2.6.66" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\APC.Services\APC.Services.csproj" />
+    </ItemGroup>
+
 </Project>

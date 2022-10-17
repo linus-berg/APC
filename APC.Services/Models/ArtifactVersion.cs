@@ -1,6 +1,6 @@
 using Dapper.Contrib.Extensions;
 
-namespace APC.Infrastructure.Models;
+namespace APC.Services.Models;
 
 [Table("artifact_versions")]
 public class ArtifactVersion {

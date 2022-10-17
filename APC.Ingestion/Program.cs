@@ -1,6 +1,7 @@
 using APC.Infrastructure;
 using APC.Ingestion;
 using APC.Kernel;
+using APC.Services;
 using MassTransit;
 using StackExchange.Redis;
 
@@ -20,8 +21,8 @@ IHost host = Host.CreateDefaultBuilder(args)
     });
 
     services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetAPCVar(ApcVariable.APC_REDIS_HOST)));
-    services.AddScoped<Database>();
-    services.AddSingleton<RedisCache>();
+    services.AddScoped<IApcDatabase, ApcDatabase>();
+    services.AddSingleton<IApcCache, ApcCache>();
     services.AddHostedService<Worker>();
   })
   .Build();

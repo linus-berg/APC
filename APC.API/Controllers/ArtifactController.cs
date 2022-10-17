@@ -1,8 +1,8 @@
 using APC.API.Input;
 using APC.Infrastructure;
-using APC.Infrastructure.Models;
 using APC.Kernel;
 using APC.Kernel.Messages;
+using APC.Services.Models;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Plugins;
@@ -13,9 +13,9 @@ namespace APC.API.Controllers;
 [ApiController]
 public class ArtifactController : ControllerBase {
   private readonly ISendEndpointProvider bus_;
-  private readonly Database db_;
+  private readonly ApcDatabase db_;
 
-  public ArtifactController(Database db, ISendEndpointProvider bus) {
+  public ArtifactController(ApcDatabase db, ISendEndpointProvider bus) {
     db_ = db;
     bus_ = bus;
   }
@@ -42,17 +42,16 @@ public class ArtifactController : ControllerBase {
         name = input.Name,
         root = true,
       });
-      await db_.Commit();
     } else if (!artifact.root) {
       artifact.root = true;
       await db_.UpdateArtifact(artifact);
-      await db_.Commit();
     }
     else {
       return Ok(new {
         Message = $"{input.Module}/{input.Name} already Exists!"
       });
     }
+    await db_.Commit();
     ArtifactIngestRequest ingest_request = new ArtifactIngestRequest();
     ingest_request.Artifacts.Add(input.Name);
     ingest_request.Module = input.Module;
@@ -79,7 +78,10 @@ public class ArtifactController : ControllerBase {
 
   // DELETE: api/Artifact/5
   [HttpDelete("{id}")]
-  public void Delete(int id) {
+  public async Task<ActionResult> Delete(int id) {
+    if (!await db_.DeleteArtifact(new Artifact() { id = id })) return Problem();
+    await db_.Commit();
+    return Ok();
   }
 
   private async Task SendToIngest(ArtifactIngestRequest request) {

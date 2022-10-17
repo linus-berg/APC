@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Dapper.Contrib">
+        <HintPath>..\..\..\.nuget\packages\dapper.contrib\2.0.78\lib\net5.0\Dapper.Contrib.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

@@ -1,4 +1,4 @@
-using APC.Infrastructure.Models;
+using APC.Services.Models;
 
 namespace APC.Kernel.Messages;
 

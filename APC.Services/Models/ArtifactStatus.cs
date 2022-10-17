@@ -1,4 +1,4 @@
-namespace APC.Infrastructure.Models;
+namespace APC.Services.Models;
 
 public enum ArtifactStatus {
   PROCESSING
