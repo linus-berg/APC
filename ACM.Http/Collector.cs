@@ -10,7 +10,6 @@ public class Collector : ICollector {
   private readonly FileSystem fs_ = new();
 
   public Collector() {
-    fs_.CreateDailyDeposit();
   }
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {
