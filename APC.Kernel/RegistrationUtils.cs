@@ -9,8 +9,8 @@ public static class RegistrationUtils {
       mt.UsingRabbitMq((ctx, cfg) => {
         SetupRabbitMq(cfg);
         cfg.ReceiveEndpoint($"apm-{name}", e => {
-          e.UseMessageRetry(r => r.Intervals(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(4),
-            TimeSpan.FromMinutes(15)));
+          e.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30)));
+          e.UseMessageRetry(r => r.Immediate(5));
           e.Instance(processor);
         });
         cfg.ConfigureEndpoints(ctx);
@@ -24,8 +24,8 @@ public static class RegistrationUtils {
       mt.UsingRabbitMq((ctx, cfg) => {
         SetupRabbitMq(cfg);
         cfg.ReceiveEndpoint($"acm-{name}", e => {
-          e.UseMessageRetry(
-            r => r.Intervals(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(4), TimeSpan.FromMinutes(15)));
+          e.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30)));
+          e.UseMessageRetry(r => r.Immediate(5));
           e.Instance(collector);
         });
         cfg.ConfigureEndpoints(ctx);
