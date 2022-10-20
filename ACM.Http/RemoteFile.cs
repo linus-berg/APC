@@ -20,7 +20,7 @@ internal class RemoteFile {
       await ProcessStream(s, (int)size, tmp_file);
     }
     catch (Exception e) {
-      Console.WriteLine(e);
+      throw;
     }
     finally {
       s.Close();
