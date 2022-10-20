@@ -1,6 +1,6 @@
 # Artifact Processor Complex
 
-
+Used to collect multiple package manager artifacts.
 
 ## Modules
 | Tag | Name                        | Description                                                                   |
