@@ -14,15 +14,10 @@ public class Processor : IProcessor {
 
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     string name = context.Message.Name;
-    try {
-      Artifact artifact = await npm_.ProcessArtifact(name);
-      await context.Send(Endpoints.APC_INGEST_PROCESSED, new ArtifactProcessedRequest {
-        Context = context.Message.Context,
-        Artifact = artifact
-      });
-    }
-    catch (Exception e) {
-      Console.WriteLine($"{name}->{e.Message}");
-    }
+    Artifact artifact = await npm_.ProcessArtifact(name);
+    await context.Send(Endpoints.APC_INGEST_PROCESSED, new ArtifactProcessedRequest {
+      Context = context.Message.Context,
+      Artifact = artifact
+    });
   }
 }

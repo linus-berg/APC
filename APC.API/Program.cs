@@ -40,7 +40,6 @@ app.UseCors(b => {
   b.AllowAnyMethod();
 });
 
-if (!app.Environment.IsDevelopment()) app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

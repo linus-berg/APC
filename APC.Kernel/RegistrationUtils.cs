@@ -8,7 +8,11 @@ public static class RegistrationUtils {
     sc.AddMassTransit(mt => {
       mt.UsingRabbitMq((ctx, cfg) => {
         SetupRabbitMq(cfg);
-        cfg.ReceiveEndpoint($"apm-{name}", e => { e.Instance(processor); });
+        cfg.ReceiveEndpoint($"apm-{name}", e => {
+          e.UseMessageRetry(r => r.Intervals(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(4),
+            TimeSpan.FromMinutes(15)));
+          e.Instance(processor);
+        });
         cfg.ConfigureEndpoints(ctx);
       });
     });
@@ -19,7 +23,11 @@ public static class RegistrationUtils {
     sc.AddMassTransit(mt => {
       mt.UsingRabbitMq((ctx, cfg) => {
         SetupRabbitMq(cfg);
-        cfg.ReceiveEndpoint($"acm-{name}", e => { e.Instance(collector); });
+        cfg.ReceiveEndpoint($"acm-{name}", e => {
+          e.UseMessageRetry(
+            r => r.Intervals(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(4), TimeSpan.FromMinutes(15)));
+          e.Instance(collector);
+        });
         cfg.ConfigureEndpoints(ctx);
       });
     });
