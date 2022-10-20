@@ -1,4 +1,4 @@
-using APC.Infrastructure;
+using APC.Services;
 using APC.Kernel.Messages;
 using MassTransit;
 
@@ -7,9 +7,9 @@ namespace APC.Ingestion;
 public class IngestConsumer : IConsumer<ArtifactIngestRequest> {
   private readonly ILogger<Worker> _logger;
   private readonly IBus bus_;
-  private readonly ApcCache cache_;
+  private readonly IApcCache cache_;
 
-  public IngestConsumer(ILogger<Worker> logger, IBus bus, ApcCache cache) {
+  public IngestConsumer(ILogger<Worker> logger, IBus bus, IApcCache cache) {
     _logger = logger;
     bus_ = bus;
     cache_ = cache;
