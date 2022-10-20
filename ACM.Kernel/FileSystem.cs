@@ -15,16 +15,16 @@ public class FileSystem {
     Directory.CreateDirectory(GetDailyDeposit());
   }
 
-  private string GetDailyDeposit() {
-    string daily_deposit = Path.Join(BASE_DIR_, "Daily");
+  private string GetDailyDeposit(string module) {
+    string daily_deposit = Path.Join(BASE_DIR_, "Daily", module);
     return Path.Join(daily_deposit, DateTime.UtcNow.ToString("yyyy_MM_dd"));
   }
 
   public void CreateDailyLink(string module, string uri_str) {
     Uri uri = new(uri_str);
     string location = CleanFilepath(uri.LocalPath);
-    string daily_deposit = GetDailyDeposit();
-    string link = Path.Join(daily_deposit, module, location);
+    string daily_deposit = GetDailyDeposit(module);
+    string link = Path.Join(daily_deposit, location);
     Directory.CreateDirectory(Path.GetDirectoryName(link));
     File.CreateSymbolicLink(link, GetArtifactPath(module, uri_str));
   }
