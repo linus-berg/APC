@@ -58,9 +58,9 @@ internal class RemoteFile {
         await fs.WriteAsync(buffer, 0, read);
       }
     } catch (Exception e) {
-      fs.close();
+      fs.Close();
       if (File.Exists(filepath)) {
-        Console.WriteLine($"Clearing {tmp_file}");
+        Console.WriteLine($"Clearing {filepath}");
         File.Delete(filepath);
       }
       throw;
