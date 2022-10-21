@@ -39,6 +39,10 @@ public class Nuget : INuget {
   private async Task ProcessArtifactVersions(Artifact artifact) {
     IEnumerable<IPackageSearchMetadata> versions =
       await GetMetadata(artifact.name);
+    
+    if (versions == null) {
+      throw new ArtifactTimeoutException($"Metadata fetch failed for {artifact.name}"); 
+    }
     foreach (IPackageSearchMetadata version in versions) {
       string v = version.Identity.Version.ToString();
       string u = NUGET_ + $"{artifact.name}/{v}/{artifact.name}.{v}.nupkg".ToLower();
@@ -53,10 +57,13 @@ public class Nuget : INuget {
 
   private void AddDependencies(Artifact artifact, ArtifactVersion version,
     IEnumerable<PackageDependencyGroup> dependencies) {
-    if (dependencies == null) return;
-    foreach (PackageDependencyGroup x in dependencies)
-    foreach (PackageDependency pkg in x.Packages) {
-      artifact.AddDependency(pkg.Id, artifact.module);
+    if (dependencies == null) {
+      throw new ArtifactMetadataException("No versions found!");
+    }
+    foreach (PackageDependencyGroup x in dependencies) {
+      foreach (PackageDependency pkg in x.Packages) {
+        artifact.AddDependency(pkg.Id, artifact.module);
+      }
     }
   }
 
