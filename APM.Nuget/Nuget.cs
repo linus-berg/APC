@@ -5,6 +5,7 @@ using NuGet.Packaging.Core;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using ILogger = NuGet.Common.ILogger;
+using APC.Kernel.Exceptions;
 
 namespace APM.Nuget;
 
@@ -52,6 +53,7 @@ public class Nuget : INuget {
         version = v
       };
       AddDependencies(artifact, a_v, version.DependencySets);
+      artifact.AddVersion(a_v);
     }
   }
 
