@@ -15,15 +15,10 @@ public class Processor : IProcessor {
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     string name = context.Message.Name;
     Console.WriteLine($"PROCESSING: {name}");
-    try {
-      Artifact artifact = await nuget_.ProcessArtifact(name);
-      await context.Send(Endpoints.APC_INGEST_PROCESSED, new ArtifactProcessedRequest {
-        Context = context.Message.Context,
-        Artifact = artifact
-      });
-    }
-    catch (Exception e) {
-      Console.WriteLine(e.Message);
-    }
+    Artifact artifact = await nuget_.ProcessArtifact(name);
+    await context.Send(Endpoints.APC_INGEST_PROCESSED, new ArtifactProcessedRequest {
+      Context = context.Message.Context,
+      Artifact = artifact
+    });
   }
 }
