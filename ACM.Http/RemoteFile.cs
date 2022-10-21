@@ -50,13 +50,21 @@ internal class RemoteFile {
     int total = 0;
     int read = -1;
     byte[] buffer = new byte[BUFFER_SIZE];
-    while (read != 0) {
-      read = await s.ReadAsync(buffer, 0, buffer.Length);
-      total += read;
-      if (read == 0) break;
-      await fs.WriteAsync(buffer, 0, read);
+    try {
+      while (read != 0) {
+        read = await s.ReadAsync(buffer, 0, buffer.Length);
+        total += read;
+        if (read == 0) break;
+        await fs.WriteAsync(buffer, 0, read);
+      }
+    } catch (Exception e) {
+      fs.close();
+      if (File.Exists(filepath)) {
+        Console.WriteLine($"Clearing {tmp_file}");
+        File.Delete(filepath);
+      }
+      throw;
     }
-
     fs.Close();
   }
 }
