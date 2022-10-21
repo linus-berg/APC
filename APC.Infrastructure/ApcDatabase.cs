@@ -49,16 +49,13 @@ public class ApcDatabase : IApcDatabase {
     Artifact db_artifact = await GetArtifactByName(artifact.name, artifact.module);
     if (db_artifact == null) artifact.id = await db_.InsertAsync(artifact, transaction_);
     foreach (ArtifactVersion version in artifact.versions.Values) await AddArtifactVersion(artifact, version);
-    foreach (string dependency in artifact.dependencies) await AddArtifactDependency(artifact, dependency);
+    foreach (ArtifactDependency dependency in artifact.dependencies) await AddArtifactDependency(artifact, dependency);
   }
 
-  private async Task<ArtifactDependency> AddArtifactDependency(Artifact artifact, string dependency) {
-    ArtifactDependency dep = new() {
-      name = dependency,
-      artifact_id = artifact.id
-    };
-    dep.id = await db_.InsertAsync(dep, transaction_);
-    return dep;
+  private async Task<ArtifactDependency> AddArtifactDependency(Artifact artifact, ArtifactDependency dependency) {
+    dependency.artifact_id = artifact.id;
+    dependency.id = await db_.InsertAsync(dependency, transaction_);
+    return dependency;
   }
 
   public async Task<bool> UpdateArtifact(Artifact artifact) {

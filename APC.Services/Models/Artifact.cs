@@ -6,7 +6,7 @@ namespace APC.Services.Models;
 public class Artifact {
   public Artifact() {
     versions = new Dictionary<string, ArtifactVersion>();
-    dependencies = new HashSet<string>();
+    dependencies = new HashSet<ArtifactDependency>();
   }
 
   public int id { get; set; }
@@ -17,18 +17,13 @@ public class Artifact {
 
   [Computed] public Dictionary<string, ArtifactVersion> versions { get; set; }
 
-  [Computed] public HashSet<string> dependencies { get; set; }
+  [Computed] public HashSet<ArtifactDependency> dependencies { get; set; }
 
-  public bool AddDependency(string id) {
-    return dependencies.Add(id);
-  }
-
-  public HashSet<string> DependencyDiff(HashSet<string> dependencies_in_db) {
-    HashSet<string> diff = new();
-    foreach (string dep in dependencies)
-      if (!dependencies_in_db.Contains(dep))
-        diff.Add(dep);
-    return diff;
+  public bool AddDependency(string name, string module) {
+    return dependencies.Add(new ArtifactDependency() {
+      name = name,
+      module = module
+    });
   }
 
   public HashSet<string> VersionDiff(HashSet<ArtifactVersion> versions_in_db) {

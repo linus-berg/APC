@@ -56,8 +56,7 @@ public class Nuget : INuget {
     if (dependencies == null) return;
     foreach (PackageDependencyGroup x in dependencies)
     foreach (PackageDependency pkg in x.Packages) {
-      artifact.AddDependency(pkg.Id);
-      version.AddDependency(pkg.Id);
+      artifact.AddDependency(pkg.Id, artifact.module);
     }
   }
 

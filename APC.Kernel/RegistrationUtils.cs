@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using APC.Kernel.Exceptions;
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace APC.Kernel;
@@ -9,8 +10,16 @@ public static class RegistrationUtils {
       mt.UsingRabbitMq((ctx, cfg) => {
         SetupRabbitMq(cfg);
         cfg.ReceiveEndpoint($"apm-{name}", e => {
-          e.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30)));
-          e.UseMessageRetry(r => r.Immediate(5));
+          e.UseDelayedRedelivery(r => { 
+            r.Handle<ArtifactTimeoutException>();
+            r.Ignore<ArtifactMetadataException>();
+            r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30));
+          });
+          e.UseMessageRetry(r => {
+            r.Handle<ArtifactTimeoutException>();
+            r.Ignore<ArtifactMetadataException>();
+            r.Immediate(5);
+          });
           e.Instance(processor);
         });
         cfg.ConfigureEndpoints(ctx);
@@ -24,7 +33,9 @@ public static class RegistrationUtils {
       mt.UsingRabbitMq((ctx, cfg) => {
         SetupRabbitMq(cfg);
         cfg.ReceiveEndpoint($"acm-{name}", e => {
-          e.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30)));
+          e.UseDelayedRedelivery(r => {
+            r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30));
+          });
           e.UseMessageRetry(r => r.Immediate(5));
           e.Instance(collector);
         });

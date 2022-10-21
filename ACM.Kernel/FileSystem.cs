@@ -10,10 +10,6 @@ public class FileSystem {
   static FileSystem() {
     Console.WriteLine($"Storage Directory: {BASE_DIR_}");   
   }
-  public void CreateDailyDeposit(string module) {
-    string daily_deposit = Path.Join(BASE_DIR_, "Daily");
-    Directory.CreateDirectory(GetDailyDeposit(module));
-  }
 
   private string GetDailyDeposit(string module) {
     string daily_deposit = Path.Join(BASE_DIR_, "Daily", module);

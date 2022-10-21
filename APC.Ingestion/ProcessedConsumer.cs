@@ -36,15 +36,15 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     }
 
     /* Process all dependencies not already processed in this context */
-    HashSet<string> dependencies = artifact.dependencies;
-    foreach (string dependency in dependencies) {
-      if (await cache_.InCache(dependency, request.Context)) {
+    HashSet<ArtifactDependency> dependencies = artifact.dependencies;
+    foreach (ArtifactDependency dependency in dependencies) {
+      if (await cache_.InCache(dependency.name, request.Context)) {
         continue;
       }
 
-      await cache_.AddToCache(dependency, request.Context);
       /* Memorize this dependency */
-      await Process(context, dependency);
+      await cache_.AddToCache(dependency.name, request.Context);
+      await Process(context, dependency.name);
     }
   }
 
