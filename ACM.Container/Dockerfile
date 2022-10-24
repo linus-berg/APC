@@ -4,6 +4,9 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["ACM.Container/ACM.Container.csproj", "ACM.Container/"]
+COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["ACM.Kernel/APC.Kernel.csproj", "ACM.Kernel/"]
+COPY ["APC.Skopeo/APC.Skopeo.csproj", "APC.Skopeo/"]
 RUN dotnet restore "ACM.Container/ACM.Container.csproj"
 COPY . .
 WORKDIR "/src/ACM.Container"
@@ -13,6 +16,7 @@ FROM build AS publish
 RUN dotnet publish "ACM.Container.csproj" -c Release -o /app/publish
 
 FROM base AS final
+RUN apt-get install -y skopeo
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ACM.Container.dll"]
