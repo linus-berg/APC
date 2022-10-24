@@ -18,6 +18,9 @@ jobs:
 
           - name: api
             directory: APC.API
+          
+          - name: apm/container
+            directory: APM.Container
 
           - name: apm/npm
             directory: APM.Npm
@@ -27,6 +30,9 @@ jobs:
 
           - name: acm/http
             directory: ACM.Http
+
+          - name: acm/container
+            directory: ACM.Container
 
     name: Build Docker image and push to repositories
     # run only when code is compiling and tests are passing
