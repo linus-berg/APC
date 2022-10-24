@@ -16,7 +16,7 @@ FROM build AS publish
 RUN dotnet publish "ACM.Container.csproj" -c Release -o /app/publish
 
 FROM base AS final
-RUN apt-get install -y skopeo
+RUN apt-get -y update && apt-get install -y skopeo
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ACM.Container.dll"]
