@@ -13,13 +13,13 @@ public class Collector : ICollector {
   }
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {
-    Artifact artifact = context.Message.Artifact;
-    foreach (KeyValuePair<string, ArtifactVersion> kv in artifact.versions) {
-      string fp = fs_.GetArtifactPath(artifact.module, kv.Value.location);
-      if (fs_.Exists(fp) || fs_.Exists(fp + ".tmp")) continue;
-      RemoteFile rf = new(kv.Value.location);
+    string location = context.Message.location;
+    string module = context.Message.module;
+    string fp = fs_.GetArtifactPath(module, location);
+    if (!fs_.Exists(fp) && !fs_.Exists(fp + ".tmp")) {
+      RemoteFile rf = new(location);
       await rf.Get(fp);
-      fs_.CreateDailyLink(artifact.module, kv.Value.location);
+      fs_.CreateDailyLink(module, location);
     }
   }
 }

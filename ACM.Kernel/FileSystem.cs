@@ -51,7 +51,7 @@ public class FileSystem {
   }
 
 
-  private string GetModuleDir(string module) {
+  public string GetModuleDir(string module) {
     return Path.Join(BASE_DIR_, module);
   }
 

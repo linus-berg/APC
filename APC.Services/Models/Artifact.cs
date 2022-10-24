@@ -12,6 +12,7 @@ public class Artifact {
   public int id { get; set; }
   public string name { get; set; }
   public string module { get; set; }
+  public string filter { get; set; }
   public ArtifactStatus status { get; set; } = ArtifactStatus.PROCESSING;
   public bool root { get; set; } = false;
 

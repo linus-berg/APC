@@ -44,7 +44,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
 
       /* Memorize this dependency */
       await cache_.AddToCache(dependency.name, request.Context);
-      await Process(context, dependency.name);
+      await Process(context, dependency);
     }
   }
 
@@ -53,6 +53,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     Artifact db_artifact = await db_.GetArtifactByName(artifact.name, artifact.module);
     try {
       if (db_artifact != null) {
+        artifact.filter = db_artifact.filter;
         return await db_.UpdateArtifact(db_artifact, artifact);
       }
       await db_.AddArtifact(artifact);
@@ -67,18 +68,18 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
   private async Task Collect(ConsumeContext<ArtifactProcessedRequest> context) {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
-    await context.Send(new Uri("queue:acm-http"), new ArtifactCollectRequest {
+    await context.Send(new Uri("queue:acm-router"), new ArtifactRouteRequest() {
       Artifact = artifact
     });
   }
 
-  private async Task Process(ConsumeContext<ArtifactProcessedRequest> context, string artifact_name) {
+  private async Task Process(ConsumeContext<ArtifactProcessedRequest> context, ArtifactDependency dependency) {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
     await context.Send(new Uri($"queue:apm-{artifact.module}"), new ArtifactProcessRequest {
       Context = request.Context,
-      Name = artifact_name,
-      Module = artifact.module
+      Name = dependency.name,
+      Module = dependency.module
     });
   }
 }

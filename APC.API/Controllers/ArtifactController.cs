@@ -40,6 +40,7 @@ public class ArtifactController : ControllerBase {
       await db_.AddArtifact(new Artifact() {
         module = input.Module,
         name = input.Name,
+        filter = input.Filter,
         root = true,
       });
     } else if (!artifact.root) {
@@ -68,7 +69,6 @@ public class ArtifactController : ControllerBase {
     if (artifact == null) return NotFound();
 
     if (!artifact.root) return Problem("Artifact is not a root artifact");
-
     ArtifactIngestRequest ingest_request = new();
     ingest_request.Module = request.Module;
     ingest_request.Artifacts.Add(request.Artifact);

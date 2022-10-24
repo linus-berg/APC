@@ -1,9 +1,12 @@
-using ACM.Http;
+using ACM.Container;
 using APC.Kernel;
 
 IHost host = Host.CreateDefaultBuilder(args)
   .ConfigureServices(services => {
-    services.RegisterCollector(new List<string>(){ "http", "https" }, new Collector());
+    services.RegisterCollector(new List<string>() {
+      "docker",
+      "oci"
+    }, new Collector(), 1);
     services.AddHostedService<Worker>();
   })
   .Build();

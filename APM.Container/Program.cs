@@ -1,9 +1,9 @@
-using ACM.Http;
 using APC.Kernel;
+using APM.Container;
 
 IHost host = Host.CreateDefaultBuilder(args)
   .ConfigureServices(services => {
-    services.RegisterCollector(new List<string>(){ "http", "https" }, new Collector());
+    services.RegisterProcessor("container", new Processor());
     services.AddHostedService<Worker>();
   })
   .Build();
