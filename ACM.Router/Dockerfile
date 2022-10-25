@@ -4,6 +4,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["ACM.Router/ACM.Router.csproj", "ACM.Router/"]
+COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 RUN dotnet restore "ACM.Router/ACM.Router.csproj"
 COPY . .
 WORKDIR "/src/ACM.Router"
