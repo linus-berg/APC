@@ -52,6 +52,12 @@ public class ApcDatabase : IApcDatabase {
     foreach (ArtifactDependency dependency in artifact.dependencies) await AddArtifactDependency(artifact, dependency);
   }
 
+  public async Task<int> AddProcessingFault(ArtifactProcessingFault fault) {
+    int id = await db_.InsertAsync(fault);
+    fault.id = id;
+    return id;
+  }
+
   private async Task<ArtifactDependency> AddArtifactDependency(Artifact artifact, ArtifactDependency dependency) {
     dependency.artifact_id = artifact.id;
     dependency.id = await db_.InsertAsync(dependency, transaction_);
@@ -123,6 +129,11 @@ public class ApcDatabase : IApcDatabase {
 
   public async Task<IEnumerable<Artifact>> GetArtifacts(string module) {
     return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module", new { module },
+      transaction_);
+  }
+  
+  public async Task<IEnumerable<Artifact>> GetRoots(string module) {
+    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module and root = true", new { module },
       transaction_);
   }
 

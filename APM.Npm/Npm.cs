@@ -11,9 +11,6 @@ public class Npm : INpm {
 
   public async Task<Artifact> ProcessArtifact(string name) {
     Metadata metadata = await GetMetadata(name);
-    if (metadata == null) {
-      throw new ArtifactTimeoutException($"Could not get metadata: {name}");
-    }
     Artifact artifact = new() {
       name = name,
       module = "npm"
@@ -22,10 +19,9 @@ public class Npm : INpm {
     return artifact;
   }
 
-  private void ProcessArtifactVersions(Artifact artifact,
-    Metadata metadata) {
-    if (metadata.versions == null) {
-      throw new ArtifactMetadataException("No versions found!");
+  private void ProcessArtifactVersions(Artifact artifact, Metadata metadata) {
+    if (metadata?.versions == null) {
+      return;
     }
     foreach (KeyValuePair<string, Package> kv in metadata.versions) {
       if (artifact.HasVersion(kv.Key)) continue;
@@ -53,8 +49,11 @@ public class Npm : INpm {
     try {
       return await client_.GetJsonAsync<Metadata>($"{id}/");
     }
+    catch (TimeoutException ex) {
+      throw new ArtifactTimeoutException($"{id} timed out!");
+    }
     catch (Exception ex) {
-      return null;
+      throw new ArtifactMetadataException($"{id} metadata error!");
     }
   }
 }

@@ -1,4 +1,5 @@
 using APC.Infrastructure;
+using APC.Kernel;
 using APC.Kernel.Messages;
 using APC.Services;
 using APC.Services.Models;
@@ -68,7 +69,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
   private async Task Collect(ConsumeContext<ArtifactProcessedRequest> context) {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
-    await context.Send(new Uri("queue:acm-router"), new ArtifactRouteRequest() {
+    await context.Send(Endpoints.APC_ACM_ROUTER, new ArtifactRouteRequest() {
       Artifact = artifact
     });
   }

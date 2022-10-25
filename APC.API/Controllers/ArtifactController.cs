@@ -75,6 +75,40 @@ public class ArtifactController : ControllerBase {
     await SendToIngest(ingest_request);
     return Ok("Artifact being reprocessed");
   }
+  
+  [HttpPost("track/all")]
+  public async Task<ActionResult> TrackAll() {
+    IEnumerable<string> modules = await db_.GetModules();
+    int module_count = 0;
+    int artifact_count = 0;
+    foreach (string module in modules) {
+      IEnumerable<Artifact> artifacts = await db_.GetRoots(module);
+      ArtifactIngestRequest ingest_request = new();
+      foreach (Artifact artifact in artifacts) {
+        ingest_request.Module = module;
+        ingest_request.Artifacts.Add(artifact.name);
+        artifact_count++;
+      }
+      await SendToIngest(ingest_request);
+      module_count++;
+    }
+    return Ok($"{artifact_count} artifacts being reprocessed in {module_count} modules!");
+  }
+
+  [HttpPost("validate/all")]
+  public async Task<ActionResult> ValidateAllArtifacts() {
+    IEnumerable<string> modules = await db_.GetModules();
+    foreach (string module in modules) {
+      IEnumerable<Artifact> artifacts = await db_.GetArtifacts(module);
+      Console.WriteLine(artifacts.Count());
+      ArtifactRouteRequest route_request = new();
+      foreach (Artifact artifact in artifacts) {
+        route_request.Artifact = artifact;
+        await SendToCollect(route_request);
+      }
+    }
+    return Ok("Validating all artifacts!");
+  }
 
   // DELETE: api/Artifact/5
   [HttpDelete("{id}")]
@@ -83,9 +117,17 @@ public class ArtifactController : ControllerBase {
     await db_.Commit();
     return Ok();
   }
+  
+  private async Task SendToCollect(ArtifactRouteRequest request) {
+    await SendRequest(Endpoints.APC_ACM_ROUTER, request);
+  }
 
   private async Task SendToIngest(ArtifactIngestRequest request) {
-    ISendEndpoint endpoint = await bus_.GetSendEndpoint(Endpoints.APC_INGEST_UNPROCESSED);
-    endpoint.Send(request);
+    await SendRequest(Endpoints.APC_INGEST_UNPROCESSED, request);
+  }
+  
+  private async Task SendRequest<T>(Uri uri, T request) {
+    ISendEndpoint endpoint = await bus_.GetSendEndpoint(uri);
+    await endpoint.Send(request);
   }
 }
