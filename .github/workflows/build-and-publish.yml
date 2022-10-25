@@ -30,7 +30,10 @@ jobs:
 
           - name: acm/http
             directory: ACM.Http
-
+            
+          - name: acm/router
+            directory: ACM.Router
+            
           - name: acm/container
             directory: ACM.Container
 
