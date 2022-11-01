@@ -10,7 +10,6 @@ public enum ApcVariable {
   APC_REDIS_PASS,
     
   APC_API_HOST,
-  APC_API_PORT,
   
-  APC_ACM_DIR,
+  APC_ACM_DIR
 }

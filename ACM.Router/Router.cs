@@ -26,15 +26,11 @@ public class Router : IRouter {
   }
 
   private async Task Collect(ConsumeContext<ArtifactRouteRequest> context, string location, string module) {
-    await context.Send(new Uri($"queue:{GetCollectorModule(location)}"), new ArtifactCollectRequest() {
+    ArtifactCollectRequest request = new() {
       location = location,
       module = module
-    });
+    };
+    await context.Send(new Uri($"queue:{request.GetCollectorModule()}"), request);
   }
 
-  private string GetCollectorModule(string location) {
-    Uri uri = new Uri(location);
-    string scheme = uri.Scheme;
-    return $"acm-{scheme}";
-  }
 }

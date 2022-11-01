@@ -117,9 +117,18 @@ public class ArtifactController : ControllerBase {
     await db_.Commit();
     return Ok();
   }
+
+  [HttpPost("collect")]
+  public async Task<ActionResult> DirectCollect(ArtifactCollectRequest request) {
+    await SendDirectCollect(request);
+    return Ok("OK");
+  }
   
   private async Task SendToCollect(ArtifactRouteRequest request) {
     await SendRequest(Endpoints.APC_ACM_ROUTER, request);
+  }
+  private async Task SendDirectCollect(ArtifactCollectRequest request) {
+    await SendRequest(new Uri($"queue:{request.GetCollectorModule()}"), request);
   }
 
   private async Task SendToIngest(ArtifactIngestRequest request) {

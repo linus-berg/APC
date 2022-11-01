@@ -5,9 +5,7 @@ namespace APC.Kernel;
 public static class Configuration {
 
   private static readonly Dictionary<ApcVariable, string> defaults_ = new Dictionary<ApcVariable, string>() {
-    { ApcVariable.APC_API_HOST, "localhost" },
-    { ApcVariable.APC_API_PORT, "4000" },
-    
+    { ApcVariable.APC_API_HOST, "http://localhost:4001" },
     { ApcVariable.APC_ACM_DIR, "/data/"},
     
     { ApcVariable.APC_REDIS_HOST, "localhost" },

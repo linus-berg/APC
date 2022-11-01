@@ -1,15 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using APC.Skopeo;
+using ATM.RKE2;
+using ATM.RKE2.Models;
 
 Console.WriteLine("Hello, World!");
-SkopeoClient client = new SkopeoClient();
-SkopeoListTagsOutput output = await client.GetTags("docker://docker.io/nginx");
-
-foreach (string tag in output.Tags) {
-  Console.WriteLine(tag);
-}
-
-await client.CopyToOci(
-  "docker://docker.io/library/nginx:1.9.9", 
-  "/home/linusberg/Development/apc.test/skopeo/oci_dir");
+RancherProcessor processor = new RancherProcessor();
+await processor.CheckReleases();
