@@ -120,6 +120,7 @@ public class ArtifactController : ControllerBase {
 
   [HttpPost("collect")]
   public async Task<ActionResult> DirectCollect(ArtifactCollectRequest request) {
+    Console.WriteLine($"Collecting {request.location}");
     await SendDirectCollect(request);
     return Ok("OK");
   }
