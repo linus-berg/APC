@@ -53,12 +53,7 @@ public class Worker : BackgroundService {
       module = "RKE2"
     };
     request.AddBody(JsonSerializer.Serialize(body));
-    var response = await client_.ExecuteAsync(request);
-    if (response.IsSuccessful) {
-      Console.WriteLine(response.Content);
-    } else {
-      Console.WriteLine(response.ErrorMessage);
-    }
+    await client_.ExecuteAsync(request);
   }
   
   
