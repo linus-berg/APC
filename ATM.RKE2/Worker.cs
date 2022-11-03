@@ -2,6 +2,8 @@ using APC.Kernel;
 using APC.Kernel.Messages;
 using MassTransit;
 using RestSharp;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ATM.RKE2;
 
@@ -18,7 +20,7 @@ public class Worker : BackgroundService {
   protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
     while (!stoppingToken.IsCancellationRequested) {
       try {
-      await CheckForReleases();
+        await CheckForReleases();
       } catch (Exception e) {
         Console.WriteLine(e);
       }
@@ -43,13 +45,20 @@ public class Worker : BackgroundService {
   }
   
   private async Task CollectImage(string container) {
-    RestRequest request = new RestRequest("api/artifact/collect");
+    RestRequest request = new RestRequest("api/artifact/collect", Method.Post);
     request.RequestFormat = DataFormat.Json;
-    request.AddJsonBody(new ArtifactCollectRequest() {
+    
+    ArtifactCollectRequest body = new ArtifactCollectRequest() {
       location = $"docker://{container}",
       module = "RKE2"
-    });
-    await client_.PostAsync(request);
+    };
+    request.AddBody(JsonSerializer.Serialize(body));
+    var response = await client_.ExecuteAsync(request);
+    if (response.IsSuccessful) {
+      Console.WriteLine(response.Content);
+    } else {
+      Console.WriteLine(response.ErrorMessage);
+    }
   }
   
   
