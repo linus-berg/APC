@@ -20,7 +20,12 @@ public class RancherProcessor {
         continue;
       }
       Console.WriteLine($"New release found {url}");
-      new_releases.Add(await SaveRancherFile(url, filename));
+      try {
+        string rancher_file = await SaveRancherFile(url, filename);
+        new_releases.Add(rancher_file);
+      } catch (Exception e) {
+        
+      }
     }
     return new_releases;
   }
@@ -32,7 +37,12 @@ public class RancherProcessor {
   private async Task<string> SaveRancherFile(string url, string filename) {
     string save_path = GetSavePath(filename);
     Console.WriteLine(save_path);
-    await using Stream stream = await http_client_.DownloadStreamAsync(new RestRequest(url));
+    try {
+      await using Stream stream = await http_client_.DownloadStreamAsync(new RestRequest(url));
+    } catch (Exception e) {
+      Console.WriteLine(e);
+      throw;
+    }
     await using FileStream output = File.Open(save_path, FileMode.Create);
     await stream.CopyToAsync(output);
     return save_path;
