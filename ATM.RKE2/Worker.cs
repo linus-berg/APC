@@ -40,6 +40,7 @@ public class Worker : BackgroundService {
   
   private async Task CollectImage(string container) {
     RestRequest request = new RestRequest("api/artifact/collect");
+    request.RequestFormat = DataFormat.Json;
     request.AddJsonBody(new ArtifactCollectRequest() {
       location = $"docker://{container}",
       module = "RKE2"
