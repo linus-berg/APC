@@ -18,7 +18,7 @@ public class Worker : BackgroundService {
   protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
     while (!stoppingToken.IsCancellationRequested) {
       await CheckForReleases();
-      await Task.Delay(60 * 1000, stoppingToken);
+      await Task.Delay(60 * 1000 * 60, stoppingToken);
     }
   }
 
