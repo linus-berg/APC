@@ -39,12 +39,15 @@ public class RancherProcessor {
     Console.WriteLine(save_path);
     try {
       await using Stream stream = await http_client_.DownloadStreamAsync(new RestRequest(url));
+      await using FileStream output = File.Open(save_path, FileMode.Create);
+      await stream.CopyToAsync(output);
     } catch (Exception e) {
+      if (File.Exists(save_path)) {
+        File.Delete(save_path);
+      }
       Console.WriteLine(e);
       throw;
     }
-    await using FileStream output = File.Open(save_path, FileMode.Create);
-    await stream.CopyToAsync(output);
     return save_path;
   }
 
