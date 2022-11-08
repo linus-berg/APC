@@ -38,7 +38,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Router", "ACM.Router\AC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trackers", "Trackers", "{1C463E88-6718-4CAD-9385-F91AD0EC3358}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATM.RKE2", "ATM.RKE2\ATM.RKE2.csproj", "{4C7B7B52-F601-40B6-A8A9-724274C96085}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATM.Rancher", "ATM.Rancher\ATM.Rancher.csproj", "{4C7B7B52-F601-40B6-A8A9-724274C96085}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

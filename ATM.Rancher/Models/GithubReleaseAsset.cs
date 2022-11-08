@@ -1,4 +1,4 @@
-namespace ATM.RKE2.Models; 
+namespace ATM.Rancher.Models; 
 
 public class GithubReleaseAsset {
   public string url { get; set; }  

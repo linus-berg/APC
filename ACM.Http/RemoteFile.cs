@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace ACM.Http; 
 
 internal class RemoteFile {

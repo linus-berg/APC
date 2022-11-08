@@ -1,9 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using APC.Skopeo;
-using ATM.RKE2;
-using ATM.RKE2.Models;
+using ATM.Rancher;
+using ATM.Rancher.Models;
 
 Console.WriteLine("Hello, World!");
-RancherProcessor processor = new RancherProcessor();
+RancherProcessor processor = new RancherProcessor("rancher/rancher", "rancher-images.txt");
 await processor.CheckReleases();

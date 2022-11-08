@@ -1,6 +1,6 @@
 using MassTransit.Futures.Contracts;
 
-namespace ATM.RKE2.Models; 
+namespace ATM.Rancher.Models; 
 
 public class GithubRelease {
   public string url { get; set; }
@@ -18,9 +18,9 @@ public class GithubRelease {
   public bool prerelease { get; set; }
   public List<GithubReleaseAsset> assets { get; set; }
 
-  public string GetRancherImageFile() {
+  public string GetRancherImageFile(string name) {
     foreach (GithubReleaseAsset asset in assets) {
-      if (asset.name == "rke2-images-all.linux-amd64.txt") {
+      if (asset.name == name) {
         return asset.browser_download_url;
       }
     }

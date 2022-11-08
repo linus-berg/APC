@@ -5,16 +5,17 @@ using RestSharp;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ATM.RKE2;
+namespace ATM.Rancher;
 
 public class Worker : BackgroundService {
   private readonly ILogger<Worker> _logger;
 
   private readonly RestClient client_ = new($"{Configuration.GetAPCVar(ApcVariable.APC_API_HOST)}");
-  private readonly RancherProcessor processor_ = new RancherProcessor();
-
+  private readonly Dictionary<string, RancherProcessor> processors_ = new Dictionary<string, RancherProcessor>();
   public Worker(ILogger<Worker> logger) {
     _logger = logger;
+    processors_["rancher/rke2"] = new RancherProcessor("rancher/rke2", "rke2-images-all.linux-amd64.txt");
+    processors_["rancher/rancher"] = new RancherProcessor("rancher/rancher", "rancher-images.txt");
   }
 
   protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
@@ -29,28 +30,28 @@ public class Worker : BackgroundService {
   }
 
   private async Task CheckForReleases() {
-    List<string> new_releases = await processor_.CheckReleases();
-    foreach (string release_file in new_releases) {
-      await CollectRelease(release_file);
+    foreach (KeyValuePair<string, RancherProcessor> processor in processors_) {
+      List<string> new_releases = await processor.Value.CheckReleases();
+      foreach (string release_file in new_releases) {
+        await CollectRelease(processor.Key, release_file);
+      }
     }
   }
 
-  private async Task CollectRelease(string release) {
+  private async Task CollectRelease(string repo, string release) {
     List<string> images = File.ReadLines(release).ToList();
-    
     foreach (string image in images) {
       Console.WriteLine($"Collecting {image}");
-      await CollectImage(image);
+      await CollectImage(repo, image.Contains("docker.io") ? image : $"docker.io/{image}");
     }
   }
   
-  private async Task CollectImage(string container) {
+  private async Task CollectImage(string repo, string image) {
     RestRequest request = new RestRequest("api/artifact/collect", Method.Post);
     request.RequestFormat = DataFormat.Json;
-    
     ArtifactCollectRequest body = new ArtifactCollectRequest() {
-      location = $"docker://{container}",
-      module = "RKE2"
+      location = $"docker://{image}",
+      module = repo
     };
     request.AddBody(JsonSerializer.Serialize(body));
     await client_.ExecuteAsync(request);

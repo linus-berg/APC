@@ -1,13 +1,15 @@
-using ATM.RKE2.Models;
+using ATM.Rancher.Models;
 using RestSharp;
 
-namespace ATM.RKE2; 
+namespace ATM.Rancher; 
 
 public class GithubClient {
   private const string API_ = "https://api.github.com";
   private readonly RestClient client_ = new(API_);
+  private readonly string repo_;
   
-  public GithubClient() {
+  public GithubClient(string repo) {
+    repo_ = repo;
   }
 
   public async Task<List<GithubRelease>> GetRancherReleases() {
@@ -16,6 +18,6 @@ public class GithubClient {
   }
 
   private async Task<List<GithubRelease>> GetRancherReleasePage(int page) {
-    return await client_.GetJsonAsync<List<GithubRelease>>("/repos/rancher/rke2/releases?page={page}&per_page=100", new { page });
+    return await client_.GetJsonAsync<List<GithubRelease>>($"/repos/{repo_}/releases?page={page}&per_page=100", new { page });
   }
 }
