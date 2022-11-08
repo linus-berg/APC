@@ -15,31 +15,34 @@ internal class RemoteFile {
     string tmp_file = filepath + ".tmp";
     HttpResponseMessage response =
       await CLIENT_.GetAsync(URL_, HttpCompletionOption.ResponseHeadersRead);
-    if (response.Content.Headers.ContentLength == null) return false;
+    if (!response.IsSuccessStatusCode || response.Content.Headers.ContentLength == null) {
+      return false;
+    }
     long size = (long)response.Content.Headers.ContentLength;
     using Stream s = await response.Content.ReadAsStreamAsync();
     try {
-      await ProcessStream(s, (int)size, tmp_file);
-    }
-    catch (Exception e) {
-      throw;
-    }
-    finally {
+      await ProcessStream(s, tmp_file);
+    } catch (Exception e) {
       s.Close();
+      ClearFile(filepath);
+      ClearFile(tmp_file);
+      throw;
     }
 
     /* If downloaded file size matches remote, its complete */
-    if (new FileInfo(tmp_file).Length == size)
+    if (new FileInfo(tmp_file).Length == size) {
       /* Rename */
       File.Move(tmp_file, filepath);
-    else
+    } else {
       File.Delete(tmp_file);
+      return false;
+    }
 
     return true;
   }
 
   private static async Task
-    ProcessStream(Stream s, int size, string filepath) {
+    ProcessStream(Stream s, string filepath) {
     using FileStream fs = new(
       filepath,
       FileMode.Create,
@@ -61,12 +64,17 @@ internal class RemoteFile {
       }
     } catch (Exception e) {
       fs.Close();
-      if (File.Exists(filepath)) {
-        Console.WriteLine($"Clearing {filepath}");
-        File.Delete(filepath);
-      }
+      ClearFile(filepath);
       throw;
     }
     fs.Close();
   }
+
+  private static bool ClearFile(string file) {
+    if (!File.Exists(file)) return false;
+    Console.WriteLine($"Clearing {file}");
+    File.Delete(file);
+    return true;
+  }
+  
 }

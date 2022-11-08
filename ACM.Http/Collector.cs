@@ -18,8 +18,9 @@ public class Collector : ICollector {
     string fp = fs_.GetArtifactPath(module, location);
     if (!fs_.Exists(fp) && !fs_.Exists(fp + ".tmp")) {
       RemoteFile rf = new(location);
-      await rf.Get(fp);
-      fs_.CreateDailyLink(module, location);
+      if (await rf.Get(fp)) {
+        fs_.CreateDailyLink(module, location);
+      }
     }
   }
 }
