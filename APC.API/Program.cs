@@ -8,15 +8,16 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddMassTransit(b => {
   b.UsingRabbitMq((ctx, cfg) => {
-    cfg.Host(Configuration.GetAPCVar(ApcVariable.APC_RABBIT_MQ_HOST), "/", h => {
-      h.Username(Configuration.GetAPCVar(ApcVariable.APC_RABBIT_MQ_USER));
-      h.Password(Configuration.GetAPCVar(ApcVariable.APC_RABBIT_MQ_PASS));
+    cfg.Host(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_HOST), "/", h => {
+      h.Username(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_USER));
+      h.Password(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_PASS));
     });
     cfg.ConfigureEndpoints(ctx);
   });
 });
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetAPCVar(ApcVariable.APC_REDIS_HOST)));
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+  ConnectionMultiplexer.Connect(Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)));
 builder.Services.AddScoped<ApcDatabase>();
 builder.Services.AddSingleton<ApcCache>();
 

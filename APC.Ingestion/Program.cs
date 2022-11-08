@@ -16,7 +16,8 @@ IHost host = Host.CreateDefaultBuilder(args)
       });
     });
 
-    services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetAPCVar(ApcVariable.APC_REDIS_HOST)));
+    services.AddSingleton<IConnectionMultiplexer>(
+      ConnectionMultiplexer.Connect(Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)));
     services.AddScoped<IApcDatabase, ApcDatabase>();
     services.AddSingleton<IApcCache, ApcCache>();
     services.AddHostedService<Worker>();

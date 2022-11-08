@@ -1,9 +1,9 @@
 namespace APC.Infrastructure;
 
 public class DatabaseFactory {
-  private readonly string DB_STR_;
+  private readonly string db_str_;
 
   public DatabaseFactory(string db_str) {
-    DB_STR_ = db_str;
+    db_str_ = db_str;
   }
 }
