@@ -37,8 +37,8 @@ jobs:
           - name: acm/container
             directory: ACM.Container
             
-          - name: atm/rke2
-            directory: ATM.RKE2
+          - name: atm/rancher
+            directory: ATM.Rancher
 
     name: Build Docker image and push to repositories
     # run only when code is compiling and tests are passing
