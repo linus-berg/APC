@@ -9,11 +9,11 @@ public class ProcessedDefinition : ConsumerDefinition<ProcessedConsumer> {
     ConcurrentMessageLimit = 10;
   }
 
-  protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
-    IConsumerConfigurator<ProcessedConsumer> consumerConfigurator) {
+  protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpoint_configurator,
+    IConsumerConfigurator<ProcessedConsumer> consumer_configurator) {
     // configure message retry with millisecond intervals
-    endpointConfigurator.UseMessageRetry(r => r.Intervals(100, 200, 500, 800, 1000));
+    endpoint_configurator.UseMessageRetry(r => r.Intervals(100, 200, 500, 800, 1000));
     // use the outbox to prevent duplicate events from being published
-    endpointConfigurator.UseInMemoryOutbox();
+    endpoint_configurator.UseInMemoryOutbox();
   }
 }

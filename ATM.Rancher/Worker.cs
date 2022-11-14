@@ -1,31 +1,31 @@
+using System.Text.Json;
 using APC.Kernel;
 using APC.Kernel.Messages;
-using MassTransit;
 using RestSharp;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace ATM.Rancher;
 
 public class Worker : BackgroundService {
-  private readonly ILogger<Worker> _logger;
-
-  private readonly RestClient client_ = new($"{Configuration.GetAPCVar(ApcVariable.APC_API_HOST)}");
+  private readonly RestClient client_ = new($"{Configuration.GetApcVar(ApcVariable.APC_API_HOST)}");
+  private readonly ILogger<Worker> logger_;
   private readonly Dictionary<string, RancherProcessor> processors_ = new Dictionary<string, RancherProcessor>();
+
   public Worker(ILogger<Worker> logger) {
-    _logger = logger;
+    logger_ = logger;
     processors_["rancher/rke2"] = new RancherProcessor("rancher/rke2", "rke2-images-all.linux-amd64.txt");
     processors_["rancher/rancher"] = new RancherProcessor("rancher/rancher", "rancher-images.txt");
   }
 
-  protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
-    while (!stoppingToken.IsCancellationRequested) {
+  protected override async Task ExecuteAsync(CancellationToken stopping_token) {
+    while (!stopping_token.IsCancellationRequested) {
       try {
         await CheckForReleases();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         Console.WriteLine(e);
       }
-      await Task.Delay(60 * 1000 * 60, stoppingToken);
+
+      await Task.Delay(60 * 1000 * 60, stopping_token);
     }
   }
 
@@ -45,7 +45,7 @@ public class Worker : BackgroundService {
       await CollectImage(repo, image.Contains("docker.io") ? image : $"docker.io/{image}");
     }
   }
-  
+
   private async Task CollectImage(string repo, string image) {
     RestRequest request = new RestRequest("api/artifact/collect", Method.Post);
     request.RequestFormat = DataFormat.Json;
@@ -56,7 +56,4 @@ public class Worker : BackgroundService {
     request.AddBody(JsonSerializer.Serialize(body));
     await client_.ExecuteAsync(request);
   }
-  
-  
-  
 }

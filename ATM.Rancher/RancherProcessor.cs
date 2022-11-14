@@ -2,22 +2,22 @@ using APC.Kernel;
 using ATM.Rancher.Models;
 using RestSharp;
 
-namespace ATM.Rancher; 
+namespace ATM.Rancher;
 
 public class RancherProcessor {
+  private readonly string file_;
   private readonly GithubClient gh_client_;
   private readonly RestClient http_client_ = new();
-  private readonly string save_dir_;
   private readonly string repo_;
-  private readonly string file_;
+  private readonly string save_dir_;
 
   public RancherProcessor(string repo, string file) {
     repo_ = repo;
     gh_client_ = new(repo_);
     file_ = file;
-    save_dir_ = Path.Join(Configuration.GetAPCVar(ApcVariable.APC_ACM_DIR), ".meta/", repo_);
+    save_dir_ = Path.Join(Configuration.GetApcVar(ApcVariable.APC_ACM_DIR), ".meta/", repo_);
   }
-  
+
   public async Task<List<string>> CheckReleases() {
     Directory.CreateDirectory(save_dir_);
     List<GithubRelease> releases = await gh_client_.GetRancherReleases();
@@ -28,14 +28,16 @@ public class RancherProcessor {
       if (url == null || TagExists(filename)) {
         continue;
       }
+
       Console.WriteLine($"New release found {url}");
       try {
         string rancher_file = await SaveRancherFile(url, filename);
         new_releases.Add(rancher_file);
-      } catch (Exception e) {
-        
+      }
+      catch (Exception e) {
       }
     }
+
     return new_releases;
   }
 
@@ -50,13 +52,16 @@ public class RancherProcessor {
       await using Stream stream = await http_client_.DownloadStreamAsync(new RestRequest(url));
       await using FileStream output = File.Open(save_path, FileMode.Create);
       await stream.CopyToAsync(output);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       if (File.Exists(save_path)) {
         File.Delete(save_path);
       }
+
       Console.WriteLine(e);
       throw;
     }
+
     return save_path;
   }
 
