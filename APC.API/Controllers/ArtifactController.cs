@@ -99,7 +99,7 @@ public class ArtifactController : ControllerBase {
   public async Task<ActionResult> ValidateAllArtifacts() {
     IEnumerable<string> modules = await db_.GetModules();
     foreach (string module in modules) {
-      IEnumerable<Artifact> artifacts = await db_.GetArtifacts(module);
+      IEnumerable<Artifact> artifacts = await db_.GetArtifactsWithVersions(module);
       Console.WriteLine(artifacts.Count());
       ArtifactRouteRequest route_request = new();
       foreach (Artifact artifact in artifacts) {

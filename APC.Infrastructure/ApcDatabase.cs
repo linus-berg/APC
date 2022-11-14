@@ -77,8 +77,7 @@ public class ApcDatabase : IApcDatabase {
       transaction_
     );
   }
-
-  public async Task<IEnumerable<Artifact>> GetArtifacts(string module) {
+  public async Task<IEnumerable<Artifact>> GetArtifactsWithVersions(string module) {
     Dictionary<int, Artifact> artifacts = new();
     return (await db_.QueryAsync<Artifact, ArtifactVersion, Artifact>(@"
         SELECT 
@@ -103,6 +102,11 @@ public class ApcDatabase : IApcDatabase {
       new { module },
       transaction_
     )).Distinct();
+  }
+
+  public async Task<IEnumerable<Artifact>> GetArtifacts(string module) {
+    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module", new { module },
+      transaction_);
   }
 
   public async Task<IEnumerable<Artifact>> GetRoots(string module) {

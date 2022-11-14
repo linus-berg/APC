@@ -12,7 +12,7 @@
         "APC_RABBIT_MQ_USER": "guest",
         "APC_RABBIT_MQ_PASS": "guest",
         "APC_REDIS_HOST": "localhost",
-        "APC_PGSQL_STR": "Host=localhost;Username=postgres;Password=mysecret;Database=apc-ingestion"
+        "APC_PGSQL_STR": "Host=localhost;Username=postgres;Password=mysecret;Database=postgres"
       }
     }
   }
