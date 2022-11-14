@@ -4,9 +4,6 @@ namespace APC.Services.Models;
 
 [Table("artifact_versions")]
 public class ArtifactVersion {
-  public ArtifactVersion() {
-  }
-
   public int id { get; set; }
   public int artifact_id { get; set; }
   public string version { get; set; } = "-";

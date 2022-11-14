@@ -1,6 +1,6 @@
 using APC.Services.Models;
 
-namespace APC.Services; 
+namespace APC.Services;
 
 public interface IApcDatabase : IDisposable {
   public Task AddArtifact(Artifact artifact);

@@ -4,18 +4,16 @@ using APC.Services.Models;
 using APC.Skopeo;
 using MassTransit;
 
-namespace APM.Container; 
+namespace APM.Container;
 
 public class Processor : IProcessor {
-  private readonly SkopeoClient skopeo_ = new SkopeoClient();
-  public Processor() {
-  }
+  private readonly SkopeoClient skopeo_ = new();
 
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     ArtifactProcessRequest request = context.Message;
-    Artifact artifact = new Artifact() {
+    Artifact artifact = new() {
       name = request.Name,
-      module = request.Module,
+      module = request.Module
     };
     await GetTags(artifact);
     await context.Send(Endpoints.APC_INGEST_PROCESSED, new ArtifactProcessedRequest {
@@ -27,7 +25,7 @@ public class Processor : IProcessor {
   private async Task GetTags(Artifact artifact) {
     SkopeoListTagsOutput list_tags = await skopeo_.GetTags(artifact.name);
     foreach (string tag in list_tags.Tags) {
-      ArtifactVersion version = new ArtifactVersion() {
+      ArtifactVersion version = new() {
         artifact_id = artifact.id,
         location = $"docker://{artifact.name}:{tag}",
         version = tag

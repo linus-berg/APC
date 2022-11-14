@@ -1,4 +1,4 @@
-namespace APC.Services; 
+namespace APC.Services;
 
 public interface IApcCache {
   public Task<Guid> InitKey(string artifact);

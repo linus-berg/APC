@@ -77,6 +77,18 @@ public class ApcDatabase : IApcDatabase {
       transaction_
     );
   }
+
+  public async Task<IEnumerable<Artifact>> GetArtifacts(string module) {
+    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module", new { module },
+      transaction_);
+  }
+
+  public async Task<IEnumerable<Artifact>> GetRoots(string module) {
+    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module and root = true",
+      new { module },
+      transaction_);
+  }
+
   public async Task<IEnumerable<Artifact>> GetArtifactsWithVersions(string module) {
     Dictionary<int, Artifact> artifacts = new();
     return (await db_.QueryAsync<Artifact, ArtifactVersion, Artifact>(@"
@@ -95,24 +107,16 @@ public class ApcDatabase : IApcDatabase {
           artifacts.Add(artifact.id, entry);
         }
 
-        if (version != null) entry.versions.Add(version.version, version);
+        if (version != null && !entry.versions.ContainsKey(version.version))
+          entry.versions.Add(version.version, version);
+        else
+          Console.WriteLine($"{module} duplicate found {entry.name} {version.version} -> {version.location}");
 
         return entry;
       },
       new { module },
       transaction_
     )).Distinct();
-  }
-
-  public async Task<IEnumerable<Artifact>> GetArtifacts(string module) {
-    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module", new { module },
-      transaction_);
-  }
-
-  public async Task<IEnumerable<Artifact>> GetRoots(string module) {
-    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module and root = true",
-      new { module },
-      transaction_);
   }
 
   private void Open() {

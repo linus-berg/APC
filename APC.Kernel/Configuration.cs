@@ -20,9 +20,7 @@ public static class Configuration {
     string value = Environment.GetEnvironmentVariable(variable.ToString());
 
     /* If variable is set */
-    if (value != null) {
-      return value;
-    }
+    if (value != null) return value;
 
     /* If variable has default */
     if (DEFAULTS_.ContainsKey(variable)) return DEFAULTS_[variable];

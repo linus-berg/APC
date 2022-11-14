@@ -1,4 +1,4 @@
-namespace APC.Skopeo; 
+namespace APC.Skopeo;
 
 public class SkopeoListTagsOutput {
   public string Repository { get; set; }

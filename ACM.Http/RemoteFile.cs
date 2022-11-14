@@ -13,9 +13,7 @@ internal class RemoteFile {
     string tmp_file = filepath + ".tmp";
     HttpResponseMessage response =
       await CLIENT_.GetAsync(url_, HttpCompletionOption.ResponseHeadersRead);
-    if (!response.IsSuccessStatusCode || response.Content.Headers.ContentLength == null) {
-      return false;
-    }
+    if (!response.IsSuccessStatusCode || response.Content.Headers.ContentLength == null) return false;
 
     long size = (long)response.Content.Headers.ContentLength;
     using Stream s = await response.Content.ReadAsStreamAsync();

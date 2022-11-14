@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\APC.Skopeo\APC.Skopeo.csproj" />
-      <ProjectReference Include="..\ATM.Rancher\ATM.Rancher.csproj" />
+        <ProjectReference Include="..\APC.Skopeo\APC.Skopeo.csproj"/>
+        <ProjectReference Include="..\ATM.Rancher\ATM.Rancher.csproj"/>
     </ItemGroup>
 
 </Project>

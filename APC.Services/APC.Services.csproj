@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="Dapper.Contrib">
-        <HintPath>..\..\..\.nuget\packages\dapper.contrib\2.0.78\lib\net5.0\Dapper.Contrib.dll</HintPath>
-      </Reference>
+        <Reference Include="Dapper.Contrib">
+            <HintPath>..\..\..\.nuget\packages\dapper.contrib\2.0.78\lib\net5.0\Dapper.Contrib.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
+        <PackageReference Include="Dapper.Contrib" Version="2.0.78"/>
     </ItemGroup>
 
 </Project>

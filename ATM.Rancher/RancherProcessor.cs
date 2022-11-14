@@ -13,7 +13,7 @@ public class RancherProcessor {
 
   public RancherProcessor(string repo, string file) {
     repo_ = repo;
-    gh_client_ = new(repo_);
+    gh_client_ = new GithubClient(repo_);
     file_ = file;
     save_dir_ = Path.Join(Configuration.GetApcVar(ApcVariable.APC_ACM_DIR), ".meta/", repo_);
   }
@@ -21,13 +21,11 @@ public class RancherProcessor {
   public async Task<List<string>> CheckReleases() {
     Directory.CreateDirectory(save_dir_);
     List<GithubRelease> releases = await gh_client_.GetRancherReleases();
-    List<string> new_releases = new List<string>();
+    List<string> new_releases = new();
     foreach (GithubRelease release in releases) {
       string url = release.GetRancherImageFile(file_);
       string filename = $"{release.tag_name}_{Path.GetFileName(url)}";
-      if (url == null || TagExists(filename)) {
-        continue;
-      }
+      if (url == null || TagExists(filename)) continue;
 
       Console.WriteLine($"New release found {url}");
       try {
@@ -54,9 +52,7 @@ public class RancherProcessor {
       await stream.CopyToAsync(output);
     }
     catch (Exception e) {
-      if (File.Exists(save_path)) {
-        File.Delete(save_path);
-      }
+      if (File.Exists(save_path)) File.Delete(save_path);
 
       Console.WriteLine(e);
       throw;

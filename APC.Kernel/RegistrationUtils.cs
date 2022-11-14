@@ -33,13 +33,12 @@ public static class RegistrationUtils {
     sc.AddMassTransit(mt => {
       mt.UsingRabbitMq((ctx, cfg) => {
         cfg.SetupRabbitMq();
-        foreach (string name in names) {
+        foreach (string name in names)
           cfg.ReceiveEndpoint($"acm-{name}", e => {
             e.ConfigureRetrying();
             e.ConcurrentMessageLimit = concurrency;
             e.Instance(collector);
           });
-        }
 
         cfg.ConfigureEndpoints(ctx);
       });

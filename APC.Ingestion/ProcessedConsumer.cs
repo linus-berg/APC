@@ -1,4 +1,3 @@
-using APC.Infrastructure;
 using APC.Kernel;
 using APC.Kernel.Messages;
 using APC.Services;
@@ -30,6 +29,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
       catch (Exception e) {
         Console.WriteLine($"{artifact.name}->{e.Message}");
       }
+
       await Collect(context);
     }
     else {
@@ -39,9 +39,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     /* Process all dependencies not already processed in this context */
     HashSet<ArtifactDependency> dependencies = artifact.dependencies;
     foreach (ArtifactDependency dependency in dependencies) {
-      if (await cache_.InCache(dependency.name, request.Context)) {
-        continue;
-      }
+      if (await cache_.InCache(dependency.name, request.Context)) continue;
 
       /* Memorize this dependency */
       await cache_.AddToCache(dependency.name, request.Context);
@@ -50,13 +48,13 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
   }
 
   private async Task<bool> TryInsertOrUpdateArtifact(Artifact artifact) {
-    
     Artifact db_artifact = await db_.GetArtifactByName(artifact.name, artifact.module);
     try {
       if (db_artifact != null) {
         artifact.filter = db_artifact.filter;
         return await db_.UpdateArtifact(db_artifact, artifact);
       }
+
       await db_.AddArtifact(artifact);
       return true;
     }
@@ -69,7 +67,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
   private async Task Collect(ConsumeContext<ArtifactProcessedRequest> context) {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
-    await context.Send(Endpoints.APC_ACM_ROUTER, new ArtifactRouteRequest() {
+    await context.Send(Endpoints.APC_ACM_ROUTER, new ArtifactRouteRequest {
       Artifact = artifact
     });
   }

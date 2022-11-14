@@ -20,9 +20,7 @@ public class Npm : INpm {
   }
 
   private void ProcessArtifactVersions(Artifact artifact, Metadata metadata) {
-    if (metadata?.versions == null) {
-      return;
-    }
+    if (metadata?.versions == null) return;
     foreach (KeyValuePair<string, Package> kv in metadata.versions) {
       if (artifact.HasVersion(kv.Key)) continue;
 
@@ -40,9 +38,7 @@ public class Npm : INpm {
 
   private void AddDependencies(Artifact artifact, Dictionary<string, string> dependencies) {
     if (dependencies == null) return;
-    foreach (KeyValuePair<string, string> package in dependencies) {
-      artifact.AddDependency(package.Key, artifact.module);
-    }
+    foreach (KeyValuePair<string, string> package in dependencies) artifact.AddDependency(package.Key, artifact.module);
   }
 
   private async Task<Metadata> GetMetadata(string id) {

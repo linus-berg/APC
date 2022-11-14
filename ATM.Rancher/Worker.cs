@@ -8,7 +8,7 @@ namespace ATM.Rancher;
 public class Worker : BackgroundService {
   private readonly RestClient client_ = new($"{Configuration.GetApcVar(ApcVariable.APC_API_HOST)}");
   private readonly ILogger<Worker> logger_;
-  private readonly Dictionary<string, RancherProcessor> processors_ = new Dictionary<string, RancherProcessor>();
+  private readonly Dictionary<string, RancherProcessor> processors_ = new();
 
   public Worker(ILogger<Worker> logger) {
     logger_ = logger;
@@ -32,9 +32,7 @@ public class Worker : BackgroundService {
   private async Task CheckForReleases() {
     foreach (KeyValuePair<string, RancherProcessor> processor in processors_) {
       List<string> new_releases = await processor.Value.CheckReleases();
-      foreach (string release_file in new_releases) {
-        await CollectRelease(processor.Key, release_file);
-      }
+      foreach (string release_file in new_releases) await CollectRelease(processor.Key, release_file);
     }
   }
 
@@ -47,9 +45,9 @@ public class Worker : BackgroundService {
   }
 
   private async Task CollectImage(string repo, string image) {
-    RestRequest request = new RestRequest("api/artifact/collect", Method.Post);
+    RestRequest request = new("api/artifact/collect", Method.Post);
     request.RequestFormat = DataFormat.Json;
-    ArtifactCollectRequest body = new ArtifactCollectRequest() {
+    ArtifactCollectRequest body = new() {
       location = $"docker://{image}",
       module = repo
     };

@@ -5,7 +5,6 @@ using APC.Kernel.Messages;
 using APC.Services.Models;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol.Plugins;
 
 namespace APC.API.Controllers;
 
@@ -37,13 +36,14 @@ public class ArtifactController : ControllerBase {
     Artifact artifact = await db_.GetArtifactByName(input.Name, input.Module);
 
     if (artifact == null) {
-      await db_.AddArtifact(new Artifact() {
+      await db_.AddArtifact(new Artifact {
         module = input.Module,
         name = input.Name,
         filter = input.Filter,
-        root = true,
+        root = true
       });
-    } else if (!artifact.root) {
+    }
+    else if (!artifact.root) {
       artifact.root = true;
       await db_.UpdateArtifact(artifact);
     }
@@ -52,8 +52,9 @@ public class ArtifactController : ControllerBase {
         Message = $"{input.Module}/{input.Name} already Exists!"
       });
     }
+
     await db_.Commit();
-    ArtifactIngestRequest ingest_request = new ArtifactIngestRequest();
+    ArtifactIngestRequest ingest_request = new();
     ingest_request.Artifacts.Add(input.Name);
     ingest_request.Module = input.Module;
     await SendToIngest(ingest_request);
@@ -75,7 +76,7 @@ public class ArtifactController : ControllerBase {
     await SendToIngest(ingest_request);
     return Ok("Artifact being reprocessed");
   }
-  
+
   [HttpPost("track/all")]
   public async Task<ActionResult> TrackAll() {
     IEnumerable<string> modules = await db_.GetModules();
@@ -89,31 +90,43 @@ public class ArtifactController : ControllerBase {
         ingest_request.Artifacts.Add(artifact.name);
         artifact_count++;
       }
+
       await SendToIngest(ingest_request);
       module_count++;
     }
+
     return Ok($"{artifact_count} artifacts being reprocessed in {module_count} modules!");
   }
 
   [HttpPost("validate/all")]
   public async Task<ActionResult> ValidateAllArtifacts() {
     IEnumerable<string> modules = await db_.GetModules();
-    foreach (string module in modules) {
-      IEnumerable<Artifact> artifacts = await db_.GetArtifactsWithVersions(module);
-      Console.WriteLine(artifacts.Count());
-      ArtifactRouteRequest route_request = new();
-      foreach (Artifact artifact in artifacts) {
-        route_request.Artifact = artifact;
-        await SendToCollect(route_request);
+    foreach (string module in modules)
+      try {
+        Console.WriteLine($"Trying to validate {module}");
+        await ValidateModule(module);
       }
-    }
+      catch (Exception e) {
+        Console.WriteLine(e);
+      }
+
     return Ok("Validating all artifacts!");
+  }
+
+  private async Task ValidateModule(string module) {
+    IEnumerable<Artifact> artifacts = await db_.GetArtifactsWithVersions(module);
+    Console.WriteLine(artifacts.Count());
+    ArtifactRouteRequest route_request = new();
+    foreach (Artifact artifact in artifacts) {
+      route_request.Artifact = artifact;
+      await SendToCollect(route_request);
+    }
   }
 
   // DELETE: api/Artifact/5
   [HttpDelete("{id}")]
   public async Task<ActionResult> Delete(int id) {
-    if (!await db_.DeleteArtifact(new Artifact() { id = id })) return Problem();
+    if (!await db_.DeleteArtifact(new Artifact { id = id })) return Problem();
     await db_.Commit();
     return Ok();
   }
@@ -124,10 +137,11 @@ public class ArtifactController : ControllerBase {
     await SendDirectCollect(request);
     return Ok("OK");
   }
-  
+
   private async Task SendToCollect(ArtifactRouteRequest request) {
     await SendRequest(Endpoints.APC_ACM_ROUTER, request);
   }
+
   private async Task SendDirectCollect(ArtifactCollectRequest request) {
     await SendRequest(new Uri($"queue:{request.GetCollectorModule()}"), request);
   }
@@ -135,7 +149,7 @@ public class ArtifactController : ControllerBase {
   private async Task SendToIngest(ArtifactIngestRequest request) {
     await SendRequest(Endpoints.APC_INGEST_UNPROCESSED, request);
   }
-  
+
   private async Task SendRequest<T>(Uri uri, T request) {
     ISendEndpoint endpoint = await bus_.GetSendEndpoint(uri);
     await endpoint.Send(request);

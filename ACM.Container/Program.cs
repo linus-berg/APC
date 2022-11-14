@@ -3,7 +3,7 @@ using APC.Kernel;
 
 IHost host = Host.CreateDefaultBuilder(args)
   .ConfigureServices(services => {
-    services.RegisterCollector(new List<string>() {
+    services.RegisterCollector(new List<string> {
       "docker",
       "oci"
     }, new Collector(), 1);

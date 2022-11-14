@@ -21,7 +21,7 @@ public class Artifact {
   [Computed] public HashSet<ArtifactDependency> dependencies { get; set; }
 
   public bool AddDependency(string name, string module) {
-    return dependencies.Add(new ArtifactDependency() {
+    return dependencies.Add(new ArtifactDependency {
       name = name,
       module = module
     });
