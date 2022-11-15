@@ -4,7 +4,8 @@ using APC.Kernel;
 namespace ACM.Kernel;
 
 public class FileSystem {
-  private static readonly string BASE_DIR_ = Configuration.GetApcVar(ApcVariable.APC_ACM_DIR);
+  private static readonly string BASE_DIR_ =
+    Configuration.GetApcVar(ApcVariable.APC_ACM_DIR);
 
   static FileSystem() {
     Console.WriteLine($"Storage Directory: {BASE_DIR_}");

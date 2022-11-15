@@ -16,9 +16,10 @@ public class Processor : IProcessor {
     string name = context.Message.Name;
     Console.WriteLine($"PROCESSING: {name}");
     Artifact artifact = await nuget_.ProcessArtifact(name);
-    await context.Send(Endpoints.APC_INGEST_PROCESSED, new ArtifactProcessedRequest {
-      Context = context.Message.Context,
-      Artifact = artifact
-    });
+    await context.Send(Endpoints.APC_INGEST_PROCESSED,
+                       new ArtifactProcessedRequest {
+                         Context = context.Message.Context,
+                         Artifact = artifact
+                       });
   }
 }

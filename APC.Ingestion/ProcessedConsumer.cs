@@ -25,21 +25,21 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     if (await TryInsertOrUpdateArtifact(artifact)) {
       try {
         await db_.Commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         Console.WriteLine($"{artifact.name}->{e.Message}");
       }
 
       await Collect(context);
-    }
-    else {
+    } else {
       return;
     }
 
     /* Process all dependencies not already processed in this context */
     HashSet<ArtifactDependency> dependencies = artifact.dependencies;
     foreach (ArtifactDependency dependency in dependencies) {
-      if (await cache_.InCache(dependency.name, request.Context)) continue;
+      if (await cache_.InCache(dependency.name, request.Context)) {
+        continue;
+      }
 
       /* Memorize this dependency */
       await cache_.AddToCache(dependency.name, request.Context);
@@ -48,7 +48,8 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
   }
 
   private async Task<bool> TryInsertOrUpdateArtifact(Artifact artifact) {
-    Artifact db_artifact = await db_.GetArtifactByName(artifact.name, artifact.module);
+    Artifact db_artifact =
+      await db_.GetArtifactByName(artifact.name, artifact.module);
     try {
       if (db_artifact != null) {
         artifact.filter = db_artifact.filter;
@@ -57,8 +58,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
 
       await db_.AddArtifact(artifact);
       return true;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       Console.WriteLine($"{artifact.name}->{e.Message}");
       return true;
     }
@@ -72,13 +72,15 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     });
   }
 
-  private async Task Process(ConsumeContext<ArtifactProcessedRequest> context, ArtifactDependency dependency) {
+  private async Task Process(ConsumeContext<ArtifactProcessedRequest> context,
+                             ArtifactDependency dependency) {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
-    await context.Send(new Uri($"queue:apm-{artifact.module}"), new ArtifactProcessRequest {
-      Context = request.Context,
-      Name = dependency.name,
-      Module = dependency.module
-    });
+    await context.Send(new Uri($"queue:apm-{artifact.module}"),
+                       new ArtifactProcessRequest {
+                         Context = request.Context,
+                         Name = dependency.name,
+                         Module = dependency.module
+                       });
   }
 }

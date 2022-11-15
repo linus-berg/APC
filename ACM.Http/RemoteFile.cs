@@ -13,14 +13,16 @@ internal class RemoteFile {
     string tmp_file = filepath + ".tmp";
     HttpResponseMessage response =
       await CLIENT_.GetAsync(url_, HttpCompletionOption.ResponseHeadersRead);
-    if (!response.IsSuccessStatusCode || response.Content.Headers.ContentLength == null) return false;
+    if (!response.IsSuccessStatusCode ||
+        response.Content.Headers.ContentLength == null) {
+      return false;
+    }
 
     long size = (long)response.Content.Headers.ContentLength;
     using Stream s = await response.Content.ReadAsStreamAsync();
     try {
       await ProcessStream(s, tmp_file);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       s.Close();
       ClearFile(filepath);
       ClearFile(tmp_file);
@@ -31,8 +33,7 @@ internal class RemoteFile {
     if (new FileInfo(tmp_file).Length == size) {
       /* Rename */
       File.Move(tmp_file, filepath);
-    }
-    else {
+    } else {
       File.Delete(tmp_file);
       return false;
     }
@@ -58,11 +59,13 @@ internal class RemoteFile {
       while (read != 0) {
         read = await s.ReadAsync(buffer, 0, buffer.Length);
         total += read;
-        if (read == 0) break;
+        if (read == 0) {
+          break;
+        }
+
         await fs.WriteAsync(buffer, 0, read);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fs.Close();
       ClearFile(filepath);
       throw;
@@ -72,7 +75,10 @@ internal class RemoteFile {
   }
 
   private static bool ClearFile(string file) {
-    if (!File.Exists(file)) return false;
+    if (!File.Exists(file)) {
+      return false;
+    }
+
     Console.WriteLine($"Clearing {file}");
     File.Delete(file);
     return true;

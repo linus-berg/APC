@@ -7,6 +7,7 @@ public class ArtifactTimeoutException : Exception {
   public ArtifactTimeoutException(string? message) : base(message) {
   }
 
-  public ArtifactTimeoutException(string? message, Exception? inner_exception) : base(message, inner_exception) {
+  public ArtifactTimeoutException(string? message, Exception? inner_exception) :
+    base(message, inner_exception) {
   }
 }

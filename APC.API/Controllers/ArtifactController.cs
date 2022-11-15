@@ -42,12 +42,10 @@ public class ArtifactController : ControllerBase {
         filter = input.Filter,
         root = true
       });
-    }
-    else if (!artifact.root) {
+    } else if (!artifact.root) {
       artifact.root = true;
       await db_.UpdateArtifact(artifact);
-    }
-    else {
+    } else {
       return Ok(new {
         Message = $"{input.Module}/{input.Name} already Exists!"
       });
@@ -65,11 +63,18 @@ public class ArtifactController : ControllerBase {
 
   // POST: api/Artifact/track
   [HttpPost("track")]
-  public async Task<ActionResult> Track([FromBody] ArtifactTrackerInput request) {
-    Artifact artifact = await db_.GetArtifactByName(request.Artifact, request.Module);
-    if (artifact == null) return NotFound();
+  public async Task<ActionResult>
+    Track([FromBody] ArtifactTrackerInput request) {
+    Artifact artifact =
+      await db_.GetArtifactByName(request.Artifact, request.Module);
+    if (artifact == null) {
+      return NotFound();
+    }
 
-    if (!artifact.root) return Problem("Artifact is not a root artifact");
+    if (!artifact.root) {
+      return Problem("Artifact is not a root artifact");
+    }
+
     ArtifactIngestRequest ingest_request = new();
     ingest_request.Module = request.Module;
     ingest_request.Artifacts.Add(request.Artifact);
@@ -95,26 +100,28 @@ public class ArtifactController : ControllerBase {
       module_count++;
     }
 
-    return Ok($"{artifact_count} artifacts being reprocessed in {module_count} modules!");
+    return Ok(
+      $"{artifact_count} artifacts being reprocessed in {module_count} modules!");
   }
 
   [HttpPost("validate/all")]
   public async Task<ActionResult> ValidateAllArtifacts() {
     IEnumerable<string> modules = await db_.GetModules();
-    foreach (string module in modules)
+    foreach (string module in modules) {
       try {
         Console.WriteLine($"Trying to validate {module}");
         await ValidateModule(module);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         Console.WriteLine(e);
       }
+    }
 
     return Ok("Validating all artifacts!");
   }
 
   private async Task ValidateModule(string module) {
-    IEnumerable<Artifact> artifacts = await db_.GetArtifactsWithVersions(module);
+    IEnumerable<Artifact>
+      artifacts = await db_.GetArtifactsWithVersions(module);
     Console.WriteLine(artifacts.Count());
     ArtifactRouteRequest route_request = new();
     foreach (Artifact artifact in artifacts) {
@@ -126,7 +133,12 @@ public class ArtifactController : ControllerBase {
   // DELETE: api/Artifact/5
   [HttpDelete("{id}")]
   public async Task<ActionResult> Delete(int id) {
-    if (!await db_.DeleteArtifact(new Artifact { id = id })) return Problem();
+    if (!await db_.DeleteArtifact(new Artifact {
+          id = id
+        })) {
+      return Problem();
+    }
+
     await db_.Commit();
     return Ok();
   }
@@ -143,7 +155,8 @@ public class ArtifactController : ControllerBase {
   }
 
   private async Task SendDirectCollect(ArtifactCollectRequest request) {
-    await SendRequest(new Uri($"queue:{request.GetCollectorModule()}"), request);
+    await SendRequest(new Uri($"queue:{request.GetCollectorModule()}"),
+                      request);
   }
 
   private async Task SendToIngest(ArtifactIngestRequest request) {

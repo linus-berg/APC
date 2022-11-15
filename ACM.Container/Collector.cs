@@ -11,6 +11,7 @@ public class Collector : ICollector {
   private readonly SkopeoClient skopeo_ = new();
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {
-    await skopeo_.CopyToOci(context.Message.location, fs_.GetModuleDir(context.Message.module));
+    await skopeo_.CopyToOci(context.Message.location,
+                            fs_.GetModuleDir(context.Message.module));
   }
 }

@@ -41,10 +41,15 @@ public class Nuget : INuget {
     IEnumerable<IPackageSearchMetadata> versions =
       await GetMetadata(artifact.name);
 
-    if (versions == null) throw new ArtifactTimeoutException($"Metadata fetch failed for {artifact.name}");
+    if (versions == null) {
+      throw new ArtifactTimeoutException(
+        $"Metadata fetch failed for {artifact.name}");
+    }
+
     foreach (IPackageSearchMetadata version in versions) {
       string v = version.Identity.Version.ToString();
-      string u = NUGET_ + $"{artifact.name}/{v}/{artifact.name}.{v}.nupkg".ToLower();
+      string u = NUGET_ +
+                 $"{artifact.name}/{v}/{artifact.name}.{v}.nupkg".ToLower();
       ArtifactVersion a_v = new() {
         artifact_id = artifact.id,
         location = u,
@@ -56,21 +61,27 @@ public class Nuget : INuget {
   }
 
   private void AddDependencies(Artifact artifact, ArtifactVersion version,
-    IEnumerable<PackageDependencyGroup> dependencies) {
-    if (dependencies == null) throw new ArtifactMetadataException("No versions found!");
+                               IEnumerable<PackageDependencyGroup>
+                                 dependencies) {
+    if (dependencies == null) {
+      throw new ArtifactMetadataException("No versions found!");
+    }
+
     foreach (PackageDependencyGroup x in dependencies)
-    foreach (PackageDependency pkg in x.Packages)
+    foreach (PackageDependency pkg in x.Packages) {
       artifact.AddDependency(pkg.Id, artifact.module);
+    }
   }
 
-  private async Task<IEnumerable<IPackageSearchMetadata>> GetMetadata(string id) {
+  private async Task<IEnumerable<IPackageSearchMetadata>>
+    GetMetadata(string id) {
     return await meta_res_.GetMetadataAsync(
-      id,
-      true,
-      false,
-      cache_,
-      logger_,
-      ct_
-    );
+             id,
+             true,
+             false,
+             cache_,
+             logger_,
+             ct_
+           );
   }
 }

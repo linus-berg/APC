@@ -17,9 +17,12 @@ public class GithubRelease {
   public List<GithubReleaseAsset> assets { get; set; }
 
   public string GetRancherImageFile(string name) {
-    foreach (GithubReleaseAsset asset in assets)
-      if (asset.name == name)
+    foreach (GithubReleaseAsset asset in assets) {
+      if (asset.name == name) {
         return asset.browser_download_url;
+      }
+    }
+
     return null;
   }
 }

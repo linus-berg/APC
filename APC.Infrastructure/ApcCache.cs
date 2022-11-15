@@ -20,7 +20,10 @@ public class ApcCache : IApcCache {
 
   public async Task<bool> InCache(string artifact, Guid context) {
     IDatabase db = redis_.GetDatabase();
-    if (!await db.KeyExistsAsync(context.ToString())) return false;
+    if (!await db.KeyExistsAsync(context.ToString())) {
+      return false;
+    }
+
     return await db.SetContainsAsync(context.ToString(), artifact);
   }
 

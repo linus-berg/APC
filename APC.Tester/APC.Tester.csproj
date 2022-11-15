@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\APC.Skopeo\APC.Skopeo.csproj"/>
+        <ProjectReference Include="..\APM.Helm\APM.Helm.csproj"/>
         <ProjectReference Include="..\ATM.Rancher\ATM.Rancher.csproj"/>
     </ItemGroup>
 

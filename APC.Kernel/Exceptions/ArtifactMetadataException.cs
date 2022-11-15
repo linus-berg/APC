@@ -7,6 +7,7 @@ public class ArtifactMetadataException : Exception {
   public ArtifactMetadataException(string? message) : base(message) {
   }
 
-  public ArtifactMetadataException(string? message, Exception? inner_exception) : base(message, inner_exception) {
+  public ArtifactMetadataException(string? message, Exception? inner_exception)
+    : base(message, inner_exception) {
   }
 }

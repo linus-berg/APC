@@ -14,7 +14,9 @@ public class ApcDatabase : IApcDatabase {
 
   static ApcDatabase() {
     string c_str = Environment.GetEnvironmentVariable("APC_PGSQL_STR");
-    DB_STR_ = c_str ?? throw new NoNullAllowedException("Database connection string is null, set APC_PGSQL_STR.");
+    DB_STR_ = c_str ??
+              throw new NoNullAllowedException(
+                "Database connection string is null, set APC_PGSQL_STR.");
   }
 
   public ApcDatabase() {
@@ -38,10 +40,19 @@ public class ApcDatabase : IApcDatabase {
   }
 
   public async Task AddArtifact(Artifact artifact) {
-    Artifact db_artifact = await GetArtifactByName(artifact.name, artifact.module);
-    if (db_artifact == null) artifact.id = await db_.InsertAsync(artifact, transaction_);
-    foreach (ArtifactVersion version in artifact.versions.Values) await AddArtifactVersion(artifact, version);
-    foreach (ArtifactDependency dependency in artifact.dependencies) await AddArtifactDependency(artifact, dependency);
+    Artifact db_artifact =
+      await GetArtifactByName(artifact.name, artifact.module);
+    if (db_artifact == null) {
+      artifact.id = await db_.InsertAsync(artifact, transaction_);
+    }
+
+    foreach (ArtifactVersion version in artifact.versions.Values) {
+      await AddArtifactVersion(artifact, version);
+    }
+
+    foreach (ArtifactDependency dependency in artifact.dependencies) {
+      await AddArtifactDependency(artifact, dependency);
+    }
   }
 
   public async Task<int> AddProcessingFault(ArtifactProcessingFault fault) {
@@ -59,7 +70,8 @@ public class ApcDatabase : IApcDatabase {
   }
 
   public async Task<IEnumerable<string>> GetModules() {
-    return await db_.QueryAsync<string>("SELECT DISTINCT module FROM artifacts");
+    return await db_.QueryAsync<string>(
+             "SELECT DISTINCT module FROM artifacts");
   }
 
   public async Task<Artifact> GetArtifactByName(string name, string module) {
@@ -70,26 +82,33 @@ public class ApcDatabase : IApcDatabase {
             artifacts 
         WHERE 
             name = @name AND module = @module",
-      new {
-        name,
-        module
-      },
-      transaction_
-    );
+               new {
+                 name,
+                 module
+               },
+               transaction_
+           );
   }
 
   public async Task<IEnumerable<Artifact>> GetArtifacts(string module) {
-    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module", new { module },
-      transaction_);
+    return await db_.QueryAsync<Artifact>(
+             "SELECT * FROM artifacts WHERE module = @module", new {
+               module
+             },
+             transaction_);
   }
 
   public async Task<IEnumerable<Artifact>> GetRoots(string module) {
-    return await db_.QueryAsync<Artifact>("SELECT * FROM artifacts WHERE module = @module and root = true",
-      new { module },
-      transaction_);
+    return await db_.QueryAsync<Artifact>(
+             "SELECT * FROM artifacts WHERE module = @module and root = true",
+             new {
+               module
+             },
+             transaction_);
   }
 
-  public async Task<IEnumerable<Artifact>> GetArtifactsWithVersions(string module) {
+  public async Task<IEnumerable<Artifact>> GetArtifactsWithVersions(
+    string module) {
     Dictionary<int, Artifact> artifacts = new();
     return (await db_.QueryAsync<Artifact, ArtifactVersion, Artifact>(@"
         SELECT 
@@ -101,22 +120,27 @@ public class ApcDatabase : IApcDatabase {
         WHERE 
             module = @module
         ", (artifact, version) => {
-        if (!artifacts.TryGetValue(artifact.id, out Artifact entry)) {
-          entry = artifact;
-          entry.versions = new Dictionary<string, ArtifactVersion>();
-          artifacts.Add(artifact.id, entry);
-        }
+                  if (!artifacts.TryGetValue(artifact.id, out Artifact entry)) {
+                    entry = artifact;
+                    entry.versions = new Dictionary<string, ArtifactVersion>();
+                    artifacts.Add(artifact.id, entry);
+                  }
 
-        if (version != null && !entry.versions.ContainsKey(version.version))
-          entry.versions.Add(version.version, version);
-        else
-          Console.WriteLine($"{module} duplicate found {entry.name} {version.version} -> {version.location}");
+                  if (version != null &&
+                      !entry.versions.ContainsKey(version.version)) {
+                    entry.versions.Add(version.version, version);
+                  } else {
+                    Console.WriteLine(
+                      $"{module} duplicate found {entry.name} {version.version} -> {version.location}");
+                  }
 
-        return entry;
-      },
-      new { module },
-      transaction_
-    )).Distinct();
+                  return entry;
+                },
+                new {
+                  module
+                },
+                transaction_
+            )).Distinct();
   }
 
   private void Open() {
@@ -127,33 +151,39 @@ public class ApcDatabase : IApcDatabase {
     Dispose(false);
   }
 
-  private async Task<ArtifactDependency> AddArtifactDependency(Artifact artifact, ArtifactDependency dependency) {
+  private async Task<ArtifactDependency> AddArtifactDependency(
+    Artifact artifact, ArtifactDependency dependency) {
     dependency.artifact_id = artifact.id;
     dependency.id = await db_.InsertAsync(dependency, transaction_);
     return dependency;
   }
 
-  private async Task<bool> UpdateArtifactVersions(Artifact current, Artifact updated) {
-    Dictionary<string, ArtifactVersion> current_versions = await GetVersions(current.id);
+  private async Task<bool> UpdateArtifactVersions(
+    Artifact current, Artifact updated) {
+    Dictionary<string, ArtifactVersion> current_versions =
+      await GetVersions(current.id);
     Dictionary<string, ArtifactVersion> updated_versions = updated.versions;
     bool has_updated = false;
-    foreach (KeyValuePair<string, ArtifactVersion> kv in updated_versions)
+    foreach (KeyValuePair<string, ArtifactVersion> kv in updated_versions) {
       if (!current_versions.ContainsKey(kv.Key)) {
         await AddArtifactVersion(current, kv.Value);
         has_updated = true;
       }
+    }
 
     return has_updated;
   }
 
-  private async Task AddArtifactVersion(Artifact artifact, ArtifactVersion version) {
+  private async Task AddArtifactVersion(Artifact artifact,
+                                        ArtifactVersion version) {
     version.artifact_id = artifact.id;
     version.id = await db_.InsertAsync(version, transaction_);
   }
 
-  private async Task<Dictionary<string, ArtifactVersion>> GetVersions(int artifact_id) {
+  private async Task<Dictionary<string, ArtifactVersion>> GetVersions(
+    int artifact_id) {
     return (await db_.QueryAsync<ArtifactVersion>(
-      @"
+              @"
             SELECT 
                 * 
             FROM 
@@ -161,11 +191,11 @@ public class ApcDatabase : IApcDatabase {
             WHERE 
                 artifact_id = @artifact_id
          ",
-      new {
-        artifact_id
-      },
-      transaction_
-    )).ToDictionary(av => av.version);
+              new {
+                artifact_id
+              },
+              transaction_
+            )).ToDictionary(av => av.version);
   }
 
   private void ReleaseUnmanagedResources() {

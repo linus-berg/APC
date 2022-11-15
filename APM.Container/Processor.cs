@@ -16,10 +16,11 @@ public class Processor : IProcessor {
       module = request.Module
     };
     await GetTags(artifact);
-    await context.Send(Endpoints.APC_INGEST_PROCESSED, new ArtifactProcessedRequest {
-      Context = context.Message.Context,
-      Artifact = artifact
-    });
+    await context.Send(Endpoints.APC_INGEST_PROCESSED,
+                       new ArtifactProcessedRequest {
+                         Context = context.Message.Context,
+                         Artifact = artifact
+                       });
   }
 
   private async Task GetTags(Artifact artifact) {

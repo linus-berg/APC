@@ -5,7 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace APC.Kernel;
 
 public static class RegistrationUtils {
-  public static IServiceCollection RegisterProcessor(this IServiceCollection sc, string name, IProcessor processor) {
+  public static IServiceCollection RegisterProcessor(
+    this IServiceCollection sc, string name, IProcessor processor) {
     sc.AddMassTransit(mt => {
       mt.UsingRabbitMq((ctx, cfg) => {
         cfg.SetupRabbitMq();
@@ -13,7 +14,9 @@ public static class RegistrationUtils {
           e.UseDelayedRedelivery(r => {
             r.Handle<ArtifactTimeoutException>();
             r.Ignore<ArtifactMetadataException>();
-            r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30));
+            r.Intervals(TimeSpan.FromMinutes(5),
+                        TimeSpan.FromMinutes(15),
+                        TimeSpan.FromMinutes(30));
           });
           e.UseMessageRetry(r => {
             r.Handle<ArtifactTimeoutException>();
@@ -28,17 +31,19 @@ public static class RegistrationUtils {
     return sc;
   }
 
-  public static IServiceCollection RegisterCollector(this IServiceCollection sc, IEnumerable<string> names,
+  public static IServiceCollection RegisterCollector(
+    this IServiceCollection sc, IEnumerable<string> names,
     ICollector collector, int concurrency = 10) {
     sc.AddMassTransit(mt => {
       mt.UsingRabbitMq((ctx, cfg) => {
         cfg.SetupRabbitMq();
-        foreach (string name in names)
+        foreach (string name in names) {
           cfg.ReceiveEndpoint($"acm-{name}", e => {
             e.ConfigureRetrying();
             e.ConcurrentMessageLimit = concurrency;
             e.Instance(collector);
           });
+        }
 
         cfg.ConfigureEndpoints(ctx);
       });
@@ -46,7 +51,8 @@ public static class RegistrationUtils {
     return sc;
   }
 
-  public static IServiceCollection RegisterRouter(this IServiceCollection sc, IRouter router) {
+  public static IServiceCollection RegisterRouter(
+    this IServiceCollection sc, IRouter router) {
     sc.AddMassTransit(mt => {
       mt.UsingRabbitMq((ctx, cfg) => {
         cfg.SetupRabbitMq();
@@ -60,17 +66,23 @@ public static class RegistrationUtils {
     return sc;
   }
 
-  private static void ConfigureRetrying(this IRabbitMqReceiveEndpointConfigurator endpoint) {
+  private static void ConfigureRetrying(
+    this IRabbitMqReceiveEndpointConfigurator endpoint) {
     endpoint.UseDelayedRedelivery(r => {
-      r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30));
+      r.Intervals(TimeSpan.FromMinutes(5),
+                  TimeSpan.FromMinutes(15),
+                  TimeSpan.FromMinutes(30));
     });
     endpoint.UseMessageRetry(r => r.Immediate(5));
   }
 
   public static void SetupRabbitMq(this IRabbitMqBusFactoryConfigurator cfg) {
-    cfg.Host(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_HOST), "/", h => {
-      h.Username(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_USER));
-      h.Password(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_PASS));
-    });
+    cfg.Host(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_HOST), "/",
+             h => {
+               h.Username(
+                 Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_USER));
+               h.Password(
+                 Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_PASS));
+             });
   }
 }

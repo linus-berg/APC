@@ -9,6 +9,8 @@ public class Worker : BackgroundService {
 
 
   protected override async Task ExecuteAsync(CancellationToken stopping_token) {
-    while (!stopping_token.IsCancellationRequested) await Task.Delay(3000, stopping_token);
+    while (!stopping_token.IsCancellationRequested) {
+      await Task.Delay(3000, stopping_token);
+    }
   }
 }

@@ -6,22 +6,25 @@ using RestSharp;
 namespace ATM.Rancher;
 
 public class Worker : BackgroundService {
-  private readonly RestClient client_ = new($"{Configuration.GetApcVar(ApcVariable.APC_API_HOST)}");
+  private readonly RestClient client_ =
+    new($"{Configuration.GetApcVar(ApcVariable.APC_API_HOST)}");
+
   private readonly ILogger<Worker> logger_;
   private readonly Dictionary<string, RancherProcessor> processors_ = new();
 
   public Worker(ILogger<Worker> logger) {
     logger_ = logger;
-    processors_["rancher/rke2"] = new RancherProcessor("rancher/rke2", "rke2-images-all.linux-amd64.txt");
-    processors_["rancher/rancher"] = new RancherProcessor("rancher/rancher", "rancher-images.txt");
+    processors_["rancher/rke2"] = new RancherProcessor("rancher/rke2",
+      "rke2-images-all.linux-amd64.txt");
+    processors_["rancher/rancher"] =
+      new RancherProcessor("rancher/rancher", "rancher-images.txt");
   }
 
   protected override async Task ExecuteAsync(CancellationToken stopping_token) {
     while (!stopping_token.IsCancellationRequested) {
       try {
         await CheckForReleases();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         Console.WriteLine(e);
       }
 
@@ -32,7 +35,9 @@ public class Worker : BackgroundService {
   private async Task CheckForReleases() {
     foreach (KeyValuePair<string, RancherProcessor> processor in processors_) {
       List<string> new_releases = await processor.Value.CheckReleases();
-      foreach (string release_file in new_releases) await CollectRelease(processor.Key, release_file);
+      foreach (string release_file in new_releases) {
+        await CollectRelease(processor.Key, release_file);
+      }
     }
   }
 
@@ -40,7 +45,10 @@ public class Worker : BackgroundService {
     List<string> images = File.ReadLines(release).ToList();
     foreach (string image in images) {
       Console.WriteLine($"Collecting {image}");
-      await CollectImage(repo, image.Contains("docker.io") ? image : $"docker.io/{image}");
+      await CollectImage(repo,
+                         image.Contains("docker.io")
+                           ? image
+                           : $"docker.io/{image}");
     }
   }
 

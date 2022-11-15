@@ -29,14 +29,20 @@ public class Artifact {
 
   public HashSet<string> VersionDiff(HashSet<ArtifactVersion> versions_in_db) {
     HashSet<string> diff = new();
-    foreach (KeyValuePair<string, ArtifactVersion> version in versions)
-      if (versions_in_db.All(v => v.version != version.Key))
+    foreach (KeyValuePair<string, ArtifactVersion> version in versions) {
+      if (versions_in_db.All(v => v.version != version.Key)) {
         diff.Add(version.Key);
+      }
+    }
+
     return diff;
   }
 
   public bool AddVersion(ArtifactVersion version) {
-    if (versions.ContainsKey(version.version)) return false;
+    if (versions.ContainsKey(version.version)) {
+      return false;
+    }
+
     versions.Add(version.version, version);
     return true;
   }
