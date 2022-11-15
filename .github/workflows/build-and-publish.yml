@@ -16,7 +16,6 @@ jobs:
           - name: atm/rancher
             directory: ATM.Rancher
 
-              l,2wqqa1<F8>9ol2wwlq12ww<F8>ol,9wWW2W,2
           - name: api
             directory: APC.API
           
