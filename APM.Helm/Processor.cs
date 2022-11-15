@@ -15,11 +15,6 @@ public class Processor : IProcessor {
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     string name = context.Message.Name;
     Artifact artifact = await helm_.ProcessArtifact(name);
-    ArtifactProcessedRequest request = new() {
-      Context = context.Message.Context,
-      Artifact = artifact
-    };
-
     await context.Send(Endpoints.APC_INGEST_PROCESSED,
                        new ArtifactProcessedRequest {
                          Context = context.Message.Context,
