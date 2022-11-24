@@ -20,7 +20,6 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
 
-
     /* If not in db add */
     if (await TryInsertOrUpdateArtifact(artifact)) {
       try {
@@ -33,6 +32,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     } else {
       return;
     }
+
 
     /* Process all dependencies not already processed in this context */
     HashSet<ArtifactDependency> dependencies = artifact.dependencies;
@@ -67,6 +67,11 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
   private async Task Collect(ConsumeContext<ArtifactProcessedRequest> context) {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
+    foreach (ArtifactCollectRequest collect in request.CollectRequests) {
+      await context.Send(new Uri($"queue:{collect.GetCollectorModule()}"),
+                         collect);
+    }
+
     await context.Send(Endpoints.APC_ACM_ROUTER, new ArtifactRouteRequest {
       Artifact = artifact
     });

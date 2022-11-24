@@ -15,10 +15,18 @@ public class Processor : IProcessor {
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     string name = context.Message.Name;
     Artifact artifact = await helm_.ProcessArtifact(name);
-    await context.Send(Endpoints.APC_INGEST_PROCESSED,
-                       new ArtifactProcessedRequest {
-                         Context = context.Message.Context,
-                         Artifact = artifact
-                       });
+    ArtifactProcessedRequest request = new() {
+      Context = context.Message.Context,
+      Artifact = artifact
+    };
+    foreach (ArtifactDependency dependency in artifact.dependencies) {
+      if (dependency.module == "container") {
+        request.AddCollectRequest($"docker://docker.io/{dependency.name}",
+                                  dependency.module);
+        artifact.dependencies.Remove(dependency);
+      }
+    }
+
+    await context.Send(Endpoints.APC_INGEST_PROCESSED, request);
   }
 }
