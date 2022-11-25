@@ -36,9 +36,7 @@ public class Processor : IProcessor {
   }
   
   private static bool HasHostname(string name) {
-    string str = $"docker://{name}";
-    Uri uri = new Uri(str);
-    bool is_match = Regex.IsMatch(uri.Host, @"\w+\.\w+\/");
+    bool is_match = Regex.IsMatch(name, @"\w+\.\w+\/");
     return is_match;
   }
 }
