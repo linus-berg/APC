@@ -45,6 +45,9 @@ public class Helm {
     }
 
     foreach (HelmChartDependency chart in data.dependencies) {
+      if (string.IsNullOrEmpty(chart.repository)) {
+        continue;
+      }
       Uri uri = new(chart.repository);
       if (uri.Scheme == "file" ||
           string.IsNullOrEmpty(chart.artifacthub_repository_name)) {
