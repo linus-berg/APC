@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using APC.Kernel;
 using APC.Kernel.Messages;
 using APC.Services.Models;
@@ -21,12 +22,23 @@ public class Processor : IProcessor {
     };
     foreach (ArtifactDependency dependency in artifact.dependencies) {
       if (dependency.module == "container") {
-        request.AddCollectRequest($"docker://docker.io/{dependency.name}",
-                                  dependency.module);
+        string container = dependency.name;
+        request.AddCollectRequest(FixNaming(container), dependency.module);
         artifact.dependencies.Remove(dependency);
       }
     }
 
     await context.Send(Endpoints.APC_INGEST_PROCESSED, request);
+  }
+
+  private static string FixNaming(string name) {
+    return !HasHostname(name) ? $"docker://docker.io/{name}" : $"docker://{name}";
+  }
+  
+  private static bool HasHostname(string name) {
+    string str = $"docker://{name}";
+    Uri uri = new Uri(str);
+    bool is_match = Regex.IsMatch(uri.Host, @"\w+\.\w+\/");
+    return is_match;
   }
 }
