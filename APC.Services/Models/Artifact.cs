@@ -1,24 +1,20 @@
-using Dapper.Contrib.Extensions;
-
 namespace APC.Services.Models;
 
-[Table("artifacts")]
 public class Artifact {
   public Artifact() {
     versions = new Dictionary<string, ArtifactVersion>();
     dependencies = new HashSet<ArtifactDependency>();
   }
 
-  public int id { get; set; }
-  public string name { get; set; }
+  public string id { get; set; }
   public string module { get; set; }
   public string filter { get; set; }
   public ArtifactStatus status { get; set; } = ArtifactStatus.PROCESSING;
   public bool root { get; set; } = false;
 
-  [Computed] public Dictionary<string, ArtifactVersion> versions { get; set; }
+  public Dictionary<string, ArtifactVersion> versions { get; set; }
 
-  [Computed] public HashSet<ArtifactDependency> dependencies { get; set; }
+  public HashSet<ArtifactDependency> dependencies { get; set; }
 
   public bool AddDependency(string name, string module) {
     return dependencies.Add(new ArtifactDependency {

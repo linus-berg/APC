@@ -29,7 +29,7 @@ public class Nuget : INuget {
 
   public async Task<Artifact> ProcessArtifact(string name) {
     Artifact artifact = new() {
-      name = name,
+      id = name,
       module = "nuget"
     };
     await ProcessArtifactVersions(artifact);
@@ -39,19 +39,18 @@ public class Nuget : INuget {
 
   private async Task ProcessArtifactVersions(Artifact artifact) {
     IEnumerable<IPackageSearchMetadata> versions =
-      await GetMetadata(artifact.name);
+      await GetMetadata(artifact.id);
 
     if (versions == null) {
       throw new ArtifactTimeoutException(
-        $"Metadata fetch failed for {artifact.name}");
+        $"Metadata fetch failed for {artifact.id}");
     }
 
     foreach (IPackageSearchMetadata version in versions) {
       string v = version.Identity.Version.ToString();
       string u = NUGET_ +
-                 $"{artifact.name}/{v}/{artifact.name}.{v}.nupkg".ToLower();
+                 $"{artifact.id}/{v}/{artifact.id}.{v}.nupkg".ToLower();
       ArtifactVersion a_v = new() {
-        artifact_id = artifact.id,
         location = u,
         version = v
       };

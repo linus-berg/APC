@@ -38,7 +38,7 @@ public class ArtifactController : ControllerBase {
     if (artifact == null) {
       await db_.AddArtifact(new Artifact {
         module = input.Module,
-        name = input.Name,
+        id = input.Name,
         filter = input.Filter,
         root = true
       });
@@ -51,7 +51,6 @@ public class ArtifactController : ControllerBase {
       });
     }
 
-    await db_.Commit();
     ArtifactIngestRequest ingest_request = new();
     ingest_request.Artifacts.Add(input.Name);
     ingest_request.Module = input.Module;
@@ -92,7 +91,7 @@ public class ArtifactController : ControllerBase {
       ArtifactIngestRequest ingest_request = new();
       foreach (Artifact artifact in artifacts) {
         ingest_request.Module = module;
-        ingest_request.Artifacts.Add(artifact.name);
+        ingest_request.Artifacts.Add(artifact.id);
         artifact_count++;
       }
 
@@ -121,7 +120,7 @@ public class ArtifactController : ControllerBase {
 
   private async Task ValidateModule(string module) {
     IEnumerable<Artifact>
-      artifacts = await db_.GetArtifactsWithVersions(module);
+      artifacts = await db_.GetArtifacts(module);
     Console.WriteLine(artifacts.Count());
     ArtifactRouteRequest route_request = new();
     foreach (Artifact artifact in artifacts) {
@@ -134,12 +133,10 @@ public class ArtifactController : ControllerBase {
   [HttpDelete("{id}")]
   public async Task<ActionResult> Delete(int id) {
     if (!await db_.DeleteArtifact(new Artifact {
-          id = id
         })) {
       return Problem();
     }
 
-    await db_.Commit();
     return Ok();
   }
 

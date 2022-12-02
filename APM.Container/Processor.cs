@@ -12,7 +12,7 @@ public class Processor : IProcessor {
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     ArtifactProcessRequest request = context.Message;
     Artifact artifact = new() {
-      name = request.Name,
+      id = request.Name,
       module = request.Module
     };
     await GetTags(artifact);
@@ -24,11 +24,10 @@ public class Processor : IProcessor {
   }
 
   private async Task GetTags(Artifact artifact) {
-    SkopeoListTagsOutput list_tags = await skopeo_.GetTags(artifact.name);
+    SkopeoListTagsOutput list_tags = await skopeo_.GetTags(artifact.id);
     foreach (string tag in list_tags.Tags) {
       ArtifactVersion version = new() {
-        artifact_id = artifact.id,
-        location = $"docker://{artifact.name}:{tag}",
+        location = $"docker://{artifact.id}:{tag}",
         version = tag
       };
       artifact.AddVersion(version);

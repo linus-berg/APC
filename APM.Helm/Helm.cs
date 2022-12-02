@@ -10,7 +10,7 @@ public class Helm {
 
   public async Task<Artifact> ProcessArtifact(string name) {
     Artifact artifact = new() {
-      name = name,
+      id = name,
       module = "helm"
     };
     await ProcessVersions(artifact);
@@ -18,9 +18,9 @@ public class Helm {
   }
 
   private async Task ProcessVersions(Artifact artifact) {
-    HelmChartMetadata metadata = await GetMetadata(artifact.name);
+    HelmChartMetadata metadata = await GetMetadata(artifact.id);
     foreach (HelmChartVersion hv in metadata.available_versions) {
-      HelmChartMetadata vm = await GetMetadata(artifact.name, hv.version);
+      HelmChartMetadata vm = await GetMetadata(artifact.id, hv.version);
       ArtifactVersion version = new();
       version.location = vm.content_url;
       version.version = vm.version;
@@ -48,6 +48,7 @@ public class Helm {
       if (string.IsNullOrEmpty(chart.repository)) {
         continue;
       }
+
       Uri uri = new(chart.repository);
       if (uri.Scheme == "file" ||
           string.IsNullOrEmpty(chart.artifacthub_repository_name)) {

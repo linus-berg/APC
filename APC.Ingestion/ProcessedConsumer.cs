@@ -22,12 +22,6 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
 
     /* If not in db add */
     if (await TryInsertOrUpdateArtifact(artifact)) {
-      try {
-        await db_.Commit();
-      } catch (Exception e) {
-        Console.WriteLine($"{artifact.name}->{e.Message}");
-      }
-
       await Collect(context);
     } else {
       return;
@@ -49,17 +43,17 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
 
   private async Task<bool> TryInsertOrUpdateArtifact(Artifact artifact) {
     Artifact db_artifact =
-      await db_.GetArtifactByName(artifact.name, artifact.module);
+      await db_.GetArtifactByName(artifact.id, artifact.module);
     try {
       if (db_artifact != null) {
         artifact.filter = db_artifact.filter;
-        return await db_.UpdateArtifact(db_artifact, artifact);
+        return await db_.UpdateArtifact(artifact);
       }
 
       await db_.AddArtifact(artifact);
       return true;
     } catch (Exception e) {
-      Console.WriteLine($"{artifact.name}->{e.Message}");
+      Console.WriteLine($"{artifact.id}->{e.Message}");
       return true;
     }
   }

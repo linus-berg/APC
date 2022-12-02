@@ -12,7 +12,7 @@ public class Npm : INpm {
   public async Task<Artifact> ProcessArtifact(string name) {
     Metadata metadata = await GetMetadata(name);
     Artifact artifact = new() {
-      name = name,
+      id = name,
       module = "npm"
     };
     ProcessArtifactVersions(artifact, metadata);
