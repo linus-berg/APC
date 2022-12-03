@@ -5,33 +5,22 @@ using MassTransit;
 namespace APC.Ingestion;
 
 public class IngestConsumer : IConsumer<ArtifactIngestRequest> {
+  private readonly IArtifactService aps_;
   private readonly IBus bus_;
   private readonly IApcCache cache_;
   private readonly ILogger<Worker> logger_;
 
-  public IngestConsumer(ILogger<Worker> logger, IBus bus, IApcCache cache) {
+  public IngestConsumer(ILogger<Worker> logger, IBus bus, IApcCache cache,
+                        IArtifactService aps) {
     logger_ = logger;
     bus_ = bus;
     cache_ = cache;
+    aps_ = aps;
   }
 
   public async Task Consume(ConsumeContext<ArtifactIngestRequest> context) {
     /* Run as init */
     ArtifactIngestRequest request = context.Message;
-    foreach (string artifact in request.Artifacts) {
-      await GetArtifact(artifact, request.Module, context.CancellationToken);
-    }
-  }
-
-  private async Task<bool> GetArtifact(string artifact, string module,
-                                       CancellationToken ct) {
-    ArtifactProcessRequest apr = new();
-    apr.Name = artifact;
-    apr.Module = module;
-    apr.Context = await cache_.InitKey(apr.Name);
-    ISendEndpoint endpoint =
-      await bus_.GetSendEndpoint(new Uri($"queue:apm-{module}"));
-    await endpoint.Send(apr, ct);
-    return true;
+    await aps_.Process(request.Artifact);
   }
 }

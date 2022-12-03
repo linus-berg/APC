@@ -1,6 +1,6 @@
 using APC.Kernel;
 using APC.Kernel.Messages;
-using APC.Services.Models;
+using APC.Kernel.Models;
 using MassTransit;
 
 namespace APM.Nuget;
@@ -13,12 +13,12 @@ public class Processor : IProcessor {
   }
 
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
-    string name = context.Message.Name;
-    Console.WriteLine($"PROCESSING: {name}");
-    Artifact artifact = await nuget_.ProcessArtifact(name);
+    Artifact artifact = context.Message.artifact;
+    Console.WriteLine($"PROCESSING: {artifact.id}");
+    await nuget_.ProcessArtifact(artifact);
     await context.Send(Endpoints.APC_INGEST_PROCESSED,
                        new ArtifactProcessedRequest {
-                         Context = context.Message.Context,
+                         Context = context.Message.ctx,
                          Artifact = artifact
                        });
   }

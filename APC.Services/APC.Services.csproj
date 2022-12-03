@@ -17,4 +17,8 @@
         <PackageReference Include="MongoDB.Bson" Version="2.18.0"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
+    </ItemGroup>
+
 </Project>

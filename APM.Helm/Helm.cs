@@ -1,4 +1,4 @@
-using APC.Services.Models;
+using APC.Kernel.Models;
 using APM.Helm.Models;
 using RestSharp;
 
@@ -8,13 +8,8 @@ public class Helm {
   private const string API_ = "https://artifacthub.io/api/v1/packages/helm";
   private readonly RestClient client_ = new(API_);
 
-  public async Task<Artifact> ProcessArtifact(string name) {
-    Artifact artifact = new() {
-      id = name,
-      module = "helm"
-    };
+  public async Task ProcessArtifact(Artifact artifact) {
     await ProcessVersions(artifact);
-    return artifact;
   }
 
   private async Task ProcessVersions(Artifact artifact) {
@@ -56,7 +51,8 @@ public class Helm {
       }
 
       artifact.AddDependency(
-        $"{chart.artifacthub_repository_name}/{chart.name}", artifact.module);
+        $"{chart.artifacthub_repository_name}/{chart.name}",
+        artifact.processor);
     }
   }
 

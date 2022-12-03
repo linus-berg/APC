@@ -1,5 +1,5 @@
 using APC.Kernel.Exceptions;
-using APC.Services.Models;
+using APC.Kernel.Models;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -27,11 +27,7 @@ public class Nuget : INuget {
     logger_ = NullLogger.Instance;
   }
 
-  public async Task<Artifact> ProcessArtifact(string name) {
-    Artifact artifact = new() {
-      id = name,
-      module = "nuget"
-    };
+  public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     await ProcessArtifactVersions(artifact);
     return artifact;
   }
@@ -68,7 +64,7 @@ public class Nuget : INuget {
 
     foreach (PackageDependencyGroup x in dependencies)
     foreach (PackageDependency pkg in x.Packages) {
-      artifact.AddDependency(pkg.Id, artifact.module);
+      artifact.AddDependency(pkg.Id, artifact.processor);
     }
   }
 

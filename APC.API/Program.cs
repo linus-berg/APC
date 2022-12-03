@@ -1,5 +1,7 @@
 using APC.Infrastructure;
+using APC.Infrastructure.Services;
 using APC.Kernel;
+using APC.Services;
 using MassTransit;
 using StackExchange.Redis;
 
@@ -26,8 +28,9 @@ builder.Services.AddMassTransit(b => {
 builder.Services.AddSingleton<IConnectionMultiplexer>(
   ConnectionMultiplexer.Connect(
     Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)));
-builder.Services.AddScoped<ApcDatabase>();
-builder.Services.AddSingleton<ApcCache>();
+builder.Services.AddScoped<IApcDatabase, MongoDatabase>();
+builder.Services.AddSingleton<IApcCache, ApcCache>();
+builder.Services.AddScoped<IArtifactService, ArtifactService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

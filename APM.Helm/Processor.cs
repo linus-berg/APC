@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using APC.Kernel;
 using APC.Kernel.Messages;
-using APC.Services.Models;
+using APC.Kernel.Models;
 using MassTransit;
 
 namespace APM.Helm;
@@ -14,16 +14,16 @@ public class Processor : IProcessor {
   }
 
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
-    string name = context.Message.Name;
-    Artifact artifact = await helm_.ProcessArtifact(name);
+    Artifact artifact = context.Message.artifact;
+    await helm_.ProcessArtifact(artifact);
     ArtifactProcessedRequest request = new() {
-      Context = context.Message.Context,
-      Artifact = artifact
+      Artifact = artifact,
+      Context = context.Message.ctx
     };
     foreach (ArtifactDependency dependency in artifact.dependencies) {
-      if (dependency.module == "container") {
-        string container = dependency.name;
-        request.AddCollectRequest(FixNaming(container), dependency.module);
+      if (dependency.processor == "container") {
+        string container = dependency.id;
+        request.AddCollectRequest(FixNaming(container), dependency.processor);
         artifact.dependencies.Remove(dependency);
       }
     }
@@ -32,9 +32,11 @@ public class Processor : IProcessor {
   }
 
   private static string FixNaming(string name) {
-    return !HasHostname(name) ? $"docker://docker.io/{name}" : $"docker://{name}";
+    return !HasHostname(name)
+             ? $"docker://docker.io/{name}"
+             : $"docker://{name}";
   }
-  
+
   private static bool HasHostname(string name) {
     bool is_match = Regex.IsMatch(name, @"\w+\.\w+\/");
     return is_match;

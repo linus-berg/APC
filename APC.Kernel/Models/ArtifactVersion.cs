@@ -1,8 +1,5 @@
-using Dapper.Contrib.Extensions;
+namespace APC.Kernel.Models;
 
-namespace APC.Services.Models;
-
-[Table("artifact_versions")]
 public class ArtifactVersion {
   public string version { get; set; } = "-";
 

@@ -1,5 +1,5 @@
 using APC.Kernel.Exceptions;
-using APC.Services.Models;
+using APC.Kernel.Models;
 using APM.Npm.Models;
 using RestSharp;
 
@@ -9,12 +9,8 @@ public class Npm : INpm {
   private const string REGISTRY_ = "https://registry.npmjs.org/";
   private readonly RestClient client_ = new(REGISTRY_);
 
-  public async Task<Artifact> ProcessArtifact(string name) {
-    Metadata metadata = await GetMetadata(name);
-    Artifact artifact = new() {
-      id = name,
-      module = "npm"
-    };
+  public async Task<Artifact> ProcessArtifact(Artifact artifact) {
+    Metadata metadata = await GetMetadata(artifact.id);
     ProcessArtifactVersions(artifact, metadata);
     return artifact;
   }
@@ -47,7 +43,7 @@ public class Npm : INpm {
     }
 
     foreach (KeyValuePair<string, string> package in dependencies) {
-      artifact.AddDependency(package.Key, artifact.module);
+      artifact.AddDependency(package.Key, artifact.processor);
     }
   }
 

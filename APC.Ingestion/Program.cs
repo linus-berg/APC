@@ -1,4 +1,5 @@
 using APC.Infrastructure;
+using APC.Infrastructure.Services;
 using APC.Ingestion;
 using APC.Kernel;
 using APC.Services;
@@ -20,8 +21,9 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddSingleton<IConnectionMultiplexer>(
                      ConnectionMultiplexer.Connect(
                        Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)));
-                   services.AddScoped<IApcDatabase, ApcDatabase>();
+                   services.AddScoped<IApcDatabase, MongoDatabase>();
                    services.AddSingleton<IApcCache, ApcCache>();
+                   services.AddScoped<IArtifactService, ArtifactService>();
                    services.AddHostedService<Worker>();
                  })
                  .Build();

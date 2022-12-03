@@ -11,5 +11,7 @@ public enum ApcVariable {
 
   APC_API_HOST,
 
-  APC_ACM_DIR
+  APC_ACM_DIR,
+
+  APC_MONGO_STR
 }

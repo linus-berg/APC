@@ -1,13 +1,15 @@
-using APC.Services.Models;
+using APC.Kernel.Models;
 
 namespace APC.Services;
 
 public interface IApcDatabase {
   public Task AddArtifact(Artifact artifact);
   public Task<bool> UpdateArtifact(Artifact artifact);
-  public Task<IEnumerable<string>> GetModules();
-  public Task<Artifact> GetArtifactByName(string name, string module);
-  public Task<IEnumerable<Artifact>> GetArtifacts(string module);
-  public Task<IEnumerable<Artifact>> GetRoots(string module);
+  public Task<IEnumerable<string>> GetProcessors();
+  public Task<Artifact> GetArtifact(string name, string processor);
+
+  public Task<IEnumerable<Artifact>> GetArtifacts(
+    string processor, bool only_roots = true);
+
   public Task<bool> DeleteArtifact(Artifact artifact);
 }

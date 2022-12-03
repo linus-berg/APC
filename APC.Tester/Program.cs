@@ -1,13 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using APC.Infrastructure;
+using APC.Kernel.Models;
 using APC.Services;
-using APC.Services.Models;
 
-IApcDatabase mongo = new ApcDatabase();
+IApcDatabase mongo = new MongoDatabase();
 Artifact artifact = new() {
   id = "react",
-  module = "npm"
+  processor = "npm"
 };
 
 artifact.root = true;
