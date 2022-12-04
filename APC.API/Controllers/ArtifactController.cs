@@ -2,7 +2,6 @@ using APC.API.Input;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;
 using APC.Services;
-using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APC.API.Controllers;
@@ -13,16 +12,15 @@ public class ArtifactController : ControllerBase {
   private readonly IArtifactService aps_;
   private readonly IApcDatabase database_;
 
-  public ArtifactController(IArtifactService aps, IApcDatabase database,
-                            ISendEndpointProvider bus) {
+  public ArtifactController(IArtifactService aps, IApcDatabase database) {
     database_ = database;
     aps_ = aps;
   }
 
   // GET: api/Artifact
   [HttpGet]
-  public async Task<IEnumerable<Artifact>> Get([FromQuery] string module) {
-    return await database_.GetArtifacts(module);
+  public async Task<IEnumerable<Artifact>> Get([FromQuery] string processor) {
+    return await database_.GetArtifacts(processor);
   }
 
   [HttpGet("processors")]
@@ -34,22 +32,22 @@ public class ArtifactController : ControllerBase {
   [HttpPost]
   public async Task<ActionResult> Post([FromBody] ArtifactInput input) {
     Artifact artifact =
-      await database_.GetArtifact(input.Name, input.Module);
+      await database_.GetArtifact(input.Name, input.Processor);
     if (artifact == null) {
       artifact =
-        await aps_.AddArtifact(input.Name, input.Module, input.Filter, true);
+        await aps_.AddArtifact(input.Name, input.Processor, input.Filter, true);
     } else if (!artifact.root) {
       artifact.root = true;
       await database_.UpdateArtifact(artifact);
     } else {
       return Ok(new {
-        Message = $"{input.Module}/{input.Name} already Exists!"
+        Message = $"{input.Processor}/{input.Name} already Exists!"
       });
     }
 
     await aps_.Ingest(artifact);
     return Ok(new {
-      Message = $"Added {input.Module}/{input.Name}"
+      Message = $"Added {input.Processor}/{input.Name}"
     });
   }
 
@@ -57,7 +55,7 @@ public class ArtifactController : ControllerBase {
   [HttpPost("track")]
   public async Task<ActionResult>
     Track([FromBody] ArtifactTrackerInput request) {
-    if (await aps_.Track(request.Artifact, request.Module)) {
+    if (await aps_.Track(request.Artifact, request.Processor)) {
       return Ok("Artifact being reprocessed");
     }
 
