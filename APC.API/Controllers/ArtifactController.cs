@@ -19,12 +19,12 @@ public class ArtifactController : ControllerBase {
 
   // GET: api/Artifact
   [HttpGet]
-  public async Task<IEnumerable<Artifact>> Get([FromQuery] string processor) {
-    return await database_.GetArtifacts(processor);
+  public async Task<IEnumerable<Artifact>> Get([FromQuery] string processor, [FromQuery] bool only_roots) {
+    return await database_.GetArtifacts(processor, only_roots);
   }
 
   [HttpGet("processors")]
-  public async Task<IEnumerable<string>> GetProcessors() {
+  public async Task<IEnumerable<Processor>> GetProcessors() {
     return await database_.GetProcessors();
   }
 
@@ -32,22 +32,22 @@ public class ArtifactController : ControllerBase {
   [HttpPost]
   public async Task<ActionResult> Post([FromBody] ArtifactInput input) {
     Artifact artifact =
-      await database_.GetArtifact(input.Name, input.Processor);
+      await database_.GetArtifact(input.Id, input.Processor);
     if (artifact == null) {
       artifact =
-        await aps_.AddArtifact(input.Name, input.Processor, input.Filter, true);
+        await aps_.AddArtifact(input.Id, input.Processor, input.Filter, true);
     } else if (!artifact.root) {
       artifact.root = true;
       await database_.UpdateArtifact(artifact);
     } else {
       return Ok(new {
-        Message = $"{input.Processor}/{input.Name} already Exists!"
+        Message = $"{input.Processor}/{input.Id} already Exists!"
       });
     }
 
     await aps_.Ingest(artifact);
     return Ok(new {
-      Message = $"Added {input.Processor}/{input.Name}"
+      Message = $"Added {input.Processor}/{input.Id}"
     });
   }
 

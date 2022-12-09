@@ -89,11 +89,11 @@ public class ArtifactService : IArtifactService {
   }
 
   public async Task ReTrack() {
-    IEnumerable<string> processors = await db_.GetProcessors();
+    IEnumerable<Processor> processors = await db_.GetProcessors();
     int proc_count = 0;
     int artifact_count = 0;
-    foreach (string processor in processors) {
-      IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor);
+    foreach (Processor processor in processors) {
+      IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.Id);
       foreach (Artifact artifact in artifacts) {
         await Ingest(artifact);
         artifact_count++;
@@ -104,8 +104,8 @@ public class ArtifactService : IArtifactService {
   }
 
   public async Task Validate() {
-    IEnumerable<string> processors = await db_.GetProcessors();
-    foreach (string processor in processors) {
+    IEnumerable<Processor> processors = await db_.GetProcessors();
+    foreach (Processor processor in processors) {
       try {
         Console.WriteLine($"Trying to validate {processor}");
         await Validate(processor);
@@ -115,9 +115,9 @@ public class ArtifactService : IArtifactService {
     }
   }
 
-  public async Task Validate(string processor) {
+  public async Task Validate(Processor processor) {
     IEnumerable<Artifact>
-      artifacts = await db_.GetArtifacts(processor, false);
+      artifacts = await db_.GetArtifacts(processor.Id, false);
     Console.WriteLine($"Validating {processor}: {artifacts.Count()}");
     ArtifactRouteRequest route_request = new();
     foreach (Artifact artifact in artifacts) {

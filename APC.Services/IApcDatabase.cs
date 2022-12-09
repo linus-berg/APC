@@ -3,9 +3,10 @@ using APC.Kernel.Models;
 namespace APC.Services;
 
 public interface IApcDatabase {
+  public Task AddProcessor(Processor processor);
   public Task AddArtifact(Artifact artifact);
   public Task<bool> UpdateArtifact(Artifact artifact);
-  public Task<IEnumerable<string>> GetProcessors();
+  public Task<IEnumerable<Processor>> GetProcessors();
   public Task<Artifact> GetArtifact(string name, string processor);
 
   public Task<IEnumerable<Artifact>> GetArtifacts(

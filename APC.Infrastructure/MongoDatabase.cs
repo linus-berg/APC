@@ -7,6 +7,7 @@ namespace APC.Infrastructure;
 public class MongoDatabase : IApcDatabase {
   private readonly MongoClient client_;
   private readonly IMongoDatabase database_;
+  private readonly string PROCCESSOR_COLLECTION_ = "apc-processors";
 
   public MongoDatabase() {
     string c_str = Environment.GetEnvironmentVariable("APC_MONGO_STR");
@@ -19,6 +20,12 @@ public class MongoDatabase : IApcDatabase {
       GetCollection<Artifact>(artifact.processor);
     await collection.InsertOneAsync(artifact);
   }
+  
+  public async Task AddProcessor(Processor processor) {
+    IMongoCollection<Processor> collection =
+      GetCollection<Processor>(PROCCESSOR_COLLECTION_);
+    await collection.InsertOneAsync(processor);
+  }
 
   public async Task<bool> UpdateArtifact(Artifact artifact) {
     IMongoCollection<Artifact> collection =
@@ -28,8 +35,10 @@ public class MongoDatabase : IApcDatabase {
     return result.IsAcknowledged;
   }
 
-  public async Task<IEnumerable<string>> GetProcessors() {
-    return await (await database_.ListCollectionNamesAsync()).ToListAsync();
+  public async Task<IEnumerable<Processor>> GetProcessors() {
+    IMongoCollection<Processor> collection =
+      GetCollection<Processor>(PROCCESSOR_COLLECTION_);
+    return await (await collection.FindAsync<Processor>(a => true)).ToListAsync();
   }
 
   public async Task<Artifact> GetArtifact(string id, string processor) {
