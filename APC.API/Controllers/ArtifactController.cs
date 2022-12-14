@@ -23,11 +23,6 @@ public class ArtifactController : ControllerBase {
     return await database_.GetArtifacts(processor, only_roots);
   }
 
-  [HttpGet("processors")]
-  public async Task<IEnumerable<Processor>> GetProcessors() {
-    return await database_.GetProcessors();
-  }
-
   // POST: api/Artifact
   [HttpPost]
   public async Task<ActionResult> Post([FromBody] ArtifactInput input) {
