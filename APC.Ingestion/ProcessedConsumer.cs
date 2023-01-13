@@ -1,35 +1,32 @@
-using APC.Kernel;
 using APC.Kernel.Messages;
+using APC.Kernel.Models;
 using APC.Services;
-using APC.Services.Models;
 using MassTransit;
 
 namespace APC.Ingestion;
 
 public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
+  private readonly IArtifactService aps_;
   private readonly IApcCache cache_;
   private readonly IApcDatabase db_;
 
-  public ProcessedConsumer(IApcDatabase db, IApcCache cache) {
+  public ProcessedConsumer(IArtifactService aps, IApcDatabase db,
+                           IApcCache cache) {
     db_ = db;
     cache_ = cache;
+    aps_ = aps;
   }
 
   /* On APM returning processed artifact */
   public async Task Consume(ConsumeContext<ArtifactProcessedRequest> context) {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
+    Artifact stored = await db_.GetArtifact(artifact.id, artifact.processor);
 
-    /* If not in db add */
-    if (await TryInsertOrUpdateArtifact(artifact)) {
-      try {
-        await db_.Commit();
-      } catch (Exception e) {
-        Console.WriteLine($"{artifact.name}->{e.Message}");
-      }
-
+    if (await db_.UpdateArtifact(artifact)) {
       await Collect(context);
-    } else {
+    } else if (stored.versions.Count == artifact.versions.Count) {
+      /* If version count is the same, end */
       return;
     }
 
@@ -37,30 +34,14 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     /* Process all dependencies not already processed in this context */
     HashSet<ArtifactDependency> dependencies = artifact.dependencies;
     foreach (ArtifactDependency dependency in dependencies) {
-      if (await cache_.InCache(dependency.name, request.Context)) {
+      if (await cache_.InCache(dependency.id, request.Context)) {
         continue;
       }
 
       /* Memorize this dependency */
-      await cache_.AddToCache(dependency.name, request.Context);
-      await Process(context, dependency);
-    }
-  }
-
-  private async Task<bool> TryInsertOrUpdateArtifact(Artifact artifact) {
-    Artifact db_artifact =
-      await db_.GetArtifactByName(artifact.name, artifact.module);
-    try {
-      if (db_artifact != null) {
-        artifact.filter = db_artifact.filter;
-        return await db_.UpdateArtifact(db_artifact, artifact);
-      }
-
-      await db_.AddArtifact(artifact);
-      return true;
-    } catch (Exception e) {
-      Console.WriteLine($"{artifact.name}->{e.Message}");
-      return true;
+      Artifact dep =
+        await aps_.AddArtifact(dependency.id, dependency.processor, "");
+      await aps_.Process(dep, request.Context);
     }
   }
 
@@ -68,24 +49,9 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.Artifact;
     foreach (ArtifactCollectRequest collect in request.CollectRequests) {
-      await context.Send(new Uri($"queue:{collect.GetCollectorModule()}"),
-                         collect);
+      await aps_.Collect(collect);
     }
 
-    await context.Send(Endpoints.APC_ACM_ROUTER, new ArtifactRouteRequest {
-      Artifact = artifact
-    });
-  }
-
-  private async Task Process(ConsumeContext<ArtifactProcessedRequest> context,
-                             ArtifactDependency dependency) {
-    ArtifactProcessedRequest request = context.Message;
-    Artifact artifact = request.Artifact;
-    await context.Send(new Uri($"queue:apm-{artifact.module}"),
-                       new ArtifactProcessRequest {
-                         Context = request.Context,
-                         Name = dependency.name,
-                         Module = dependency.module
-                       });
+    await aps_.Route(artifact);
   }
 }

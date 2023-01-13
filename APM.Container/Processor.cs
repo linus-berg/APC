@@ -1,6 +1,6 @@
 using APC.Kernel;
 using APC.Kernel.Messages;
-using APC.Services.Models;
+using APC.Kernel.Models;
 using APC.Skopeo;
 using MassTransit;
 
@@ -11,24 +11,20 @@ public class Processor : IProcessor {
 
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     ArtifactProcessRequest request = context.Message;
-    Artifact artifact = new() {
-      name = request.Name,
-      module = request.Module
-    };
+    Artifact artifact = request.artifact;
     await GetTags(artifact);
     await context.Send(Endpoints.APC_INGEST_PROCESSED,
                        new ArtifactProcessedRequest {
-                         Context = context.Message.Context,
+                         Context = context.Message.ctx,
                          Artifact = artifact
                        });
   }
 
   private async Task GetTags(Artifact artifact) {
-    SkopeoListTagsOutput list_tags = await skopeo_.GetTags(artifact.name);
+    SkopeoListTagsOutput list_tags = await skopeo_.GetTags(artifact.id);
     foreach (string tag in list_tags.Tags) {
       ArtifactVersion version = new() {
-        artifact_id = artifact.id,
-        location = $"docker://{artifact.name}:{tag}",
+        location = $"docker://{artifact.id}:{tag}",
         version = tag
       };
       artifact.AddVersion(version);

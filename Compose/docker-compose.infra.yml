@@ -1,17 +1,25 @@
 version: "3.8"
 services:
 # Infrastructure
-  apc-ingest-db:
-    image: postgres:13
-    container_name: apc-ingest-db
-    volumes:
-      - "./volumes/pg_init:/docker-entrypoint-initdb.d"
-      - "./volumes/pg_data:/var/lib/postgresql/data"
+  apc-mongo:
+    image: mongo
+    restart: always
     ports:
-      - 5432:5432
+      - 27017:27017
     environment:
-      - POSTGRES_PASSWORD=mysecret
-  
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  apc-mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@apc-mongo:27017/
+ 
   apc-ingest-redis:
     image: redis/redis-stack:latest
     container_name: apc-ingest-redis
@@ -27,14 +35,3 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
-      
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: apc-pgadmin
-    volumes:
-      - "./servers.json:/pgadmin4/servers.json"
-    ports:
-      - 8080:80
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=linus@local.com
-      - PGADMIN_DEFAULT_PASSWORD=admin

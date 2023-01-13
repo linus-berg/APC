@@ -51,22 +51,7 @@ public static class RegistrationUtils {
     return sc;
   }
 
-  public static IServiceCollection RegisterRouter(
-    this IServiceCollection sc, IRouter router) {
-    sc.AddMassTransit(mt => {
-      mt.UsingRabbitMq((ctx, cfg) => {
-        cfg.SetupRabbitMq();
-        cfg.ReceiveEndpoint("acm-router", e => {
-          e.ConfigureRetrying();
-          e.Instance(router);
-        });
-        cfg.ConfigureEndpoints(ctx);
-      });
-    });
-    return sc;
-  }
-
-  private static void ConfigureRetrying(
+  public static void ConfigureRetrying(
     this IRabbitMqReceiveEndpointConfigurator endpoint) {
     endpoint.UseDelayedRedelivery(r => {
       r.Intervals(TimeSpan.FromMinutes(5),

@@ -1,5 +1,5 @@
 using APC.Kernel.Exceptions;
-using APC.Services.Models;
+using APC.Kernel.Models;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -27,11 +27,7 @@ public class Nuget : INuget {
     logger_ = NullLogger.Instance;
   }
 
-  public async Task<Artifact> ProcessArtifact(string name) {
-    Artifact artifact = new() {
-      name = name,
-      module = "nuget"
-    };
+  public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     await ProcessArtifactVersions(artifact);
     return artifact;
   }
@@ -39,19 +35,18 @@ public class Nuget : INuget {
 
   private async Task ProcessArtifactVersions(Artifact artifact) {
     IEnumerable<IPackageSearchMetadata> versions =
-      await GetMetadata(artifact.name);
+      await GetMetadata(artifact.id);
 
     if (versions == null) {
       throw new ArtifactTimeoutException(
-        $"Metadata fetch failed for {artifact.name}");
+        $"Metadata fetch failed for {artifact.id}");
     }
 
     foreach (IPackageSearchMetadata version in versions) {
       string v = version.Identity.Version.ToString();
       string u = NUGET_ +
-                 $"{artifact.name}/{v}/{artifact.name}.{v}.nupkg".ToLower();
+                 $"{artifact.id}/{v}/{artifact.id}.{v}.nupkg".ToLower();
       ArtifactVersion a_v = new() {
-        artifact_id = artifact.id,
         location = u,
         version = v
       };
@@ -69,7 +64,7 @@ public class Nuget : INuget {
 
     foreach (PackageDependencyGroup x in dependencies)
     foreach (PackageDependency pkg in x.Packages) {
-      artifact.AddDependency(pkg.Id, artifact.module);
+      artifact.AddDependency(pkg.Id, artifact.processor);
     }
   }
 

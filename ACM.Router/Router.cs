@@ -1,12 +1,12 @@
 using System.Text.RegularExpressions;
-using APC.Kernel;
+using APC.Kernel.Extensions;
 using APC.Kernel.Messages;
-using APC.Services.Models;
+using APC.Kernel.Models;
 using MassTransit;
 
 namespace ACM.Router;
 
-public class Router : IRouter {
+public class Router : IConsumer<ArtifactRouteRequest> {
   public async Task Consume(ConsumeContext<ArtifactRouteRequest> context) {
     Artifact artifact = context.Message.Artifact;
     Regex regex = null;
@@ -17,18 +17,8 @@ public class Router : IRouter {
     foreach (KeyValuePair<string, ArtifactVersion> kv in artifact.versions) {
       bool collect = regex == null || regex.IsMatch(kv.Key);
       if (collect) {
-        await Collect(context, kv.Value.location, artifact.module);
+        await context.Collect(kv.Value.location, artifact.processor);
       }
     }
-  }
-
-  private async Task Collect(ConsumeContext<ArtifactRouteRequest> context,
-                             string location, string module) {
-    ArtifactCollectRequest request = new() {
-      location = location,
-      module = module
-    };
-    await context.Send(new Uri($"queue:{request.GetCollectorModule()}"),
-                       request);
   }
 }
