@@ -8,15 +8,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
-        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.7" />
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+        <PackageReference Include="Keycloak.AuthServices.Authentication" Version="1.4.1"/>
+        <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1"/>
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.7"/>
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj" />
-        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj" />
+        <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj"/>
+        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Keycloak"/>
     </ItemGroup>
 
 </Project>

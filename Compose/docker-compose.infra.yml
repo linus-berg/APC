@@ -10,6 +10,17 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
 
+  apc-keycloak:
+    image: quay.io/keycloak/keycloak:20.0.3
+    restart: always
+    ports:
+      - 8090:8080
+    command:
+      - start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
   apc-mongo-express:
     image: mongo-express
     restart: always

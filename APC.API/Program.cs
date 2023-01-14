@@ -2,6 +2,7 @@ using APC.Infrastructure;
 using APC.Infrastructure.Services;
 using APC.Kernel;
 using APC.Services;
+using Keycloak.AuthServices.Authentication;
 using MassTransit;
 using StackExchange.Redis;
 
@@ -32,11 +33,18 @@ builder.Services.AddScoped<IApcDatabase, MongoDatabase>();
 builder.Services.AddSingleton<IApcCache, ApcCache>();
 builder.Services.AddScoped<IArtifactService, ArtifactService>();
 
+/* keycloak */
+builder.Host.ConfigureKeycloakConfigurationSource();
+
+builder.Services.AddKeycloakAuthentication(builder.Configuration,
+                                           o => {
+                                             o.RequireHttpsMetadata = false;
+                                           });
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 WebApplication app = builder.Build();
 
@@ -52,6 +60,7 @@ app.UseCors(b => {
   b.AllowAnyMethod();
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 app.Run();
