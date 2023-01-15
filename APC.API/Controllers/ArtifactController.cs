@@ -2,6 +2,7 @@ using APC.API.Input;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;
 using APC.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APC.API.Controllers;
@@ -19,7 +20,8 @@ public class ArtifactController : ControllerBase {
 
   // GET: api/Artifact
   [HttpGet]
-  public async Task<IEnumerable<Artifact>> Get([FromQuery] string processor, [FromQuery] bool only_roots) {
+  public async Task<IEnumerable<Artifact>> Get([FromQuery] string processor,
+                                               [FromQuery] bool only_roots) {
     return await database_.GetArtifacts(processor, only_roots);
   }
 
@@ -58,12 +60,14 @@ public class ArtifactController : ControllerBase {
   }
 
   [HttpPost("track/all")]
+  [Authorize(Roles = "Administrator")]
   public async Task<ActionResult> TrackAll() {
     await aps_.ReTrack();
     return Ok("Triggered re-tracking");
   }
 
   [HttpPost("validate/all")]
+  [Authorize(Roles = "Administrator")]
   public async Task<ActionResult> ValidateAllArtifacts() {
     await aps_.Validate();
     return Ok("Validating all artifacts!");
@@ -71,6 +75,7 @@ public class ArtifactController : ControllerBase {
 
   // DELETE: api/Artifact/npm/react
   [HttpDelete("{processor}/{id}")]
+  [Authorize(Roles = "Administrator")]
   public async Task<ActionResult> Delete(string id, string processor) {
     Artifact artifact = await database_.GetArtifact(id, processor);
     if (artifact == null) {
