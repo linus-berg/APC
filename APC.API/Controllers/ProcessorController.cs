@@ -10,6 +10,7 @@ namespace APC.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ProcessorController : ControllerBase {
   private readonly IArtifactService aps_;
   private readonly IApcDatabase database_;

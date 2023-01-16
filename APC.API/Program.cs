@@ -3,11 +3,11 @@ using APC.Infrastructure.Services;
 using APC.Kernel;
 using APC.Services;
 using Keycloak.AuthServices.Authentication;
+using Keycloak.AuthServices.Common;
 using MassTransit;
 using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddMassTransit(b => {
   b.UsingRabbitMq((ctx, cfg) => {
@@ -62,5 +62,5 @@ app.UseCors(b => {
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers().RequireAuthorization();
+app.MapControllers();
 app.Run();

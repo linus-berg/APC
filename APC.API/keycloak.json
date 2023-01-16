@@ -1,9 +1,0 @@
-{
-  "realm": "master",
-  "auth-server-url": "http://localhost:8090/",
-  "ssl-required": "external",
-  "resource": "apc",
-  "public-client": true,
-  "confidential-port": 0,
-  "verify-token-audience": false
-}
