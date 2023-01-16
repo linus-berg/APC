@@ -40,7 +40,8 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
 
       /* Memorize this dependency */
       Artifact dep =
-        await aps_.AddArtifact(dependency.id, dependency.processor, "");
+        await aps_.AddArtifact(dependency.id, dependency.processor, "",
+                               dependency.config);
       await aps_.Process(dep, request.Context);
     }
   }

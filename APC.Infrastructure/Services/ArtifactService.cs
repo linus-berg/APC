@@ -19,7 +19,9 @@ public class ArtifactService : IArtifactService {
   }
 
   public async Task<Artifact> AddArtifact(string id, string processor,
-                                          string filter, bool root = false) {
+                                          string filter,
+                                          Dictionary<string, string> config,
+                                          bool root = false) {
     Artifact existing = await db_.GetArtifact(id, processor);
     if (existing != null) {
       return existing;
@@ -30,6 +32,8 @@ public class ArtifactService : IArtifactService {
     artifact.processor = processor;
     artifact.filter = filter;
     artifact.root = root;
+    artifact.config = config;
+
     await db_.AddArtifact(artifact);
     return artifact;
   }

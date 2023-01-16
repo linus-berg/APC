@@ -5,6 +5,7 @@ namespace APC.Services;
 
 public interface IArtifactService {
   public Task<Artifact> AddArtifact(string id, string processor, string filter,
+                                    Dictionary<string, string> config,
                                     bool root = false);
 
   public Task Collect(string location, string processor);

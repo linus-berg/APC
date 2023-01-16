@@ -4,6 +4,7 @@ public class Artifact {
   public Artifact() {
     versions = new Dictionary<string, ArtifactVersion>();
     dependencies = new HashSet<ArtifactDependency>();
+    config = new Dictionary<string, string>();
   }
 
   public string id { get; set; }
@@ -14,6 +15,7 @@ public class Artifact {
   public bool root { get; set; } = false;
 
   public Dictionary<string, ArtifactVersion> versions { get; set; }
+  public Dictionary<string, string> config { get; set; }
 
   public HashSet<ArtifactDependency> dependencies { get; set; }
 

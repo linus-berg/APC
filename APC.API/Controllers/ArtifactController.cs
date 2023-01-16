@@ -33,7 +33,8 @@ public class ArtifactController : ControllerBase {
       await database_.GetArtifact(input.Id, input.Processor);
     if (artifact == null) {
       artifact =
-        await aps_.AddArtifact(input.Id, input.Processor, input.Filter, true);
+        await aps_.AddArtifact(input.Id, input.Processor, input.Filter,
+                               input.Config, true);
     } else if (!artifact.root) {
       artifact.root = true;
       await database_.UpdateArtifact(artifact);
