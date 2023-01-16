@@ -4,6 +4,7 @@ using APC.Kernel.Models;
 using APC.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ILogger = Serilog.ILogger;
 
 namespace APC.API.Controllers;
 
@@ -13,10 +14,13 @@ namespace APC.API.Controllers;
 public class ArtifactController : ControllerBase {
   private readonly IArtifactService aps_;
   private readonly IApcDatabase database_;
+  private readonly ILogger log_;
 
-  public ArtifactController(IArtifactService aps, IApcDatabase database) {
+  public ArtifactController(IArtifactService aps, IApcDatabase database,
+                            ILogger log) {
     database_ = database;
     aps_ = aps;
+    log_ = log.ForContext<ArtifactController>();
   }
 
   // GET: api/Artifact
@@ -29,6 +33,7 @@ public class ArtifactController : ControllerBase {
   // POST: api/Artifact
   [HttpPost]
   public async Task<ActionResult> Post([FromBody] ArtifactInput input) {
+    log_.Information($"{HttpContext.User.Identity.Name} added {input.Id}");
     Artifact artifact =
       await database_.GetArtifact(input.Id, input.Processor);
     if (artifact == null) {

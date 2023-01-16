@@ -3,11 +3,24 @@ using APC.Infrastructure.Services;
 using APC.Kernel;
 using APC.Services;
 using Keycloak.AuthServices.Authentication;
-using Keycloak.AuthServices.Common;
+using Keycloak.AuthServices.Authorization;
 using MassTransit;
+using Serilog;
+using Serilog.Events;
 using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, configuration) => {
+  configuration.Enrich.FromLogContext();
+  configuration.MinimumLevel.Override("Microsoft", LogEventLevel.Information);
+  configuration.WriteTo.Console();
+  configuration.WriteTo.File(
+    Path.Combine(
+      Environment.GetEnvironmentVariable("APC_LOGS"),
+      "apc_api.log"));
+});
+
 // Add services to the container.
 builder.Services.AddMassTransit(b => {
   b.UsingRabbitMq((ctx, cfg) => {
@@ -25,7 +38,6 @@ builder.Services.AddMassTransit(b => {
     cfg.ConfigureEndpoints(ctx);
   });
 });
-
 builder.Services.AddSingleton<IConnectionMultiplexer>(
   ConnectionMultiplexer.Connect(
     Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)));
@@ -40,7 +52,9 @@ builder.Services.AddKeycloakAuthentication(builder.Configuration,
                                            o => {
                                              o.RequireHttpsMetadata = false;
                                            });
+builder.Services.AddKeycloakAuthorization(builder.Configuration);
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -59,7 +73,7 @@ app.UseCors(b => {
   b.AllowAnyHeader();
   b.AllowAnyMethod();
 });
-
+app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
