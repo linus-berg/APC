@@ -15,6 +15,7 @@ FROM build AS publish
 RUN dotnet publish "ACM.Git.csproj" -c Release -o /app/publish
 
 FROM base AS final
+RUN apt-get -y update && apt-get install -y git
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ACM.Git.dll"]
