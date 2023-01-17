@@ -21,7 +21,7 @@ builder.Host.UseSerilog((context, configuration) => {
       Environment.GetEnvironmentVariable("APC_LOGS"),
       "apc_api.log"));
 });
-IdentityModelEventSource.ShowPII = true;
+
 // Add services to the container.
 builder.Services.AddMassTransit(b => {
   b.UsingRabbitMq((ctx, cfg) => {
