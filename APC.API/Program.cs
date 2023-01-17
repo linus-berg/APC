@@ -5,6 +5,7 @@ using APC.Services;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using MassTransit;
+using Microsoft.IdentityModel.Logging;
 using Serilog;
 using Serilog.Events;
 using StackExchange.Redis;
@@ -20,7 +21,7 @@ builder.Host.UseSerilog((context, configuration) => {
       Environment.GetEnvironmentVariable("APC_LOGS"),
       "apc_api.log"));
 });
-
+IdentityModelEventSource.ShowPII = true;
 // Add services to the container.
 builder.Services.AddMassTransit(b => {
   b.UsingRabbitMq((ctx, cfg) => {
