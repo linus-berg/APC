@@ -51,8 +51,13 @@ public class FileSystem {
   }
 
 
-  public string GetModuleDir(string module) {
-    return Path.Join(BASE_DIR_, module);
+  public string GetModuleDir(string module, bool create = false) {
+    string dir = Path.Join(BASE_DIR_, module);
+    if (create) {
+      Directory.CreateDirectory(dir);
+    }
+
+    return dir;
   }
 
   public bool Exists(string filepath) {

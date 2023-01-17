@@ -4,6 +4,8 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["ACM.Git/ACM.Git.csproj", "ACM.Git/"]
+COPY ["ACM.Kernel/ACM.Kernel.csproj", "ACM.Kernel/"]
+COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 RUN dotnet restore "ACM.Git/ACM.Git.csproj"
 COPY . .
 WORKDIR "/src/ACM.Git"
