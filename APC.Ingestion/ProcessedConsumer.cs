@@ -25,11 +25,12 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
 
     if (await db_.UpdateArtifact(artifact)) {
       await Collect(context);
-    } else if (stored.versions.Count == artifact.versions.Count) {
+    }
+
+    if (stored.versions.Count == artifact.versions.Count) {
       /* If version count is the same, end */
       return;
     }
-
 
     /* Process all dependencies not already processed in this context */
     HashSet<ArtifactDependency> dependencies = artifact.dependencies;
