@@ -5,6 +5,7 @@ using APC.Services;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using MassTransit;
+using Microsoft.IdentityModel.Logging;
 using Serilog;
 using Serilog.Events;
 using StackExchange.Redis;
