@@ -37,6 +37,9 @@ jobs:
           - name: acm/http
             directory: ACM.Http
             
+          - name: acm/git
+            directory: ACM.Git
+            
           - name: acm/router
             directory: ACM.Router
             
