@@ -6,6 +6,7 @@ public interface IApcDatabase {
   public Task AddProcessor(Processor processor);
   public Task AddArtifact(Artifact artifact);
   public Task<bool> UpdateArtifact(Artifact artifact);
+  public Task<Processor> GetProcessor(string processor);
   public Task<IEnumerable<Processor>> GetProcessors();
   public Task<Artifact> GetArtifact(string name, string processor);
 

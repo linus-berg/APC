@@ -20,7 +20,7 @@ public class MongoDatabase : IApcDatabase {
       GetCollection<Artifact>(artifact.processor);
     await collection.InsertOneAsync(artifact);
   }
-  
+
   public async Task AddProcessor(Processor processor) {
     IMongoCollection<Processor> collection =
       GetCollection<Processor>(PROCCESSOR_COLLECTION_);
@@ -35,10 +35,18 @@ public class MongoDatabase : IApcDatabase {
     return result.IsAcknowledged;
   }
 
+  public async Task<Processor> GetProcessor(string processor) {
+    IMongoCollection<Processor> collection =
+      GetCollection<Processor>(PROCCESSOR_COLLECTION_);
+    return await (await collection.FindAsync(a => a.Id == processor))
+             .FirstOrDefaultAsync();
+  }
+
   public async Task<IEnumerable<Processor>> GetProcessors() {
     IMongoCollection<Processor> collection =
       GetCollection<Processor>(PROCCESSOR_COLLECTION_);
-    return await (await collection.FindAsync<Processor>(a => true)).ToListAsync();
+    return await (await collection.FindAsync<Processor>(a => true))
+             .ToListAsync();
   }
 
   public async Task<Artifact> GetArtifact(string id, string processor) {

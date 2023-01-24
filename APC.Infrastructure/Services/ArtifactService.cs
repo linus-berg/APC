@@ -99,7 +99,12 @@ public class ArtifactService : IArtifactService {
     foreach (Processor processor in processors) {
       IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.Id);
       foreach (Artifact artifact in artifacts) {
-        await Ingest(artifact);
+        if (processor.DirectCollect) {
+          await Collect(artifact.id, artifact.processor);
+        } else {
+          await Ingest(artifact);
+        }
+
         artifact_count++;
       }
 

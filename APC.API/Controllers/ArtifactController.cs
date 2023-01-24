@@ -49,7 +49,13 @@ public class ArtifactController : ControllerBase {
       });
     }
 
-    await aps_.Ingest(artifact);
+    Processor proc = await database_.GetProcessor(input.Processor);
+    if (proc.DirectCollect) {
+      await aps_.Collect(input.Id, input.Processor);
+    } else {
+      await aps_.Ingest(artifact);
+    }
+
     return Ok(new {
       Message = $"Added {input.Processor}/{input.Id}"
     });
