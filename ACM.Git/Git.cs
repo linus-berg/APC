@@ -7,6 +7,17 @@ public class Git {
 
   public Git(string dir) {
     dir_ = dir;
+    ConfigureProxy().Wait();
+  }
+
+  private async Task<bool> ConfigureProxy() {
+    Command cmd = Cli.Wrap("git")
+              .WithArguments($"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}");
+    await using Stream stdout = Console.OpenStandardOutput();
+    await using Stream stderr = Console.OpenStandardOutput();
+    cmd |= (stdout, stderr);
+    CommandResult result = await cmd.ExecuteAsync();
+    return result.ExitCode == 0;
   }
 
   public async Task<bool> Mirror(string repo) {
@@ -22,6 +33,9 @@ public class Git {
       GetCommand(GetRepoPath(uri.Uri), $"clone --mirror {uri.Uri}");
     bool failed = false;
     try {
+      await using Stream stdout = Console.OpenStandardOutput();
+      await using Stream stderr = Console.OpenStandardOutput();
+      cmd |= (stdout, stderr);
       CommandResult result = await cmd.ExecuteAsync();
       failed = result.ExitCode == 0;
     } catch (Exception e) {
@@ -34,6 +48,9 @@ public class Git {
 
   public async Task<bool> Update(string repo) {
     Command cmd = GetCommand(repo, "remote update");
+    await using Stream stdout = Console.OpenStandardOutput();
+    await using Stream stderr = Console.OpenStandardOutput();
+    cmd |= (stdout, stderr);
     CommandResult result = await cmd.ExecuteAsync();
     return result.ExitCode == 0;
   }
