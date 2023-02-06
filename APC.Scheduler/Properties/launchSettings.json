@@ -1,0 +1,18 @@
+﻿{
+  "profiles": {
+    "APC.Scheduler": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "APC_RABBIT_MQ_HOST": "localhost",
+        "APC_RABBIT_MQ_USER": "guest",
+        "APC_RABBIT_MQ_PASS": "guest",
+        "APC_REDIS_HOST": "localhost",
+        "APC_PGSQL_STR": "Host=localhost;Username=postgres;Password=mysecret;Database=postgres",
+        "APC_MONGO_STR": "mongodb://root:example@localhost:27017",
+        "APC_LOGS": "./logs"
+      }
+    }
+  }
+}

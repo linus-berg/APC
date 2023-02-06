@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-APC.Scheduler-5E528AE8-5876-4A65-BDE5-11F104C776C7</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MassTransit" Version="8.0.13-develop.918" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.13-develop.912" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="Quartz" Version="3.6.0" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.6.0" />
+        <PackageReference Include="StackExchange.Redis" Version="2.6.90" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj" />
+      <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj" />
+      <ProjectReference Include="..\APC.Services\APC.Services.csproj" />
+    </ItemGroup>
+</Project>

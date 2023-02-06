@@ -18,6 +18,9 @@ jobs:
 
           - name: api
             directory: APC.API
+            
+          - name: scheduler
+            directory: APC.Scheduler
           
           - name: ingestion
             directory: APC.Ingestion
