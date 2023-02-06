@@ -31,7 +31,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                      q.AddTrigger(t => {
                        t.WithIdentity("tracking-trigger", "apc");
                        t.ForJob(TrackingJob.Key);
-                       t.WithCronSchedule("* * 0/2 ? * * *");
+                       t.WithCronSchedule("0 0 0/2 ? * * *");
                      });
                    });
 
