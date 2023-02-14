@@ -1,3 +1,5 @@
+using System.Security.Authentication;
+using System.Security.Claims;
 using APC.API.Input;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;
@@ -33,7 +35,11 @@ public class ArtifactController : ControllerBase {
   // POST: api/Artifact
   [HttpPost]
   public async Task<ActionResult> Post([FromBody] ArtifactInput input) {
-    log_.Information($"{HttpContext.User.Identity.Name} added {input.Id}");
+    ClaimsPrincipal u = HttpContext.User;
+    if (u?.Identity == null) {
+      throw new AuthenticationException("Unauthenticated user.");
+    }
+    log_.Information($"{u.Identity.Name} added {input.Id}");
     Artifact artifact =
       await database_.GetArtifact(input.Id, input.Processor);
     if (artifact == null) {

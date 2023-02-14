@@ -1,3 +1,4 @@
+using APC.Kernel.Extensions;
 using CliWrap;
 
 namespace ACM.Git;
@@ -13,11 +14,7 @@ public class Git {
   private async Task<bool> ConfigureProxy() {
     Command cmd = Cli.Wrap("git")
               .WithArguments($"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}");
-    await using Stream stdout = Console.OpenStandardOutput();
-    await using Stream stderr = Console.OpenStandardOutput();
-    cmd |= (stdout, stderr);
-    CommandResult result = await cmd.ExecuteAsync();
-    return result.ExitCode == 0;
+    return await cmd.ExecuteToConsole();
   }
 
   public async Task<bool> Mirror(string repo) {
@@ -31,28 +28,12 @@ public class Git {
     uri.Port = -1;
     Command cmd =
       GetCommand(GetRepoPath(uri.Uri), $"clone --mirror {uri.Uri}");
-    bool failed = false;
-    try {
-      await using Stream stdout = Console.OpenStandardOutput();
-      await using Stream stderr = Console.OpenStandardOutput();
-      cmd |= (stdout, stderr);
-      CommandResult result = await cmd.ExecuteAsync();
-      failed = result.ExitCode == 0;
-    } catch (Exception e) {
-      Console.WriteLine(e);
-      throw;
-    }
-
-    return failed;
+    return await cmd.ExecuteToConsole();
   }
 
   public async Task<bool> Update(string repo) {
     Command cmd = GetCommand(repo, "remote update");
-    await using Stream stdout = Console.OpenStandardOutput();
-    await using Stream stderr = Console.OpenStandardOutput();
-    cmd |= (stdout, stderr);
-    CommandResult result = await cmd.ExecuteAsync();
-    return result.ExitCode == 0;
+    return await cmd.ExecuteToConsole();
   }
 
   private Command GetCommand(string wd, string args) {
