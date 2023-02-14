@@ -15,7 +15,7 @@ List<string> containers = new List<string>() {
 foreach (string container in containers) {
   SkopeoManifest? manifest = await client.ImageExists(
                                container,
-                               "/home/bfde19/Development/skopeo");
+                               $"/home/{Environment.UserName}/Development/skopeo");
   if (manifest == null) {
     Console.WriteLine($"{container} does not exist");
   } else {
