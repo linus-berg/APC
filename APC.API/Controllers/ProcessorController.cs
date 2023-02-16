@@ -28,7 +28,8 @@ public class ProcessorController : ControllerBase {
     foreach (Processor processor in processors) {
       proc_out.Add(new ProcessorOutput {
         Id = processor.Id,
-        Config = processor.Config.ToJson()
+        Config = processor.Config.ToJson(),
+        Description = processor.Description
       });
     }
 
