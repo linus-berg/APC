@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using APC.API.Input;
 using APC.API.Output;
 using APC.Kernel.Models;
@@ -34,6 +35,16 @@ public class ProcessorController : ControllerBase {
     }
 
     return proc_out;
+  }
+  
+  [HttpPost("update")]
+  [Authorize(Roles = "Administrator")]
+  public async Task<Processor> UpdateProcessor([FromBody] UpdateProcessorInput input) {
+    Processor processor = await database_.GetProcessor(input.ProcessorId);
+    
+    processor.Description = input.Description;
+    await database_.UpdateProcessor(processor); 
+    return processor;
   }
 
   [HttpPost]

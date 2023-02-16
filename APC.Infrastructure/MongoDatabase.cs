@@ -35,6 +35,14 @@ public class MongoDatabase : IApcDatabase {
     return result.IsAcknowledged;
   }
 
+  public async Task<bool> UpdateProcessor(Processor processor) {
+    IMongoCollection<Processor> collection =
+      GetCollection<Processor>("apc-processors");
+    ReplaceOneResult result =
+      await collection.ReplaceOneAsync(a => a.Id == processor.Id, processor);
+    return result.IsAcknowledged;
+  }
+
   public async Task<Processor> GetProcessor(string processor) {
     IMongoCollection<Processor> collection =
       GetCollection<Processor>(PROCCESSOR_COLLECTION_);
