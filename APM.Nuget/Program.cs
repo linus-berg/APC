@@ -1,10 +1,16 @@
 using APC.Kernel;
+using APC.Kernel.Constants;
+using APC.Kernel.Registrations;
 using APM.Nuget;
+
+ModuleRegistration registration =
+  new(ModuleType.APM, typeof(Processor));
+registration.AddEndpoint("nuget");
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
                    services.AddSingleton<INuget, Nuget>();
-                   services.RegisterProcessor<Processor, ProcessorDefinition>();
+                   services.Register(registration);
                    services.AddHostedService<Worker>();
                  })
                  .Build();

@@ -1,37 +1,39 @@
-﻿using MassTransit;
+﻿using APC.Kernel.Exceptions;
+using APC.Kernel.Registrations;
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace APC.Kernel;
 
 public static class RegistrationUtils {
-  public static IServiceCollection RegisterProcessor<T, X>(
-    this IServiceCollection sc) where T : class, IProcessor
-                                where X : class, IConsumerDefinition {
+  public static IServiceCollection Register(this IServiceCollection sc,
+                                            ModuleRegistration registration) {
     sc.AddMassTransit(mt => {
-      mt.AddConsumer<T>(typeof(X));
+      mt.AddConsumer(registration.consumer);
       mt.UsingRabbitMq((ctx, cfg) => {
-        cfg.SetupRabbitMq();
-        cfg.ConfigureEndpoints(ctx);
-      });
-    });
+        foreach (Endpoint endpoint in registration.endpoints) {
+          cfg.ReceiveEndpoint(endpoint.name, c => {
+            c.UseDelayedRedelivery(r => {
+              r.Handle<ArtifactTimeoutException>();
+              r.Ignore<ArtifactMetadataException>();
+              r.Intervals(TimeSpan.FromMinutes(5),
+                          TimeSpan.FromMinutes(15),
+                          TimeSpan.FromMinutes(30));
+            });
+            c.UseMessageRetry(r => {
+              r.Handle<ArtifactTimeoutException>();
+              r.Ignore<ArtifactMetadataException>();
+              r.Immediate(5);
+            });
+            c.ConcurrentMessageLimit = endpoint.concurrency;
 
-    return sc;
-  }
-
-  public static IServiceCollection RegisterCollector(
-    this IServiceCollection sc, IEnumerable<string> names,
-    ICollector collector, int concurrency = 10) {
-    sc.AddMassTransit(mt => {
-      mt.UsingRabbitMq((ctx, cfg) => {
-        cfg.SetupRabbitMq();
-        foreach (string name in names) {
-          cfg.ReceiveEndpoint($"acm-{name}", e => {
-            e.ConfigureRetrying();
-            e.ConcurrentMessageLimit = concurrency;
-            e.Instance(collector);
+            // use the outbox to prevent duplicate events from being published
+            c.UseInMemoryOutbox();
+            c.ConfigureConsumer(ctx, registration.consumer);
           });
         }
 
+        cfg.SetupRabbitMq();
         cfg.ConfigureEndpoints(ctx);
       });
     });

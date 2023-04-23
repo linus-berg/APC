@@ -6,7 +6,11 @@ using MassTransit;
 namespace ACM.Http;
 
 public class Collector : ICollector {
-  private readonly FileSystem fs_ = new();
+  private readonly FileSystem fs_;
+
+  public Collector(FileSystem fs) {
+    fs_ = fs;
+  }
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {
     string location = context.Message.location;

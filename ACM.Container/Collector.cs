@@ -7,8 +7,13 @@ using MassTransit;
 namespace ACM.Container;
 
 public class Collector : ICollector {
-  private readonly FileSystem fs_ = new();
-  private readonly SkopeoClient skopeo_ = new();
+  private readonly FileSystem fs_;
+  private readonly SkopeoClient skopeo_;
+
+  public Collector(FileSystem fs, SkopeoClient skopeo) {
+    fs_ = fs;
+    skopeo_ = skopeo;
+  }
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {
     ArtifactCollectRequest request = context.Message;

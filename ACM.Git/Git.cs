@@ -1,3 +1,4 @@
+using ACM.Kernel;
 using APC.Kernel.Extensions;
 using CliWrap;
 
@@ -6,8 +7,8 @@ namespace ACM.Git;
 public class Git {
   private readonly string dir_;
 
-  public Git(string dir) {
-    dir_ = dir;
+  public Git(FileSystem fs) {
+    dir_ = fs.GetModuleDir("git", true);
     ConfigureProxy().Wait();
   }
 
