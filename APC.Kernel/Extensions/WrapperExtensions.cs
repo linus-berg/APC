@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using CliWrap;
 
-namespace APC.Kernel.Extensions; 
+namespace APC.Kernel.Extensions;
 
 public static class WrapperExtensions {
   public static async Task<T> ExecuteWithResult<T>(this Command cmd) {
@@ -16,6 +16,7 @@ public static class WrapperExtensions {
     } catch (Exception e) {
       throw new ApplicationException(sb_err.ToString());
     }
+
     return JsonSerializer.Deserialize<T>(sb.ToString());
   }
 

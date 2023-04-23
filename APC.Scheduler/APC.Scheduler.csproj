@@ -9,23 +9,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MassTransit" Version="8.0.13-develop.918" />
-        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.13-develop.912" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-        <PackageReference Include="Quartz" Version="3.6.0" />
-        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.6.0" />
-        <PackageReference Include="StackExchange.Redis" Version="2.6.90" />
+        <PackageReference Include="MassTransit" Version="8.0.13-develop.918"/>
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.13-develop.912"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
+        <PackageReference Include="Quartz" Version="3.6.0"/>
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.6.0"/>
+        <PackageReference Include="StackExchange.Redis" Version="2.6.90"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj" />
-      <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj" />
-      <ProjectReference Include="..\APC.Services\APC.Services.csproj" />
+        <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj"/>
+        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
+        <ProjectReference Include="..\APC.Services\APC.Services.csproj"/>
     </ItemGroup>
 </Project>

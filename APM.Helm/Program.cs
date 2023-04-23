@@ -3,8 +3,8 @@ using APM.Helm;
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
-                   services.RegisterProcessor("helm",
-                                              new Processor(new Helm()));
+                   services.AddSingleton<Helm>();
+                   services.RegisterProcessor<Processor, ProcessorDefinition>();
                    services.AddHostedService<Worker>();
                  })
                  .Build();

@@ -16,7 +16,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                        cfg.ConfigureEndpoints(ctx);
                      });
                    });
-                   
+
                    services.AddSingleton<IConnectionMultiplexer>(
                      ConnectionMultiplexer.Connect(
                        Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)));

@@ -3,8 +3,8 @@ using APM.Nuget;
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
-                   services.RegisterProcessor("nuget",
-                                              new Processor(new Nuget()));
+                   services.AddSingleton<INuget, Nuget>();
+                   services.RegisterProcessor<Processor, ProcessorDefinition>();
                    services.AddHostedService<Worker>();
                  })
                  .Build();

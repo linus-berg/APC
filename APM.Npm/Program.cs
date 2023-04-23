@@ -3,7 +3,8 @@ using APM.Npm;
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
-                   services.RegisterProcessor("npm", new Processor(new Npm()));
+                   services.AddSingleton<INpm, Npm>();
+                   services.RegisterProcessor<Processor, ProcessorDefinition>();
                    services.AddHostedService<Worker>();
                  })
                  .Build();

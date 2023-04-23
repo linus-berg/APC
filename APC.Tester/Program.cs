@@ -1,13 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using ACM.Git;
 using APC.Skopeo;
 
-SkopeoClient client = new SkopeoClient();
+SkopeoClient client = new();
 
 
-
-List<string> containers = new List<string>() {
+List<string> containers = new() {
   "docker://docker.io/library/nginx:1.23-alpine",
   "docker://docker.io/nginx:1.23-alpine"
 };

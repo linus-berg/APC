@@ -39,6 +39,7 @@ public class ArtifactController : ControllerBase {
     if (u?.Identity == null) {
       throw new AuthenticationException("Unauthenticated user.");
     }
+
     log_.Information($"{u.Identity.Name} added {input.Id}");
     Artifact artifact =
       await database_.GetArtifact(input.Id, input.Processor);

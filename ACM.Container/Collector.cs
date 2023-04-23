@@ -16,7 +16,7 @@ public class Collector : ICollector {
 
     SkopeoManifest? manifest = await skopeo_.ImageExists(request.location, wd);
     bool collect = false;
-    
+
     /* If manifest does not exist on disk */
     if (manifest == null) {
       collect = true;
@@ -24,7 +24,7 @@ public class Collector : ICollector {
       /* Verify all layers are present */
       collect = !manifest.VerifyLayers();
     }
-    
+
     /* Collect if missing manifest or layers */
     if (collect) {
       await skopeo_.CopyToOci(request.location, wd);

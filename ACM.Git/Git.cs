@@ -13,7 +13,8 @@ public class Git {
 
   private async Task<bool> ConfigureProxy() {
     Command cmd = Cli.Wrap("git")
-              .WithArguments($"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}");
+                     .WithArguments(
+                       $"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}");
     return await cmd.ExecuteToConsole();
   }
 

@@ -1,7 +1,4 @@
-﻿using System.Data;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text;
 using APC.Kernel.Extensions;
 using CliWrap;
 
@@ -44,9 +41,10 @@ public class SkopeoClient {
       Console.WriteLine(e);
       return null;
     }
+
     return tags;
   }
-  
+
   public async Task<SkopeoManifest?> ImageExists(string image, string oci_dir) {
     Command cmd = Cli.Wrap("skopeo").WithWorkingDirectory(oci_dir)
                      .WithArguments(args => {
@@ -64,11 +62,13 @@ public class SkopeoClient {
       Console.WriteLine(e);
       return null;
     }
+
     return manifest;
   }
 
   private string GetImageRef(string image) {
-    Uri uri = new(image); 
-    return uri.GetComponents(UriComponents.Host | UriComponents.Path, UriFormat.Unescaped);
+    Uri uri = new(image);
+    return uri.GetComponents(UriComponents.Host | UriComponents.Path,
+                             UriFormat.Unescaped);
   }
 }

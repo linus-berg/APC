@@ -1,7 +1,6 @@
 using APC.API.Output;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace APC.API.Controllers;
 
@@ -9,13 +8,14 @@ namespace APC.API.Controllers;
 [ApiController]
 public class StatusController : ControllerBase {
   private readonly KeycloakAuthenticationOptions kc_opt_ = new();
+
   public StatusController(IConfiguration configuration) {
     KeycloakAuthenticationOptions opts = new();
     configuration
-              .GetSection(KeycloakAuthenticationOptions.Section)
-              .Bind(kc_opt_, opt => opt.BindNonPublicProperties = true);
+      .GetSection(KeycloakAuthenticationOptions.Section)
+      .Bind(kc_opt_, opt => opt.BindNonPublicProperties = true);
   }
-  
+
   [HttpGet("status")]
   public ActionResult GetStatus() {
     return Ok("APC is OK.");

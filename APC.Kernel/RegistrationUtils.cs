@@ -1,33 +1,20 @@
-﻿using APC.Kernel.Exceptions;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace APC.Kernel;
 
 public static class RegistrationUtils {
-  public static IServiceCollection RegisterProcessor(
-    this IServiceCollection sc, string name, IProcessor processor) {
+  public static IServiceCollection RegisterProcessor<T, X>(
+    this IServiceCollection sc) where T : class, IProcessor
+                                where X : class, IConsumerDefinition {
     sc.AddMassTransit(mt => {
+      mt.AddConsumer<T>(typeof(X));
       mt.UsingRabbitMq((ctx, cfg) => {
         cfg.SetupRabbitMq();
-        cfg.ReceiveEndpoint($"apm-{name}", e => {
-          e.UseDelayedRedelivery(r => {
-            r.Handle<ArtifactTimeoutException>();
-            r.Ignore<ArtifactMetadataException>();
-            r.Intervals(TimeSpan.FromMinutes(5),
-                        TimeSpan.FromMinutes(15),
-                        TimeSpan.FromMinutes(30));
-          });
-          e.UseMessageRetry(r => {
-            r.Handle<ArtifactTimeoutException>();
-            r.Ignore<ArtifactMetadataException>();
-            r.Immediate(5);
-          });
-          e.Instance(processor);
-        });
         cfg.ConfigureEndpoints(ctx);
       });
     });
+
     return sc;
   }
 

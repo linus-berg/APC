@@ -7,7 +7,11 @@ using MassTransit;
 namespace APM.Container;
 
 public class Processor : IProcessor {
-  private readonly SkopeoClient skopeo_ = new();
+  private readonly SkopeoClient skopeo_;
+
+  public Processor(SkopeoClient skopeo) {
+    skopeo_ = skopeo;
+  }
 
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     ArtifactProcessRequest request = context.Message;

@@ -1,11 +1,12 @@
-namespace APC.Skopeo; 
+namespace APC.Skopeo;
 
 public class SkopeoManifest {
+  private string working_dir_;
   public string Digest { get; set; }
   public string Created { get; set; }
   public string Os { get; set; }
   public string Architecture { get; set; }
-  public List<string> Layers { get; set; } = new List<string>();
+  public List<string> Layers { get; set; } = new();
 
   public string WorkingDirectory {
     get => working_dir_;
@@ -15,7 +16,6 @@ public class SkopeoManifest {
     }
   }
 
-  private string working_dir_;
   private string layer_dir_ { get; set; }
 
   public bool VerifyLayers() {
@@ -25,6 +25,7 @@ public class SkopeoManifest {
         return false;
       }
     }
+
     return complete;
   }
 

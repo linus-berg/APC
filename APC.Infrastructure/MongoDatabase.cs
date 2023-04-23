@@ -53,7 +53,7 @@ public class MongoDatabase : IApcDatabase {
   public async Task<IEnumerable<Processor>> GetProcessors() {
     IMongoCollection<Processor> collection =
       GetCollection<Processor>(PROCCESSOR_COLLECTION_);
-    return await (await collection.FindAsync<Processor>(a => true))
+    return await (await collection.FindAsync(a => true))
              .ToListAsync();
   }
 

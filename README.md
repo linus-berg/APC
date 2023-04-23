@@ -19,7 +19,6 @@ Used to collect multiple package manager artifacts.
 | APC_REDIS_HOST     | localhost | Ingest, API           |
 | APC_REDIS_USER     | -         | Ingest, API           |
 | APC_REDIS_PASS     | -         | Ingest, API           |
-| APC_PGSQL_STR      | -         | Ingest, API           |
 | APC_API_HOST       | localhost | GUI, ATM, API         |
 | APC_API_PORT       | 4000      | GUI, ATM, API         |
 | APC_ACM_DIR        | /data/    | ACM                   |
