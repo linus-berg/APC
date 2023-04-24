@@ -1,20 +1,14 @@
 using ACM.Router;
 using APC.Kernel;
-using MassTransit;
+using APC.Kernel.Constants;
+using APC.Kernel.Registrations;
+
+ModuleRegistration registration = new(ModuleType.ACM, typeof(Router));
+registration.AddEndpoint("router");
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
-                   services.AddMassTransit(mt => {
-                     mt.UsingRabbitMq((ctx, cfg) => {
-                       cfg.SetupRabbitMq();
-                       cfg.ReceiveEndpoint(
-                         "acm-router", e => {
-                           e.ConfigureRetrying();
-                           e.Instance(new Router());
-                         });
-                       cfg.ConfigureEndpoints(ctx);
-                     });
-                   });
+                   services.Register(registration);
                    services.AddHostedService<Worker>();
                  })
                  .Build();

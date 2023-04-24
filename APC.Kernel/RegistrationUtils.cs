@@ -13,18 +13,7 @@ public static class RegistrationUtils {
       mt.UsingRabbitMq((ctx, cfg) => {
         foreach (Endpoint endpoint in registration.endpoints) {
           cfg.ReceiveEndpoint(endpoint.name, c => {
-            c.UseDelayedRedelivery(r => {
-              r.Handle<ArtifactTimeoutException>();
-              r.Ignore<ArtifactMetadataException>();
-              r.Intervals(TimeSpan.FromMinutes(5),
-                          TimeSpan.FromMinutes(15),
-                          TimeSpan.FromMinutes(30));
-            });
-            c.UseMessageRetry(r => {
-              r.Handle<ArtifactTimeoutException>();
-              r.Ignore<ArtifactMetadataException>();
-              r.Immediate(5);
-            });
+            c.ConfigureRetrying();
             c.ConcurrentMessageLimit = endpoint.concurrency;
 
             // use the outbox to prevent duplicate events from being published
@@ -40,14 +29,20 @@ public static class RegistrationUtils {
     return sc;
   }
 
-  public static void ConfigureRetrying(
+  private static void ConfigureRetrying(
     this IRabbitMqReceiveEndpointConfigurator endpoint) {
     endpoint.UseDelayedRedelivery(r => {
+      r.Handle<ArtifactTimeoutException>();
+      r.Ignore<ArtifactMetadataException>();
       r.Intervals(TimeSpan.FromMinutes(5),
                   TimeSpan.FromMinutes(15),
                   TimeSpan.FromMinutes(30));
     });
-    endpoint.UseMessageRetry(r => r.Immediate(5));
+    endpoint.UseMessageRetry(r => {
+      r.Handle<ArtifactTimeoutException>();
+      r.Ignore<ArtifactMetadataException>();
+      r.Immediate(5);
+    });
   }
 
   public static void SetupRabbitMq(this IRabbitMqBusFactoryConfigurator cfg) {
