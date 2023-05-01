@@ -40,31 +40,31 @@ public class ArtifactController : ControllerBase {
       throw new AuthenticationException("Unauthenticated user.");
     }
 
-    log_.Information($"{u.Identity.Name} added {input.Id}");
+    log_.Information($"{u.Identity.Name} added {input.id}");
     Artifact artifact =
-      await database_.GetArtifact(input.Id, input.Processor);
+      await database_.GetArtifact(input.id, input.processor);
     if (artifact == null) {
       artifact =
-        await aps_.AddArtifact(input.Id, input.Processor, input.Filter,
-                               input.Config, true);
+        await aps_.AddArtifact(input.id, input.processor, input.filter,
+                               input.config, true);
     } else if (!artifact.root) {
       artifact.root = true;
       await database_.UpdateArtifact(artifact);
     } else {
       return Ok(new {
-        Message = $"{input.Processor}/{input.Id} already Exists!"
+        Message = $"{input.processor}/{input.id} already Exists!"
       });
     }
 
-    Processor proc = await database_.GetProcessor(input.Processor);
-    if (proc.DirectCollect) {
-      await aps_.Collect(input.Id, input.Processor);
+    Processor proc = await database_.GetProcessor(input.processor);
+    if (proc.direct_collect) {
+      await aps_.Collect(input.id, input.processor);
     } else {
       await aps_.Ingest(artifact);
     }
 
     return Ok(new {
-      Message = $"Added {input.Processor}/{input.Id}"
+      Message = $"Added {input.processor}/{input.id}"
     });
   }
 
@@ -72,7 +72,7 @@ public class ArtifactController : ControllerBase {
   [HttpPost("track")]
   public async Task<ActionResult>
     Track([FromBody] ArtifactTrackerInput request) {
-    if (await aps_.Track(request.Artifact, request.Processor)) {
+    if (await aps_.Track(request.artifact, request.processor)) {
       return Ok("Artifact being reprocessed");
     }
 
@@ -94,10 +94,11 @@ public class ArtifactController : ControllerBase {
   }
 
   // DELETE: api/Artifact/npm/react
-  [HttpDelete("{processor}/{id}")]
+  [HttpDelete("{processor}/")]
   [Authorize(Roles = "Administrator")]
-  public async Task<ActionResult> Delete(string id, string processor) {
-    Artifact artifact = await database_.GetArtifact(id, processor);
+  public async Task<ActionResult> Delete([FromRoute] string processor,
+                                         [FromBody] DeleteArtifactInput input) {
+    Artifact artifact = await database_.GetArtifact(input.id, processor);
     if (artifact == null) {
       return NotFound();
     }

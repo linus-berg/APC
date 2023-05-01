@@ -39,14 +39,14 @@ public class MongoDatabase : IApcDatabase {
     IMongoCollection<Processor> collection =
       GetCollection<Processor>("apc-processors");
     ReplaceOneResult result =
-      await collection.ReplaceOneAsync(a => a.Id == processor.Id, processor);
+      await collection.ReplaceOneAsync(a => a.id == processor.id, processor);
     return result.IsAcknowledged;
   }
 
   public async Task<Processor> GetProcessor(string processor) {
     IMongoCollection<Processor> collection =
       GetCollection<Processor>(PROCCESSOR_COLLECTION_);
-    return await (await collection.FindAsync(a => a.Id == processor))
+    return await (await collection.FindAsync(a => a.id == processor))
              .FirstOrDefaultAsync();
   }
 

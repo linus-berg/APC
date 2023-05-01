@@ -1,11 +1,9 @@
-using MongoDB.Bson;
-
 namespace APC.Kernel.Models;
 
 public class Processor {
-  public string Id { get; set; }
-  public bool DirectCollect { get; set; } = false;
+  public string id { get; set; }
+  public bool direct_collect { get; set; } = false;
 
-  public string Description { get; set; }
-  public BsonDocument Config { get; set; }
+  public string description { get; set; }
+  public Dictionary<string, ProcessorAuxiliaryField> config { get; set; }
 }

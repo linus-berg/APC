@@ -1,23 +1,24 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using APC.Skopeo;
+using APM.Maven;
+using MavenNet.Models;
 
-SkopeoClient client = new();
+string group = "org/elasticsearch";
 
+string id = "elasticsearch";
+string v = "8.1.3";
 
-List<string> containers = new() {
-  "docker://docker.io/library/nginx:1.23-alpine",
-  "docker://docker.io/nginx:1.23-alpine"
-};
+IMaven mvn = new Maven();
+Metadata metadata = await mvn.GetMetadata(group, id);
+Project p = await mvn.GetPom(group, id, v);
 
-foreach (string container in containers) {
-  SkopeoManifest? manifest = await client.ImageExists(
-                               container,
-                               $"/home/{Environment.UserName}/Development/skopeo");
-  if (manifest == null) {
-    Console.WriteLine($"{container} does not exist");
-  } else {
-    Console.WriteLine($"{container} EXISTS!");
-    Console.WriteLine($"{manifest.VerifyLayers()}");
-  }
-}
+string lib = mvn.GetLibraryPath(group, id, v, p.Packaging);
+string doc = mvn.GetDocsPath(group, id, v, "javadoc", "jar");
+string src = mvn.GetSrcPath(group, id, v, "sources", "jar");
+string pom = mvn.GetPomPath(group, id, v);
+
+Console.WriteLine(lib);
+Console.WriteLine(doc);
+Console.WriteLine(src);
+Console.WriteLine(pom);
+Console.WriteLine("---");

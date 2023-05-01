@@ -27,9 +27,9 @@ public class ProcessorController : ControllerBase {
 
     foreach (Processor processor in processors) {
       proc_out.Add(new ProcessorOutput {
-        Id = processor.Id,
-        Config = processor.Config.ToJson(),
-        Description = processor.Description
+        Id = processor.id,
+        Config = processor.config.ToJson(),
+        Description = processor.description
       });
     }
 
@@ -40,9 +40,9 @@ public class ProcessorController : ControllerBase {
   [Authorize(Roles = "Administrator")]
   public async Task<Processor> UpdateProcessor(
     [FromBody] UpdateProcessorInput input) {
-    Processor processor = await database_.GetProcessor(input.ProcessorId);
+    Processor processor = await database_.GetProcessor(input.processor_id);
 
-    processor.Description = input.Description;
+    processor.description = input.description;
     await database_.UpdateProcessor(processor);
     return processor;
   }
@@ -51,10 +51,10 @@ public class ProcessorController : ControllerBase {
   [Authorize(Roles = "Administrator")]
   public async Task<ActionResult> Post([FromBody] AddProcessorInput input) {
     await database_.AddProcessor(new Processor {
-      Id = input.ProcessorId
+      id = input.processor_id
     });
     return Ok(new {
-      Message = $"Added {input.ProcessorId}!"
+      Message = $"Added {input.processor_id}!"
     });
   }
 }

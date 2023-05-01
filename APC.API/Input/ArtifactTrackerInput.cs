@@ -1,6 +1,6 @@
 namespace APC.API.Input;
 
 public class ArtifactTrackerInput {
-  public string Artifact { get; set; }
-  public string Processor { get; set; }
+  public string artifact { get; set; }
+  public string processor { get; set; }
 }

@@ -19,11 +19,13 @@ public class Artifact {
 
   public HashSet<ArtifactDependency> dependencies { get; set; }
 
-  public bool AddDependency(string id, string processor) {
-    return dependencies.Add(new ArtifactDependency {
+  public ArtifactDependency AddDependency(string id, string processor) {
+    ArtifactDependency dep = new() {
       id = id,
       processor = processor
-    });
+    };
+    dependencies.Add(dep);
+    return dep;
   }
 
   public bool AddVersion(ArtifactVersion version) {

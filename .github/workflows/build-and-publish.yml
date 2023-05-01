@@ -33,6 +33,9 @@ jobs:
 
           - name: apm/nuget
             directory: APM.Nuget
+            
+          - name: apm/maven
+            directory: APM.Maven
 
           - name: apm/helm
             directory: APM.Helm

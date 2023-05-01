@@ -97,9 +97,9 @@ public class ArtifactService : IArtifactService {
     int proc_count = 0;
     int artifact_count = 0;
     foreach (Processor processor in processors) {
-      IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.Id);
+      IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.id);
       foreach (Artifact artifact in artifacts) {
-        if (processor.DirectCollect) {
+        if (processor.direct_collect) {
           await Collect(artifact.id, artifact.processor);
         } else {
           await Ingest(artifact);
@@ -126,7 +126,7 @@ public class ArtifactService : IArtifactService {
 
   public async Task Validate(Processor processor) {
     IEnumerable<Artifact>
-      artifacts = await db_.GetArtifacts(processor.Id, false);
+      artifacts = await db_.GetArtifacts(processor.id, false);
     Console.WriteLine($"Validating {processor}: {artifacts.Count()}");
     ArtifactRouteRequest route_request = new();
     foreach (Artifact artifact in artifacts) {
