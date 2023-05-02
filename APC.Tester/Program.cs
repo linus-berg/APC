@@ -3,10 +3,10 @@
 using APM.Maven;
 using MavenNet.Models;
 
-string group = "org/elasticsearch";
+string group = "org/eclipse/jetty/aggregate";
 
-string id = "elasticsearch";
-string v = "8.1.3";
+string id = "jetty-all";
+string v = "2.0.0";
 
 IMaven mvn = new Maven();
 Metadata metadata = await mvn.GetMetadata(group, id);
