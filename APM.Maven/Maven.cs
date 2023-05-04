@@ -47,6 +47,7 @@ public class Maven : IMaven {
 
       await AddDependencies(artifact, project, properties);
       await AddPlugins(artifact, project, properties);
+      artifact.AddVersion(artifact_version);
     }
 
     return artifact;
