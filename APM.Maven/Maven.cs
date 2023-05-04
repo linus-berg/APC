@@ -39,9 +39,9 @@ public class Maven : IMaven {
       ArtifactVersion artifact_version = new ArtifactVersion() {
         version = version
       };
-      artifact_version.AddFile($"{artifact.id}-{version}-pom",
+      artifact_version.AddFile("pom",
                                GetPomPath(group_id, artifact.id, version));
-      artifact_version.AddFile($"{artifact.id}-{version}-lib",
+      artifact_version.AddFile("lib",
                                GetLibraryPath(group_id, artifact.id, version,
                                               project.Packaging));
 

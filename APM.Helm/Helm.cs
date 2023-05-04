@@ -18,7 +18,7 @@ public class Helm {
     foreach (HelmChartVersion hv in metadata.available_versions) {
       HelmChartMetadata vm = await GetMetadata(artifact.id, hv.version);
       ArtifactVersion version = new();
-      version.AddFile(Path.GetFileName(vm.content_url), vm.content_url);
+      version.AddFile("chart", vm.content_url);
       version.version = vm.version;
 
       /* Add required containers */
