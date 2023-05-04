@@ -20,25 +20,7 @@ public class Processor : IProcessor {
       Artifact = artifact,
       Context = context.Message.ctx
     };
-    foreach (ArtifactDependency dependency in artifact.dependencies) {
-      if (dependency.processor == "container") {
-        string container = dependency.id;
-        request.AddCollectRequest(FixNaming(container), dependency.processor);
-        artifact.dependencies.Remove(dependency);
-      }
-    }
-
     await context.Send(Endpoints.APC_INGEST_PROCESSED, request);
   }
 
-  private static string FixNaming(string name) {
-    return !HasHostname(name)
-             ? $"docker://docker.io/{name}"
-             : $"docker://{name}";
-  }
-
-  private static bool HasHostname(string name) {
-    bool is_match = Regex.IsMatch(name, @"\w+\.\w+\/");
-    return is_match;
-  }
 }

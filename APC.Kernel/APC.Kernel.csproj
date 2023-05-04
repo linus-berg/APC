@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CliWrap" Version="3.6.0"/>
-        <PackageReference Include="MassTransit" Version="8.0.7-develop.575"/>
-        <PackageReference Include="MassTransit.Abstractions" Version="8.0.7-develop.575"/>
-        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.7-develop.575"/>
-        <PackageReference Include="MongoDB.Bson" Version="2.18.0"/>
+        <PackageReference Include="CliWrap" Version="3.6.0" />
+        <PackageReference Include="MassTransit" Version="8.0.7-develop.575" />
+        <PackageReference Include="MassTransit.Abstractions" Version="8.0.7-develop.575" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.7-develop.575" />
+        <PackageReference Include="MongoDB.Bson" Version="2.18.0" />
     </ItemGroup>
 
 </Project>

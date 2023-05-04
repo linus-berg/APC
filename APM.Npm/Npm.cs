@@ -27,9 +27,9 @@ public class Npm : INpm {
 
       Package package = kv.Value;
       ArtifactVersion version = new() {
-        location = package.dist.tarball,
         version = kv.Key
       };
+      version.AddFile(Path.GetFileName(package.dist.tarball), package.dist.tarball);
       AddDependencies(artifact, package.dependencies);
       AddDependencies(artifact, package.peerDependencies);
       artifact.AddVersion(version);

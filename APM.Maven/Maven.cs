@@ -36,9 +36,14 @@ public class Maven : IMaven {
 
       Dictionary<string, string> properties = GetProperties(project);
       /* Add pom and lib to collection */
-      artifact.AddVersion(GetPomVersion(group_id, artifact.id, version));
-      artifact.AddVersion(
-        GetLibraryVersion(group_id, artifact.id, version, project.Packaging));
+      ArtifactVersion artifact_version = new ArtifactVersion() {
+        version = version
+      };
+      artifact_version.AddFile($"{artifact.id}-{version}-pom",
+                               GetPomPath(group_id, artifact.id, version));
+      artifact_version.AddFile($"{artifact.id}-{version}-lib",
+                               GetLibraryPath(group_id, artifact.id, version,
+                                              project.Packaging));
 
       await AddDependencies(artifact, project, properties);
       await AddPlugins(artifact, project, properties);
@@ -163,39 +168,6 @@ public class Maven : IMaven {
       Namespaces = ns
     });
     return result;
-  }
-
-  private ArtifactVersion
-    GetPomVersion(string group, string id, string version) {
-    return new ArtifactVersion {
-      location = GetPomPath(group, id, version),
-      version = $"{version}-pom"
-    };
-  }
-
-  private ArtifactVersion
-    GetLibraryVersion(string group, string id, string version,
-                      string packaging) {
-    return new ArtifactVersion {
-      location = GetLibraryPath(group, id, version, packaging),
-      version = $"{version}-lib"
-    };
-  }
-
-  private ArtifactVersion
-    GetDocVersion(string group, string id, string version) {
-    return new ArtifactVersion {
-      location = GetDocsPath(group, id, version, "javadoc", "jar"),
-      version = $"{version}-doc"
-    };
-  }
-
-  private ArtifactVersion
-    GetSrcVersion(string group, string id, string version) {
-    return new ArtifactVersion {
-      location = GetSrcPath(group, id, version, "sources", "jar"),
-      version = $"{version}-src"
-    };
   }
 
   private string GetGroup(Artifact artifact) {

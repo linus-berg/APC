@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using APC.Kernel.Models;
 using APM.Helm.Models;
 using RestSharp;
@@ -17,21 +18,32 @@ public class Helm {
     foreach (HelmChartVersion hv in metadata.available_versions) {
       HelmChartMetadata vm = await GetMetadata(artifact.id, hv.version);
       ArtifactVersion version = new();
-      version.location = vm.content_url;
+      version.AddFile(Path.GetFileName(vm.content_url), vm.content_url);
       version.version = vm.version;
-      artifact.AddVersion(version);
 
       /* Add required containers */
-      AddContainers(artifact, vm.containers_images);
+      AddContainers(version, vm.containers_images);
+      artifact.AddVersion(version);
       await AddDependencies(artifact, vm.data);
     }
   }
 
-  private void AddContainers(Artifact artifact,
+  private void AddContainers(ArtifactVersion artifact_version,
                              IEnumerable<HelmChartContainerImage> images) {
     foreach (HelmChartContainerImage image in images) {
-      artifact.AddDependency(image.image, "container");
+      artifact_version.AddFile($"{image.image}", FixNaming(image.image));
     }
+  }
+  
+  private static string FixNaming(string name) {
+    return !HasHostname(name)
+             ? $"docker://docker.io/{name}"
+             : $"docker://{name}";
+  }
+
+  private static bool HasHostname(string name) {
+    bool is_match = Regex.IsMatch(name, @"\w+\.\w+\/");
+    return is_match;
   }
 
   private async Task AddDependencies(Artifact artifact, HelmChartData data) {

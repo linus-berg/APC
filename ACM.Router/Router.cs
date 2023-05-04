@@ -16,8 +16,12 @@ public class Router : IConsumer<ArtifactRouteRequest> {
 
     foreach (KeyValuePair<string, ArtifactVersion> kv in artifact.versions) {
       bool collect = regex == null || regex.IsMatch(kv.Key);
-      if (collect) {
-        await context.Collect(kv.Value.location, artifact.processor);
+      if (!collect) {
+        continue;
+      }
+
+      foreach (KeyValuePair<string, ArtifactFile> file in kv.Value.files) {
+        await context.Collect(file.Value.uri, artifact.processor);
       }
     }
   }

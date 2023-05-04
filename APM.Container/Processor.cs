@@ -28,9 +28,9 @@ public class Processor : IProcessor {
     SkopeoListTagsOutput list_tags = await skopeo_.GetTags(artifact.id);
     foreach (string tag in list_tags.Tags) {
       ArtifactVersion version = new() {
-        location = $"docker://{artifact.id}:{tag}",
         version = tag
       };
+      version.AddFile($"{artifact.id}:{tag}", $"docker://{artifact.id}:{tag}");
       artifact.AddVersion(version);
     }
   }

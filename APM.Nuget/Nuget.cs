@@ -47,9 +47,9 @@ public class Nuget : INuget {
       string u = NUGET_ +
                  $"{artifact.id}/{v}/{artifact.id}.{v}.nupkg".ToLower();
       ArtifactVersion a_v = new() {
-        location = u,
         version = v
       };
+      a_v.AddFile(Path.GetFileName(u), u);
       AddDependencies(artifact, a_v, version.DependencySets);
       artifact.AddVersion(a_v);
     }
