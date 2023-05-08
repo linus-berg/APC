@@ -18,7 +18,7 @@ public class FileSystem {
 
   public void CreateDailyLink(string module, string uri_str) {
     Uri uri = new(uri_str);
-    string location = CleanFilepath(uri.LocalPath);
+    string location = GetDiskLocation(uri);
     string daily_deposit = GetDailyDeposit(module);
     string link = Path.Join(daily_deposit, location);
     Directory.CreateDirectory(Path.GetDirectoryName(link));
@@ -27,11 +27,15 @@ public class FileSystem {
 
   public string GetArtifactPath(string module, string uri_str) {
     Uri uri = new(uri_str);
-    string location = $"{uri.Host}{CleanFilepath(uri.LocalPath)}";
+    string location = GetDiskLocation(uri);
     CreateModuleDirectory(module);
     string path = GetModulePath(module, location);
     CreateArtifactDirectory(Path.GetDirectoryName(path));
     return path;
+  }
+
+  private string GetDiskLocation(Uri uri) {
+    return $"{uri.Host}{CleanFilepath(uri.LocalPath)}";
   }
 
   private string CleanFilepath(string location) {
