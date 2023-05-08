@@ -8,9 +8,10 @@ public class ArtifactVersion {
 
   public Dictionary<string, ArtifactFile> files { get; set; } = new Dictionary<string, ArtifactFile>();
 
-  public void AddFile(string name, string uri) {
+  public void AddFile(string name, string uri, string module) {
     files[name] = new ArtifactFile() {
-      uri = uri
+      uri = uri,
+      processor = module
     };
   }
 }

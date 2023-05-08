@@ -40,10 +40,10 @@ public class Maven : IMaven {
         version = version
       };
       artifact_version.AddFile("pom",
-                               GetPomPath(group_id, artifact.id, version));
+                               GetPomPath(group_id, artifact.id, version), "maven");
       artifact_version.AddFile("lib",
                                GetLibraryPath(group_id, artifact.id, version,
-                                              project.Packaging));
+                                              project.Packaging), "maven");
 
       await AddDependencies(artifact, project, properties);
       await AddPlugins(artifact, project, properties);

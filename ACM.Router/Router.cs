@@ -21,7 +21,7 @@ public class Router : IConsumer<ArtifactRouteRequest> {
       }
 
       foreach (KeyValuePair<string, ArtifactFile> file in kv.Value.files) {
-        await context.Collect(file.Value.uri, artifact.processor);
+        await context.Collect(file.Value.uri, file.Value.processor);
       }
     }
   }

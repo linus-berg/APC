@@ -49,7 +49,7 @@ public class Nuget : INuget {
       ArtifactVersion a_v = new() {
         version = v
       };
-      a_v.AddFile("nupkg", u);
+      a_v.AddFile("nupkg", u, "nuget");
       AddDependencies(artifact, a_v, version.DependencySets);
       artifact.AddVersion(a_v);
     }
