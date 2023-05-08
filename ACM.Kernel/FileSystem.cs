@@ -27,7 +27,7 @@ public class FileSystem {
 
   public string GetArtifactPath(string module, string uri_str) {
     Uri uri = new(uri_str);
-    string location = CleanFilepath(uri.LocalPath);
+    string location = $"{uri.Host}{CleanFilepath(uri.LocalPath)}";
     CreateModuleDirectory(module);
     string path = GetModulePath(module, location);
     CreateArtifactDirectory(Path.GetDirectoryName(path));
