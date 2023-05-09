@@ -1,12 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using ACM.Kernel;
 using APC.Kernel.Models;
 using APM.Jetbrains;
-using APM.Maven;
 
 IJetbrains jetbrains = new Jetbrains();
-Artifact artifact = new Artifact() {
+Artifact artifact = new() {
   id = "164-ideavim",
   root = true
 };

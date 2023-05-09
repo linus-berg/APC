@@ -36,14 +36,14 @@ public class Maven : IMaven {
 
       Dictionary<string, string> properties = GetProperties(project);
       /* Add pom and lib to collection */
-      ArtifactVersion artifact_version = new ArtifactVersion() {
+      ArtifactVersion artifact_version = new() {
         version = version
       };
       artifact_version.AddFile("pom",
-                               GetPomPath(group_id, artifact.id, version), "maven");
+                               GetPomPath(group_id, artifact.id, version));
       artifact_version.AddFile("lib",
                                GetLibraryPath(group_id, artifact.id, version,
-                                              project.Packaging), "maven");
+                                              project.Packaging));
 
       await AddDependencies(artifact, project, properties);
       await AddPlugins(artifact, project, properties);

@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using APC.Kernel;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;
@@ -22,5 +21,4 @@ public class Processor : IProcessor {
     };
     await context.Send(Endpoints.APC_INGEST_PROCESSED, request);
   }
-
 }

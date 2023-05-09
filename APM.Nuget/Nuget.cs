@@ -49,22 +49,23 @@ public class Nuget : INuget {
       ArtifactVersion a_v = new() {
         version = v
       };
-      a_v.AddFile("nupkg", u, "nuget");
-      AddDependencies(artifact, a_v, version.DependencySets);
+      a_v.AddFile("nupkg", u);
+      AddDependencies(artifact, version.DependencySets);
       artifact.AddVersion(a_v);
     }
   }
 
-  private void AddDependencies(Artifact artifact, ArtifactVersion version,
+  private void AddDependencies(Artifact artifact,
                                IEnumerable<PackageDependencyGroup>
                                  dependencies) {
     if (dependencies == null) {
       throw new ArtifactMetadataException("No versions found!");
     }
 
-    foreach (PackageDependencyGroup x in dependencies)
-    foreach (PackageDependency pkg in x.Packages) {
-      artifact.AddDependency(pkg.Id, artifact.processor);
+    foreach (PackageDependencyGroup pdg in dependencies) {
+      foreach (PackageDependency pkg in pdg.Packages) {
+        artifact.AddDependency(pkg.Id, artifact.processor);
+      }
     }
   }
 
