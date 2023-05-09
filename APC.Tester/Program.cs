@@ -1,16 +1,15 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using ACM.Kernel;
+using APC.Kernel.Models;
+using APM.Jetbrains;
 using APM.Maven;
-using MavenNet.Models;
 
-string group = "org/eclipse/jetty/aggregate";
-
-string id = "jetty-all";
-string v = "2.0.0";
-
-FileSystem fs = new FileSystem();
-
-string p = fs.GetArtifactPath("npm", "https://registry.npmjs.org/react/bleh.tgz");
+IJetbrains jetbrains = new Jetbrains();
+Artifact artifact = new Artifact() {
+  id = "164-ideavim",
+  root = true
+};
+Artifact a2 = await jetbrains.ProcessArtifact(artifact);
 
 Console.WriteLine("---");
