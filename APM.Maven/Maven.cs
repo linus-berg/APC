@@ -4,8 +4,10 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using APC.Kernel.Exceptions;
 using APC.Kernel.Models;
+using APM.Maven.Models;
 using MavenNet;
 using MavenNet.Models;
+using RestSharp;
 using Artifact = APC.Kernel.Models.Artifact;
 using MavenArtifact = MavenNet.Models.Artifact;
 
@@ -13,6 +15,8 @@ namespace APM.Maven;
 
 public class Maven : IMaven {
   private const string MAVEN_ = "https://repo1.maven.org/maven2";
+  private const string MAVEN_SEARCH_ = "https://search.maven.org";
+  private readonly RestClient mvn_search_ = new(MAVEN_SEARCH_);
   private readonly MavenCentralRepository repo_;
 
   public Maven() {
@@ -23,6 +27,8 @@ public class Maven : IMaven {
     string group_id = GetGroup(artifact);
     string artifact_id = artifact.id;
     Metadata metadata = await GetMetadata(group_id, artifact_id);
+    Dictionary<string, List<string>> search =
+      await SearchMaven(group_id, artifact_id);
     if (metadata == null) {
       throw new ArtifactMetadataException();
     }
@@ -39,11 +45,15 @@ public class Maven : IMaven {
       ArtifactVersion artifact_version = new() {
         version = version
       };
-      artifact_version.AddFile("pom",
-                               GetPomPath(group_id, artifact.id, version));
-      artifact_version.AddFile("lib",
-                               GetLibraryPath(group_id, artifact.id, version,
-                                              project.Packaging));
+      if (!search.ContainsKey(version)) {
+        continue;
+      }
+
+      List<string> files = search[version];
+      foreach (string file in files) {
+        artifact_version.AddFile(
+          file, GetFile(group_id, artifact.id, version, file));
+      }
 
       await AddDependencies(artifact, project, properties);
       await AddPlugins(artifact, project, properties);
@@ -51,6 +61,26 @@ public class Maven : IMaven {
     }
 
     return artifact;
+  }
+
+  public async Task<Dictionary<string, List<string>>> SearchMaven(
+    string g, string id) {
+    string group = g.Replace("/", ".");
+    Dictionary<string, List<string>> versions = new();
+    int count = 0;
+    int start = 0;
+    do {
+      MavenSearch search = await mvn_search_.GetJsonAsync<MavenSearch>(
+                             $"/solrsearch/select?q=g:{group}+AND+a:{id}&core=gav&rows=200&wt=json&start={start}");
+      count = search.response.docs.Count;
+      start += 200;
+
+      foreach (MavenSearchDoc doc in search.response.docs) {
+        versions[doc.v] = doc.ec;
+      }
+    } while (count > 0);
+
+    return versions;
   }
 
   public async Task<Metadata> GetMetadata(string g, string id) {
@@ -77,26 +107,10 @@ public class Maven : IMaven {
     return p;
   }
 
-  public string GetPomPath(string group, string id, string version) {
-    return Path.Combine(MAVEN_, group, id, version, $"{id}-{version}.pom");
-  }
-
-  public string GetDocsPath(string group, string id, string version,
-                            string src_postfix, string src_ext) {
+  public string GetFile(string group, string id, string version,
+                        string extension) {
     return Path.Combine(MAVEN_, group, id, version,
-                        $"{id}-{version}-{src_postfix}.{src_ext.TrimStart('.')}");
-  }
-
-  public string GetSrcPath(string group, string id, string version,
-                           string src_postfix, string src_ext) {
-    return Path.Combine(MAVEN_, group, id, version,
-                        $"{id}-{version}-{src_postfix}.{src_ext.TrimStart('.')}");
-  }
-
-  public string GetLibraryPath(string group, string id, string version,
-                               string packaging) {
-    return Path.Combine(MAVEN_, group, id, version,
-                        $"{id}-{version}.{packaging.ToLowerInvariant().TrimStart('.')}");
+                        $"{id}-{version}{extension}");
   }
 
   private async Task AddDependencies(Artifact artifact, Project project,

@@ -12,6 +12,7 @@
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.15"/>
         <PackageReference Include="MavenNet" Version="2.2.13"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
+        <PackageReference Include="RestSharp" Version="110.2.0"/>
     </ItemGroup>
 
     <ItemGroup>
