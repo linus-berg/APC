@@ -11,11 +11,7 @@ public class PypiMetadata {
       List<PypiRelease> releases = kv.Value;
       string version = kv.Key;
       foreach (PypiRelease release in releases) {
-        if (release.filename.Contains("macos")) {
-          continue;
-        }
-
-        if (release.packagetype == "bdist_wininst") {
+        if (!release.IsValid()) {
           continue;
         }
 
