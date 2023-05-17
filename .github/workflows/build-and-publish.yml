@@ -39,6 +39,9 @@ jobs:
             
           - name: apm/maven
             directory: APM.Maven
+            
+          - name: apm/pypi
+            directory: APM.Pypi
 
           - name: apm/helm
             directory: APM.Helm
