@@ -4,6 +4,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["APM.Pypi/APM.Pypi.csproj", "APM.Pypi/"]
+COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 RUN dotnet restore "APM.Pypi/APM.Pypi.csproj"
 COPY . .
 WORKDIR "/src/APM.Pypi"
