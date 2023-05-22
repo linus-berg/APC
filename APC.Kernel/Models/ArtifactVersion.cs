@@ -6,7 +6,7 @@ public class ArtifactVersion {
   public ArtifactVersionStatus status { get; set; } =
     ArtifactVersionStatus.SENT_FOR_COLLECTION;
 
-  public Dictionary<string, ArtifactFile> files { get; } = new();
+  public Dictionary<string, ArtifactFile> files { get; set; } = new();
 
   public void AddFile(string name, string uri, string folder = "") {
     files[name] = new ArtifactFile {
