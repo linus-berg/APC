@@ -13,7 +13,7 @@ It builds daily deltas to reduce the day-to-day load on the transfer device.
 
 The design is microservice oriented and intended to minimize the amount of work needed to build a new "Processor", for example maven.
 
-Processors can rely safely on the core infrastructure of the APC, the core infrastructure handles the memorization of metadata, 
+Processors can safely rely on the core infrastructure of the APC, the core infrastructure handles the memorization of metadata, 
 and the collection via standard protocols, for example http, git, or docker.
 
 ## Modules
