@@ -1,6 +1,12 @@
 # Artifact Processor Complex
 
-Used to collect multiple package manager artifacts.
+The APC is used to collect and store a varied and large amount of artifacts, for example npm, nuget...
+
+Primary use-case is transferring to airgapped / high security networks for offline consumption via a artifact repository.
+The complex keeps track of already collected artifacts, dependencies, and versions.
+The APC's collection of artifacts is greedy, it will per default take every version and every dependency version, recursively, 
+until every item is collected, artifacts can include a filter to reduce the amount collected.
+It builds daily deltas to reduce the day-to-day load on the transfer device.
 
 ## Modules
 | Tag | Name                        | Description                                                                   |
