@@ -19,4 +19,8 @@
         <ProjectReference Include="..\ATM.Rancher\ATM.Rancher.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Compile Remove="pip.peg.g.cs"/>
+    </ItemGroup>
+
 </Project>

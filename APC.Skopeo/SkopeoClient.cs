@@ -1,24 +1,29 @@
 ﻿using System.Text;
 using APC.Kernel.Extensions;
+using APC.Skopeo.Models;
 using CliWrap;
 
 namespace APC.Skopeo;
 
 public class SkopeoClient {
-  public async Task CopyToOci(string image, string oci_dir) {
-    Directory.CreateDirectory(oci_dir);
-    Command cmd = Cli.Wrap("skopeo").WithWorkingDirectory(oci_dir)
+  public async Task CopyToOci(string input, string oci_dir) {
+    Image image = new(input);
+    OciDir oci = new(oci_dir);
+    string root = oci.GetImageRoot(image);
+    Directory.CreateDirectory(root);
+    Command cmd = Cli.Wrap("skopeo")
+                     .WithWorkingDirectory(root)
                      .WithArguments(args => {
                        args.Add("copy");
                        args.Add("--quiet");
                        args.Add("--dest-shared-blob-dir");
-                       args.Add("shared");
-                       args.Add(image);
+                       args.Add(oci.Shared);
+                       args.Add(image.Uri);
                        args.Add(
-                         $"oci:repo:{GetImageRef(image)}");
+                         $"oci:{image.Name}:{image.Reference}");
                      });
     StringBuilder sb = new();
-    Console.WriteLine($"Pulling {image}");
+    Console.WriteLine($"Pulling {image.Uri}");
     try {
       CommandResult result =
         await (cmd | PipeTarget.ToStringBuilder(sb)).ExecuteAsync();
@@ -28,6 +33,7 @@ public class SkopeoClient {
       throw;
     }
   }
+
 
   public async Task<SkopeoListTagsOutput?> GetTags(string image) {
     Command cmd = Cli.Wrap("skopeo").WithArguments(args => {
@@ -45,30 +51,28 @@ public class SkopeoClient {
     return tags;
   }
 
-  public async Task<SkopeoManifest?> ImageExists(string image, string oci_dir) {
-    Command cmd = Cli.Wrap("skopeo").WithWorkingDirectory(oci_dir)
+  public async Task<SkopeoManifest?> ImageExists(string input, string oci_dir) {
+    Image image = new(input);
+    OciDir oci = new(oci_dir);
+    string root = oci.GetImageRoot(image);
+    Directory.CreateDirectory(root);
+    Command cmd = Cli.Wrap("skopeo")
+                     .WithWorkingDirectory(root)
                      .WithArguments(args => {
                        args.Add("inspect");
                        args.Add("--shared-blob-dir");
-                       args.Add("shared");
+                       args.Add(oci.Shared);
                        args.Add(
-                         $"oci:repo:{GetImageRef(image)}");
+                         $"oci:{image.Name}:{image.Reference}");
                      });
     SkopeoManifest manifest;
     try {
       manifest = await cmd.ExecuteWithResult<SkopeoManifest>();
       manifest.WorkingDirectory = oci_dir;
     } catch (Exception e) {
-      Console.WriteLine(e);
       return null;
     }
 
     return manifest;
-  }
-
-  private string GetImageRef(string image) {
-    Uri uri = new(image);
-    return uri.GetComponents(UriComponents.Host | UriComponents.Path,
-                             UriFormat.Unescaped);
   }
 }
