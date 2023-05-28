@@ -9,10 +9,9 @@ public class SkopeoClient {
   public async Task CopyToOci(string input, string oci_dir) {
     Image image = new(input);
     OciDir oci = new(oci_dir);
-    string root = oci.GetImageRoot(image);
-    Directory.CreateDirectory(root);
+    Directory.CreateDirectory(oci.Repositories);
     Command cmd = Cli.Wrap("skopeo")
-                     .WithWorkingDirectory(root)
+                     .WithWorkingDirectory(oci.Repositories)
                      .WithArguments(args => {
                        args.Add("copy");
                        args.Add("--quiet");
@@ -20,14 +19,13 @@ public class SkopeoClient {
                        args.Add(oci.Shared);
                        args.Add(image.Uri);
                        args.Add(
-                         $"oci:{image.Name}:{image.Reference}");
+                         $"oci:{image.Repository}");
                      });
     StringBuilder sb = new();
-    Console.WriteLine($"Pulling {image.Uri}");
+    Console.WriteLine($"Pulling {image.Uri} -> oci:{image.Repository}");
     try {
       CommandResult result =
         await (cmd | PipeTarget.ToStringBuilder(sb)).ExecuteAsync();
-      Console.WriteLine(sb);
     } catch (Exception e) {
       Console.WriteLine(e);
       throw;
@@ -54,16 +52,15 @@ public class SkopeoClient {
   public async Task<SkopeoManifest?> ImageExists(string input, string oci_dir) {
     Image image = new(input);
     OciDir oci = new(oci_dir);
-    string root = oci.GetImageRoot(image);
-    Directory.CreateDirectory(root);
+    Directory.CreateDirectory(oci.Repositories);
     Command cmd = Cli.Wrap("skopeo")
-                     .WithWorkingDirectory(root)
+                     .WithWorkingDirectory(oci.Repositories)
                      .WithArguments(args => {
                        args.Add("inspect");
                        args.Add("--shared-blob-dir");
                        args.Add(oci.Shared);
                        args.Add(
-                         $"oci:{image.Name}:{image.Reference}");
+                         $"oci:{image.Repository}");
                      });
     SkopeoManifest manifest;
     try {
