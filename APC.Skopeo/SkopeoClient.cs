@@ -10,6 +10,7 @@ public class SkopeoClient {
     Image image = new(input);
     OciDir oci = new(oci_dir);
     Directory.CreateDirectory(oci.Repositories);
+    Directory.CreateDirectory(image.Destination);
     Command cmd = Cli.Wrap("skopeo")
                      .WithWorkingDirectory(oci.Repositories)
                      .WithArguments(args => {
@@ -53,6 +54,9 @@ public class SkopeoClient {
     Image image = new(input);
     OciDir oci = new(oci_dir);
     Directory.CreateDirectory(oci.Repositories);
+    if (!Directory.Exists(image.Destination)) {
+      return null;
+    }
     Command cmd = Cli.Wrap("skopeo")
                      .WithWorkingDirectory(oci.Repositories)
                      .WithArguments(args => {
