@@ -46,7 +46,8 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@apc-mongo:27017/
- 
+
+
   apc-ingest-redis:
     image: redis/redis-stack:latest
     container_name: apc-ingest-redis
@@ -62,3 +63,38 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
+  
+
+# TELEMETRY
+  apc-telemetry-grafana:
+    image: grafana/grafana-oss:latest
+    volumes:
+      - "./volumes/grafana_data:/data"
+      - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml
+    ports:
+      - 3050:3000
+  
+  apc-telemetry-tempo:
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo.yml:/etc/tempo.yaml
+      - ./volumes/tempo-data:/tmp/tempo
+
+  apc-telemetry-otel:
+    image: otel/opentelemetry-collector:0.78.0
+    command: [ "--config=/etc/otel-collector.yaml" ]
+    volumes:
+      - ./otel.yml:/etc/otel-collector.yaml
+    ports:
+      - 4317:4317
+      - 4318:4318
+
+  apc-telemetry-prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus.yaml
+      - --web.enable-remote-write-receiver
+      - --enable-feature=exemplar-storage
+    volumes:
+      - ./prometheus.yml:/etc/prometheus.yaml

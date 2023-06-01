@@ -1,13 +1,16 @@
+using System.Reflection;
 using APC.Kernel.Constants;
 
 namespace APC.Kernel.Registrations;
 
 public class ModuleRegistration {
+  public readonly string name;
   private readonly string prefix_;
 
   public ModuleRegistration(ModuleType type, Type consumer) {
     prefix_ = type.ToString().ToLower();
     this.consumer = consumer;
+    name = Assembly.GetEntryAssembly().GetName().Name;
   }
 
   public Type consumer { get; }

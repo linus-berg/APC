@@ -2,6 +2,9 @@ using APC.Infrastructure;
 using APC.Infrastructure.Services;
 using APC.Ingestion;
 using APC.Kernel;
+using APC.Kernel.Constants;
+using APC.Kernel.Extensions;
+using APC.Kernel.Registrations;
 using APC.Services;
 using MassTransit;
 using StackExchange.Redis;
@@ -24,6 +27,8 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddScoped<IApcDatabase, MongoDatabase>();
                    services.AddSingleton<IApcCache, ApcCache>();
                    services.AddScoped<IArtifactService, ArtifactService>();
+                   services.AddTelemetry(
+                     new ModuleRegistration(ModuleType.ACM, typeof(IHost)));
                    services.AddHostedService<Worker>();
                  })
                  .Build();
