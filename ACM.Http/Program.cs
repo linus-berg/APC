@@ -11,9 +11,9 @@ registration.AddEndpoint("https");
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
+                   services.AddTelemetry(registration);
                    services.AddSingleton<FileSystem>();
                    services.Register(registration);
-                   services.AddTelemetry(registration);
                    services.AddHostedService<Worker>();
                  })
                  .Build();

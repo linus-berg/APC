@@ -6,6 +6,13 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: [ 'localhost:9090' ]
+  
+  - job_name: 'otel'
+    scrape_interval: 5s
+    static_configs:
+      - targets: [ 'apc-telemetry-otel:8889' ]
+      - targets: [ 'apc-telemetry-otel:8888' ]
+
   - job_name: 'tempo'
     static_configs:
       - targets: [ 'apc-telemetry-tempo:3200' ]

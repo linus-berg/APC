@@ -1,5 +1,6 @@
 using APC.Kernel;
 using APC.Kernel.Constants;
+using APC.Kernel.Extensions;
 using APC.Kernel.Registrations;
 using APM.Npm;
 
@@ -8,6 +9,7 @@ registration.AddEndpoint("npm");
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
+                   services.AddTelemetry(registration);
                    services.AddSingleton<INpm, Npm>();
                    services.Register(registration);
                    services.AddHostedService<Worker>();

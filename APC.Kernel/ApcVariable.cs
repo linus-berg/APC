@@ -9,6 +9,8 @@ public enum ApcVariable {
   APC_REDIS_USER,
   APC_REDIS_PASS,
 
+  APC_OTEL_HOST,
+
   APC_API_HOST,
 
   APC_ACM_DIR,

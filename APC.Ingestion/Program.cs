@@ -11,10 +11,13 @@ using StackExchange.Redis;
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
+                   services.AddTelemetry(
+                     new ModuleRegistration(ModuleType.ACM, typeof(IHost)));
                    services.AddMassTransit(b => {
                      b.AddConsumer<ProcessedConsumer>(
                        typeof(ProcessedDefinition));
                      b.AddConsumer<IngestConsumer>(typeof(IngestDefinition));
+
                      b.UsingRabbitMq((ctx, cfg) => {
                        cfg.SetupRabbitMq();
                        cfg.ConfigureEndpoints(ctx);
@@ -27,8 +30,6 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddScoped<IApcDatabase, MongoDatabase>();
                    services.AddSingleton<IApcCache, ApcCache>();
                    services.AddScoped<IArtifactService, ArtifactService>();
-                   services.AddTelemetry(
-                     new ModuleRegistration(ModuleType.ACM, typeof(IHost)));
                    services.AddHostedService<Worker>();
                  })
                  .Build();

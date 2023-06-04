@@ -1,6 +1,9 @@
 using APC.Infrastructure;
 using APC.Infrastructure.Services;
 using APC.Kernel;
+using APC.Kernel.Constants;
+using APC.Kernel.Extensions;
+using APC.Kernel.Registrations;
 using APC.Services;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
@@ -10,6 +13,8 @@ using Serilog.Events;
 using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Services.AddTelemetry(
+  new ModuleRegistration(ModuleType.ACM, typeof(IHost)));
 
 builder.Host.UseSerilog((context, configuration) => {
   configuration.Enrich.FromLogContext();

@@ -20,6 +20,8 @@ public static class Configuration {
       ApcVariable.APC_RABBIT_MQ_USER, "guest"
     }, {
       ApcVariable.APC_RABBIT_MQ_PASS, "guest"
+    }, {
+      ApcVariable.APC_OTEL_HOST, "localhost"
     }
   };
 

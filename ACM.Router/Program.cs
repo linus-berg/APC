@@ -9,8 +9,8 @@ registration.AddEndpoint("router");
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
-                   services.Register(registration);
                    services.AddTelemetry(registration);
+                   services.Register(registration);
                    services.AddHostedService<Worker>();
                  })
                  .Build();

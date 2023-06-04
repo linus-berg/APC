@@ -1,5 +1,6 @@
 using APC.Kernel.Registrations;
 using MassTransit.Logging;
+using MassTransit.Monitoring;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -14,18 +15,24 @@ public static class ServiceExtensions {
     void ConfigureRsc(ResourceBuilder r) {
       r.AddService(
         registration.name,
-        serviceVersion: "master",
-        serviceInstanceId: Environment.MachineName);
+        serviceVersion: "master");
+      r.AddTelemetrySdk();
+      r.AddEnvironmentVariableDetector();
     }
 
     s.AddOpenTelemetry().ConfigureResource(ConfigureRsc).WithTracing(
       builder => {
+        builder.AddSource(DiagnosticHeaders.DefaultListenerName);
+        builder.AddAspNetCoreInstrumentation();
         builder.AddHttpClientInstrumentation();
         builder.AddRedisInstrumentation();
-        builder.AddSource(DiagnosticHeaders.DefaultListenerName);
         builder.AddOtlpExporter();
       }).WithMetrics(builder => {
       builder.AddHttpClientInstrumentation();
+      builder.AddAspNetCoreInstrumentation();
+      builder.AddRuntimeInstrumentation();
+      builder.AddMeter(InstrumentationOptions.MeterName);
+      builder.AddOtlpExporter();
       builder.AddOtlpExporter();
     });
     return s;

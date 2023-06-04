@@ -3,8 +3,6 @@ receivers:
     protocols:
       grpc:
       http:
-processors:
-  batch:
 
 exporters:
   logging:
@@ -13,10 +11,14 @@ exporters:
     endpoint: apc-telemetry-tempo:4317
     tls:
       insecure: true
+  prometheus:
+      endpoint: "0.0.0.0:8889"
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [otlp, logging]
-      processors: [batch]
+      exporters: [otlp]
+    metrics:
+      receivers: [otlp]
+      exporters: [prometheus, logging]
