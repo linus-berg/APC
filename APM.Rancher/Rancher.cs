@@ -1,4 +1,5 @@
 using APC.Kernel;
+using APC.Kernel.Exceptions;
 using APC.Kernel.Models;
 using APM.Rancher.Models;
 using RestSharp;
@@ -23,7 +24,6 @@ public class Rancher : IRancher {
       }
       
       string url = release.GetRancherImageFile(file);
-      string filename = $"{release.tag_name}_{Path.GetFileName(url)}";
       if (url == null) {
         continue;
       }
@@ -33,7 +33,10 @@ public class Rancher : IRancher {
       };
 
       Console.WriteLine($"New release found {url}");
-      string rancher_file = await GetRancherFile(url, filename);
+      string? rancher_file = await GetRancherFile(url);
+      if (rancher_file == null) {
+        throw new ArtifactMetadataException($"Could not get {url}");
+      }
       string[] images = rancher_file.Split('\n');
       foreach (string image in images) {
         string clean =
@@ -48,7 +51,9 @@ public class Rancher : IRancher {
     return artifact;
   }
 
-  private async Task<string> GetRancherFile(string url, string filename) {
-    return await http_client_.GetAsync<string>(new RestRequest(url));
+  private async Task<string?> GetRancherFile(string url) {
+    RestResponse response =
+       await http_client_.GetAsync(new RestRequest(url));
+    return response.Content ?? null;
   }
 }
