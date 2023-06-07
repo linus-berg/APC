@@ -23,16 +23,13 @@ public static class ServiceExtensions {
     s.AddOpenTelemetry().ConfigureResource(ConfigureRsc).WithTracing(
       builder => {
         builder.AddSource(DiagnosticHeaders.DefaultListenerName);
-        builder.AddAspNetCoreInstrumentation();
         builder.AddHttpClientInstrumentation();
         builder.AddRedisInstrumentation();
         builder.AddOtlpExporter();
       }).WithMetrics(builder => {
       builder.AddHttpClientInstrumentation();
-      builder.AddAspNetCoreInstrumentation();
       builder.AddRuntimeInstrumentation();
       builder.AddMeter(InstrumentationOptions.MeterName);
-      builder.AddOtlpExporter();
       builder.AddOtlpExporter();
     });
     return s;
