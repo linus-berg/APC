@@ -39,6 +39,9 @@ public class Rancher : IRancher {
       }
       string[] images = rancher_file.Split('\n');
       foreach (string image in images) {
+        if (string.IsNullOrEmpty(image)) {
+          continue;
+        }
         string clean =
           image.Contains("docker.io")
             ? image
