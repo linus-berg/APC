@@ -46,6 +46,9 @@ public class Nuget : INuget {
       string v = version.Identity.Version.ToString();
       string u = NUGET_ +
                  $"{artifact.id}/{v}/{artifact.id}.{v}.nupkg".ToLower();
+      if (artifact.HasVersion(v)) {
+        continue;
+      }
       ArtifactVersion a_v = new() {
         version = v
       };

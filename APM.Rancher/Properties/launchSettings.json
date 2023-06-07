@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "ATM.RKE2": {
+    "APM.Rancher": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {

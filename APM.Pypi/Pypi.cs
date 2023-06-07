@@ -19,7 +19,9 @@ public class Pypi : IPypi {
     foreach (KeyValuePair<string, List<PypiRelease>> kv in versions) {
       string version = kv.Key;
       List<PypiRelease> releases = kv.Value;
-
+      if (artifact.HasVersion(version)) {
+        continue;
+      }
       ArtifactVersion a_version = new() {
         version = version
       };

@@ -13,8 +13,8 @@ jobs:
     strategy:
       matrix: 
         services:
-          - name: atm/rancher
-            directory: ATM.Rancher
+          - name: apm/rancher
+            directory: APM.Rancher
 
           - name: api
             directory: APC.API

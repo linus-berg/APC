@@ -16,6 +16,9 @@ public class Helm {
   private async Task ProcessVersions(Artifact artifact) {
     HelmChartMetadata metadata = await GetMetadata(artifact.id);
     foreach (HelmChartVersion hv in metadata.available_versions) {
+      if (artifact.HasVersion(hv.version)) {
+        continue;
+      }
       HelmChartMetadata vm = await GetMetadata(artifact.id, hv.version);
       ArtifactVersion version = new();
       version.AddFile("chart", vm.content_url);

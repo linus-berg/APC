@@ -27,6 +27,9 @@ public class Processor : IProcessor {
   private async Task GetTags(Artifact artifact) {
     SkopeoListTagsOutput list_tags = await skopeo_.GetTags(artifact.id);
     foreach (string tag in list_tags.Tags) {
+      if (artifact.HasVersion(tag)) {
+        continue;
+      }
       ArtifactVersion version = new() {
         version = tag
       };

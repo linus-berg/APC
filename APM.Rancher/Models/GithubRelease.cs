@@ -1,4 +1,4 @@
-namespace ATM.Rancher.Models;
+namespace APM.Rancher.Models;
 
 public class GithubRelease {
   public string url { get; set; }
