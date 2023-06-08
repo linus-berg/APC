@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using APC.Kernel;
+using OpenTelemetry.Exporter;
 
 namespace APC.Kernel.Extensions;
 
@@ -25,12 +27,18 @@ public static class ServiceExtensions {
         builder.AddSource(DiagnosticHeaders.DefaultListenerName);
         builder.AddHttpClientInstrumentation();
         builder.AddRedisInstrumentation();
-        builder.AddOtlpExporter();
+        builder.AddOtlpExporter(cfg => {
+          cfg.Endpoint = new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
+          cfg.Protocol = OtlpExportProtocol.HttpProtobuf;
+        });
       }).WithMetrics(builder => {
       builder.AddHttpClientInstrumentation();
       builder.AddRuntimeInstrumentation();
       builder.AddMeter(InstrumentationOptions.MeterName);
-      builder.AddOtlpExporter();
+      builder.AddOtlpExporter(cfg => {
+        cfg.Endpoint = new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
+        cfg.Protocol = OtlpExportProtocol.HttpProtobuf;
+      });
     });
     return s;
   }

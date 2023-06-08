@@ -21,7 +21,7 @@ public static class Configuration {
     }, {
       ApcVariable.APC_RABBIT_MQ_PASS, "guest"
     }, {
-      ApcVariable.APC_OTEL_HOST, "localhost"
+      ApcVariable.APC_OTEL_HOST, "http://localhost:4318"
     }
   };
 
