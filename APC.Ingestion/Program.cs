@@ -12,7 +12,7 @@ using StackExchange.Redis;
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
                    services.AddTelemetry(
-                     new ModuleRegistration(ModuleType.ACM, typeof(IHost)));
+                     new ModuleRegistration(ModuleType.APC, typeof(IHost)));
                    services.AddMassTransit(b => {
                      b.AddConsumer<ProcessedConsumer>(
                        typeof(ProcessedDefinition));

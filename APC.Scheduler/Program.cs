@@ -1,14 +1,20 @@
 using APC.Infrastructure;
 using APC.Infrastructure.Services;
 using APC.Kernel;
+using APC.Kernel.Constants;
+using APC.Kernel.Extensions;
+using APC.Kernel.Registrations;
 using APC.Scheduler;
 using APC.Services;
 using MassTransit;
 using Quartz;
 using StackExchange.Redis;
 
+ModuleRegistration registration =
+  new ModuleRegistration(ModuleType.APC, typeof(IHost));
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
+                   services.AddTelemetry(registration);
                    services.AddHostedService<Worker>();
                    services.AddMassTransit(mt => {
                      mt.UsingRabbitMq((ctx, cfg) => {

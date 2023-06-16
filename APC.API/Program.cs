@@ -14,7 +14,7 @@ using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTelemetry(
-  new ModuleRegistration(ModuleType.ACM, typeof(IHost)));
+  new ModuleRegistration(ModuleType.APC, typeof(IHost)));
 
 builder.Host.UseSerilog((context, configuration) => {
   configuration.Enrich.FromLogContext();
