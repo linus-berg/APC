@@ -16,6 +16,17 @@ The design is microservice oriented and intended to minimize the amount of work 
 Processors can safely rely on the core infrastructure of the APC, the core infrastructure handles the memorization of metadata, 
 and the collection via standard protocols, for example http, git, or docker.
 
+## Recommended minimum requirements (single node)
+|     | Req                                 |
+|-----|-------------------------------------|
+| RAM | 16GB                                |
+| CPU | 8 cores                             |
+| Storage | 2TB * APM (depending on usage)  |
+| Network | >= 1 Gbps                       |
+
+The APC is designed to be horizontally scalable and suitable for kubernetes, however, kubernetes deployments have not been tested thoroughly.
+
+
 ## Modules
 | Tag | Name                        | Description                                                                   |
 |-----|-----------------------------|-------------------------------------------------------------------------------|
@@ -27,6 +38,7 @@ and the collection via standard protocols, for example http, git, or docker.
 ## Environment Variables
 | Name               | Default   | Modules               |
 |--------------------|-----------|-----------------------|
+| APC_OTEL_HOST      | -         | Ingest, API, APM, ACM |
 | APC_RABBIT_MQ_HOST | localhost | Ingest, API, APM, ACM |
 | APC_RABBIT_MQ_USER | guest     | Ingest, API, APM, ACM |
 | APC_RABBIT_MQ_PASS | guest     | Ingest, API, APM, ACM |
