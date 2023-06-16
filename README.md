@@ -6,8 +6,8 @@ Primary use-case is transferring to airgapped / high security networks for offli
 
 The complex keeps track of already collected artifacts, dependencies, and versions.
 
-The APC's collection of artifacts is greedy, it will by default take every version and every dependency version, recursively, 
-until every item is collected, artifact filters can be configured to reduce the amount collected.
+The APC's collection of artifacts is greedy, it will by default collect every version and every dependency version, recursively, 
+until every item is collected, artifact filters can be applied to reduce the amount collected.
 
 It builds daily deltas to reduce the day-to-day load on the transfer device.
 
