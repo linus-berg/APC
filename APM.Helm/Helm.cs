@@ -9,6 +9,22 @@ public class Helm {
   private const string API_ = "https://artifacthub.io/api/v1/packages/helm";
   private readonly RestClient client_ = new(API_);
 
+  public Helm() {
+    AddApiKeyIfAvailable();
+  }
+  
+  private void AddApiKeyIfAvailable() {
+    string? api_key_id =
+      Environment.GetEnvironmentVariable("ARTIFACTHUB_API_KEY_ID");
+    string? api_key_secret =
+      Environment.GetEnvironmentVariable("ARTIFACTHUB_API_KEY_SECRET");
+    if (!string.IsNullOrEmpty(api_key_id) &&
+        !string.IsNullOrEmpty(api_key_secret)) {
+      client_.AddDefaultHeader("X-API-KEY-ID", api_key_id);
+      client_.AddDefaultHeader("X-API-KEY-SECRET", api_key_secret);
+    }
+  }
+
   public async Task ProcessArtifact(Artifact artifact) {
     await ProcessVersions(artifact);
   }

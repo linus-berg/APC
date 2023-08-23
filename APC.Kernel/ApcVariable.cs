@@ -15,5 +15,6 @@ public enum ApcVariable {
 
   APC_ACM_DIR,
 
-  APC_MONGO_STR
+  APC_MONGO_STR,
+  ACM_DAILY_MODE
 }
