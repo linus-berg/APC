@@ -43,7 +43,7 @@ public class Helm {
       /* Add required containers */
       AddContainers(version, vm.containers_images);
       artifact.AddVersion(version);
-      await AddDependencies(artifact, vm.data);
+      AddDependencies(artifact, vm.data);
     }
   }
 
@@ -66,26 +66,41 @@ public class Helm {
     return is_match;
   }
 
-  private async Task AddDependencies(Artifact artifact, HelmChartData data) {
+  private void AddDependencies(Artifact artifact, HelmChartData data) {
     if (data?.dependencies == null) {
       return;
     }
-
     foreach (HelmChartDependency chart in data.dependencies) {
+      TryAddDependency(artifact, chart);
+    }
+  }
+
+  private bool TryAddDependency(Artifact artifact, HelmChartDependency chart) {
+    try {
+      AddDependency(artifact, chart);
+    } catch (Exception e) {
+      Console.WriteLine(e);
+      return false;
+    }
+    return true;
+  }
+
+  private bool AddDependency(Artifact artifact, HelmChartDependency chart) {
       if (string.IsNullOrEmpty(chart.repository)) {
-        continue;
+        return false;
       }
 
       Uri uri = new(chart.repository);
       if (uri.Scheme == "file" ||
           string.IsNullOrEmpty(chart.artifacthub_repository_name)) {
-        continue;
+        return false;
       }
 
       artifact.AddDependency(
         $"{chart.artifacthub_repository_name}/{chart.name}",
         artifact.processor);
-    }
+      return true; 
+    
   }
 
   private async Task<HelmChartMetadata> GetMetadata(string id, string version) {
