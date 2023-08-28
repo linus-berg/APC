@@ -34,6 +34,11 @@ public class FileSystem {
     return path;
   }
 
+  public long GetFileSize(string filepath) {
+    FileInfo info = new FileInfo(filepath);
+    return info.Length;
+  }
+
   private string GetDiskLocation(Uri uri) {
     return $"{uri.Host}{CleanFilepath(uri.LocalPath)}";
   }
