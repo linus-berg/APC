@@ -16,6 +16,8 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddMassTransit(b => {
                      b.AddConsumer<ProcessedConsumer>(
                        typeof(ProcessedDefinition));
+                     b.AddConsumer<ProcessedRawConsumer>(
+                       typeof(ProcessedRawDefinition));
                      b.AddConsumer<IngestConsumer>(typeof(IngestDefinition));
 
                      b.UsingRabbitMq((ctx, cfg) => {
