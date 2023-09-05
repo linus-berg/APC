@@ -1,16 +1,12 @@
-using ACM.Kernel;
-
 namespace ACM.Http;
 
 internal class RemoteFile {
   private const int BUFFER_SIZE_ = 8192;
   private static readonly HttpClient CLIENT_ = new();
   private readonly string url_;
-  private readonly FileSystem fs_;
 
-  public RemoteFile(FileSystem fs, string url) {
+  public RemoteFile(string url) {
     url_ = url;
-    fs_ = fs;
   }
 
   public async Task<bool> Get(string filepath) {
@@ -22,17 +18,7 @@ internal class RemoteFile {
       return false;
     }
 
-    long remote_size = (long)response.Content.Headers.ContentLength;
-    if (fs_.Exists(filepath)) {
-      /* If remote size is equal to disk, it's probably the same file */
-      long local_size = fs_.GetFileSize(filepath);
-      if (local_size == remote_size) {
-        return false;
-      }
-      Console.WriteLine(
-        $"{filepath} is different from remote path. local: {local_size} remote: {remote_size}");
-    }
-
+    long size = (long)response.Content.Headers.ContentLength;
     using Stream s = await response.Content.ReadAsStreamAsync();
     try {
       await ProcessStream(s, tmp_file);
@@ -44,7 +30,7 @@ internal class RemoteFile {
     }
 
     /* If downloaded file size matches remote, its complete */
-    if (new FileInfo(tmp_file).Length == remote_size) {
+    if (new FileInfo(tmp_file).Length == size) {
       /* Rename */
       File.Move(tmp_file, filepath);
     } else {

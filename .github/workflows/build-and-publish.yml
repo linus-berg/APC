@@ -34,6 +34,9 @@ jobs:
           - name: apm/jetbrains
             directory: APM.Jetbrains
             
+          - name: apm/jetbrains/ide
+            directory: APM.Jetbrains.IDE
+            
           - name: apm/nuget
             directory: APM.Nuget
             
