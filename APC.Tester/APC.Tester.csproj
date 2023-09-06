@@ -13,6 +13,7 @@
         <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj"/>
         <ProjectReference Include="..\APC.Skopeo\APC.Skopeo.csproj"/>
         <ProjectReference Include="..\APM.Helm\APM.Helm.csproj"/>
+        <ProjectReference Include="..\APM.Jetbrains.IDE\APM.Jetbrains.IDE.csproj" />
         <ProjectReference Include="..\APM.Jetbrains\APM.Jetbrains.csproj"/>
         <ProjectReference Include="..\APM.Maven\APM.Maven.csproj"/>
         <ProjectReference Include="..\APM.Pypi\APM.Pypi.csproj"/>

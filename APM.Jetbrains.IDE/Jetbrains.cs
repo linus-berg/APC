@@ -6,7 +6,7 @@ using RestSharp;
 namespace APM.Jetbrains.IDE;
 
 public class Jetbrains : IJetbrains {
-  private const string API_ = "https://data.service.jetbrains.com";
+  private const string API_ = "https://data.services.jetbrains.com";
   private readonly RestClient client_ = new(API_);
 
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
