@@ -5,3 +5,4 @@ volumes/
 riderModule.iml
 /_ReSharper.Caches/
 keycloak.json
+*.log

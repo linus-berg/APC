@@ -1,0 +1,313 @@
+# WARNING: This is not meant as a production ready/secure installation.
+# This only serves as a basic guideline of how to deploy the APC's full capabilities.
+version: "3.8"
+name: apc
+services:
+# Example variables
+# apc_data: "/opt/apc/data" <- this is the output directory. Note: S3 replacement is currently being tested.
+# apc_cfg: "/opt/apc/cfg"
+# apc_volumes: "/opt/apc/volumes"
+
+# apc_rabbitmq_username: "apc"
+# apc_rabbitmq_password: "dummy_rmq"
+
+# apc_keycloak_username: "admin"
+# apc_keycloak_password: "dummy_kc"
+
+# kc_postgres_username: "postgres"
+# kc_postgres_password: "dummy_pgsql"
+
+# apc_mongodb_username: "apc"
+# apc_mongodb_password: "dummy_mongodb"
+
+# apc_redis_username: "apc"
+# apc_redis_password: "dummy_redis"
+
+# artifacthub_api_key_id: "API-ID"
+# artifacthub_api_key_secret: "API-SECRET"
+
+# Infrastructure
+  # Required for artifact storage, not production configured.
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: {{ apc_mongodb_username }}
+      MONGO_INITDB_ROOT_PASSWORD: {{ apc_mongodb_password }}
+    volumes:
+      - "{{ apc_volumes }}/mongo_data:/data/db"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-mongo
+
+  # Optional and should be removed in production, good for debugging and development.
+  mongo-express:
+    image: mongo-express
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: {{ apc_mongodb_username }}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: {{ apc_mongodb_password }}
+      ME_CONFIG_MONGODB_URL: mongodb://{{ apc_mongodb_username }}:{{ apc_mongodb_password }}@apc-mongo:27017/
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-mongo-express
+
+  #### Keycloak is optional if user interface is not used, also not production configured.
+  keycloak-db:
+    image: postgres:13
+    restart: always
+    volumes:
+      - "{{ apc_volumes }}/kc_db:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: {{ kc_postgres_username }}
+      POSTGRES_PASSWORD: {{ kc_postgres_password }}
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-keycloak-db
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.3
+    restart: always
+    depends_on:
+     - keycloak-db
+    command:
+      - start --proxy edge --hostname-strict=false --hostname-url=https://{{ apc_hostname }}:10000 --db postgres --db-url-host apc-keycloak-db --db-username {{ kc_postgres_username }} --db-password {{ kc_postgres_password }}
+    volumes:
+      - "{{ apc_volumes }}/kc_data:/opt/keycloak/data/h2:Z"
+    environment:
+      PROXY_ADDRESS_FORWARDING: "true"
+      KEYCLOAK_ADMIN: {{ apc_keycloak_username }}
+      KEYCLOAK_ADMIN_PASSWORD: {{ apc_keycloak_password }} 
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-keycloak
+
+  # Required for caching, this is kind of stateless (keys expire, no stored data), cluster for HA but not required.
+  ingest-redis:
+    image: redis/redis-stack:latest
+    restart: always
+    volumes:
+      - "{{ apc_volumes }}/redis_data:/data"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-ingest-redis
+
+  # Required, it works, but not a production configured instance, see MassTransit for required addons.
+  rabbitmq:
+    image: masstransit/rabbitmq:3
+    hostname: 'apc-rabbitmq'
+    restart: always
+    volumes:
+      - "{{ apc_volumes }}/rabbitmq_data:/var/lib/rabbitmq"
+    environment:
+      - RABBITMQ_DEFAULT_USER={{ apc_rabbitmq_username }}
+      - RABBITMQ_DEFAULT_PASSWORD={{ apc_rabbitmq_password }}
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-rabbitmq
+  
+  # Optional   
+  haproxy:
+    image: haproxy 
+    volumes:
+      - "{{ apc_cfg }}/haproxy:/usr/local/etc/haproxy"
+    restart: always
+    # Only expose the services you want external access to.
+    ports:
+      - 443:8000    # GUI
+      - 8001:8001   # RabbitMQ web interface
+      - 8002:8002   # MongoDB express
+      - 8003:8003   # Redis Insights 
+      - 8004:8004   # API
+      - 9000:9000   # Grafana
+      - 10000:10000 # Keycloak
+    networks:
+      - apc-infra-network
+
+  # Ingest service is required, it manages all the artifacts being processed.  
+  ingestion:
+    image: ghcr.io/linus-berg/apc/ingestion:latest
+    restart: always
+    env_file:
+      - "vars.env"
+    networks:
+      - apc-infra-network
+
+  # Optional if gui or API is not used. 
+  api:
+    image: ghcr.io/linus-berg/apc/api:latest
+    restart: always
+    env_file:
+      - "vars.env"
+    volumes:
+      - "{{ apc_cfg }}/keycloak.json:/app/keycloak.json"
+      - "{{ apc_volumes }}/logs:/logs"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-api
+
+  # Optional if no scheduling is needed. Note: Schedule is hardcoded (TODO: make parameter)
+  scheduler:
+    image: ghcr.io/linus-berg/apc/scheduler:latest
+    restart: always
+    env_file:
+      - "vars.env"
+    volumes:
+      - "{{ apc_volumes }}/logs:/logs"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-scheduler
+
+  # Optional if no gui is needed (own interface can be created)
+  gui:
+    image: ghcr.io/linus-berg/apc/gui:latest
+    restart: always
+    env_file:
+      - "vars.env"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-gui
+
+  # Represent a APM module.
+{% for apm in apc_apms %}
+  apm-{{ apm.id }}:
+    image: {{ apm.image }}:{{ apm.tag }}
+    restart: always
+    env_file:
+      - "vars.env"
+    networks:
+      - apc-infra-network
+    deploy:
+        mode: replicated
+        replicas: {{ apm.replicas }}
+{% endfor %} 
+
+  # Required for protocol routing. 
+  acm-router:
+    image: ghcr.io/linus-berg/apc/acm/router:latest
+    restart: always
+    env_file:
+      - "vars.env"
+    networks:
+      - apc-infra-network
+    deploy:
+        mode: replicated
+        replicas: 6
+
+  # Optional if HTTP protocol is not needed (unlikely).
+  acm-http:
+    image: ghcr.io/linus-berg/apc/acm/http:latest
+    restart: always
+    env_file:
+      - "vars.env"
+    volumes:
+      - "/data:/data"
+    networks:
+      - apc-infra-network
+    deploy:
+        mode: replicated
+        replicas: 3
+
+  # Optional if no Git repositories are being collected. 
+  acm-git:
+    image: ghcr.io/linus-berg/apc/acm/git:latest
+    restart: always
+    env_file:
+      - "vars.env"
+    volumes:
+      - "/data:/data"
+    networks:
+      - apc-infra-network
+
+  # Optional if no containers are being collected.  
+  acm-container:
+    image: ghcr.io/linus-berg/apc/acm/container:latest
+    restart: always
+    env_file:
+      - "vars.env"
+    volumes:
+      - "/data:/data"
+      # Instead of logging into docker each container restart, mount docker config into the container.
+      # TODO: this is a very manual process and might even be mounted wrong for skopeo.
+      - "/root/.docker:/root/.docker"
+    networks:
+      - apc-infra-network
+  
+  # TELEMETRY (everything optional, though highly recommended, for service graph and tracing)
+  telemetry-grafana:
+    image: grafana/grafana-oss:latest
+    # WARNING: Fix for grafana being buggy with permissions and crashing in docker?
+    user: "0:0"
+    volumes:
+      - "{{ apc_volumes }}/grafana_data:/var/lib/grafana"
+      - "{{ apc_cfg }}/grafana.ini:/etc/grafana/grafana.ini"
+      - "{{ apc_cfg }}/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-telemetry-grafana
+  
+  telemetry-tempo:
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - "{{ apc_cfg }}/tempo.yml:/etc/tempo.yaml"
+      - "{{ apc_volumes }}/tempo-data:/tmp/tempo"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-telemetry-tempo
+
+  # NOT OPTIONAL IF TELEMETRY IS WANTED (each service implements the OTEL protocol)
+  telemetry-otel:
+    image: otel/opentelemetry-collector-contrib:0.79.0
+    command: [ "--config=/etc/otel-collector.yaml" ]
+    volumes:
+      - "{{ apc_cfg }}/otel.yml:/etc/otel-collector.yaml"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-telemetry-otel
+    extra_hosts: ["host.docker.internal:host-gateway"]
+
+  telemetry-prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus.yaml
+      - --web.enable-remote-write-receiver
+      - --enable-feature=exemplar-storage
+    volumes:
+      - "{{ apc_cfg }}/prometheus.yml:/etc/prometheus.yaml"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-telemetry-prometheus
+  
+  telemetry-node-exporter:
+      image: prom/node-exporter:latest
+      restart: unless-stopped
+      network_mode: host
+      volumes:
+        - /proc:/host/proc:ro
+        - /sys:/host/sys:ro
+        - /:/rootfs:ro
+      command:
+        - '--path.procfs=/host/proc'
+        - '--path.rootfs=/rootfs'
+        - '--path.sysfs=/host/sys'
+        - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      
+networks:
+  apc-infra-network:
+    name: apc-infra-network
+

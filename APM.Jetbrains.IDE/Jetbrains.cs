@@ -21,8 +21,7 @@ public class Jetbrains : IJetbrains {
     foreach (JetbrainsProductRelease release in product.releases) {
       Dictionary<string, JetbrainsProductDownload>
         downloads = release.downloads;
-      if (downloads.ContainsKey("linux")) {
-        JetbrainsProductDownload download = downloads["linux"];
+      if (downloads.TryGetValue("linux", out JetbrainsProductDownload? download)) {
         ArtifactVersion version = new() {
           version = release.version
         };
