@@ -8,6 +8,8 @@ services:
 # apc_cfg: "/opt/apc/cfg"
 # apc_volumes: "/opt/apc/volumes"
 
+# apc_hostname: apc.eat-the-internet.com
+
 # apc_rabbitmq_username: "apc"
 # apc_rabbitmq_password: "dummy_rmq"
 
@@ -23,6 +25,7 @@ services:
 # apc_redis_username: "apc"
 # apc_redis_password: "dummy_redis"
 
+## Exclusively for the Helm APM.
 # artifacthub_api_key_id: "API-ID"
 # artifacthub_api_key_secret: "API-SECRET"
 
@@ -147,6 +150,7 @@ services:
     env_file:
       - "vars.env"
     volumes:
+      # This is an exported keycloak configuration.
       - "{{ apc_cfg }}/keycloak.json:/app/keycloak.json"
       - "{{ apc_volumes }}/logs:/logs"
     networks:
@@ -192,7 +196,7 @@ services:
         replicas: {{ apm.replicas }}
 {% endfor %} 
 
-  # Required for protocol routing. 
+  # Required for protocol routing and filtering.
   acm-router:
     image: ghcr.io/linus-berg/apc/acm/router:latest
     restart: always
