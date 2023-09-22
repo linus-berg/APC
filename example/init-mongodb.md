@@ -8,7 +8,7 @@ Adding of processors is also a manual process and has no interface currently.
 
 2. Create a processor in that collection, using the following model (subject to change, please see APC.Kernel/Models/Processor.cs).
 
-```json
+```json5
 {
     "_id": "PROCESSOR-NAME", // Name of the processor, this is used for routing.
     "Config": {
