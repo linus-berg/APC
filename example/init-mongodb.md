@@ -11,7 +11,7 @@ Adding of processors is also a manual process and has no interface currently.
 ```json
 {
     "_id": "PROCESSOR-NAME", // Name of the processor, this is used for routing.
-    "Config": {
+    "config": {
         "EXTRA-VARIABLE-FIELD": {
             "key": "EXTRA-VARIABLE-FIELD",
             "type": "string",     // Currently has no effect, future will be dropdown etc
@@ -19,8 +19,8 @@ Adding of processors is also a manual process and has no interface currently.
             "placeholder": "DUMMY-GROUP"
         }
     },
-    "DirectCollect": false,         // Direct collection bypasses routers and does not attempt processing.
-    "Description": "<b>Test</b>"    // This field is editable in the APC.GUI and supports HTML.
+    "direct_collect": false,         // Direct collection bypasses routers and does not attempt processing.
+    "description": "<b>Test</b>"    // This field is editable in the APC.GUI and supports HTML.
 }
 ```
 
