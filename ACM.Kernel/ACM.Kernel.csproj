@@ -10,4 +10,8 @@
         <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Foundatio.Minio" Version="10.6.1" />
+    </ItemGroup>
+
 </Project>

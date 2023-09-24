@@ -7,19 +7,25 @@ namespace ACM.Http;
 
 public class Collector : ICollector {
   private readonly FileSystem fs_;
-
+  private readonly bool delta_;
+  private readonly bool forward_;
   public Collector(FileSystem fs) {
     fs_ = fs;
+    delta_ = Configuration.GetApcVar(ApcVariable.ACM_HTTP_DELTA) == "true";
+    forward_ = Configuration.GetApcVar(ApcVariable.ACM_HTTP_MODE) == "forward";
   }
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {
     string location = context.Message.location;
     string module = context.Message.module;
     string fp = fs_.GetArtifactPath(module, location);
-    if ((!fs_.Exists(fp) && !fs_.Exists(fp + ".tmp")) || context.Message.force) {
-      RemoteFile rf = new(location);
+    bool exists = await fs_.Exists(fp);
+    if (!exists || context.Message.force) {
+      RemoteFile rf = new(location, fs_);
       if (await rf.Get(fp)) {
-        fs_.CreateDailyLink(module, location);
+        if (delta_) {
+          fs_.CreateDailyLink(module, location);
+        }
       }
     }
   }

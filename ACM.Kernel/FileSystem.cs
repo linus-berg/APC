@@ -1,15 +1,39 @@
 using System.Text.RegularExpressions;
 using APC.Kernel;
+using Foundatio.Storage;
 
 namespace ACM.Kernel;
 
 public class FileSystem {
-  private static readonly string BASE_DIR_ =
+  private readonly string BASE_DIR_ =
     Configuration.GetApcVar(ApcVariable.APC_ACM_DIR);
 
-  static FileSystem() {
+  private readonly IFileStorage storage_backend_;
+
+  public FileSystem(IFileStorage storage_backend) {
     Console.WriteLine($"Storage Directory: {BASE_DIR_}");
+    storage_backend_ = storage_backend;
   }
+
+  public async Task<bool> Exists(string path) {
+    return await storage_backend_.ExistsAsync(path);
+  }
+  
+  public async Task<bool> Delete(string path) {
+    return await storage_backend_.DeleteFileAsync(path);
+  }
+  
+  public async Task<bool> Rename(string a, string b) { 
+    return await storage_backend_.RenameFileAsync(a, b);
+  }
+  public async Task<Stream> GetStream(string path) {
+    return await storage_backend_.GetFileStreamAsync(path);
+  }
+
+  public async Task<bool> PutFile(string path, Stream stream) {
+    return await storage_backend_.SaveFileAsync(path, stream);
+  }
+  
 
   private string GetDailyDeposit(string module) {
     string daily_deposit = Path.Join(BASE_DIR_, "Daily", module);
@@ -28,15 +52,13 @@ public class FileSystem {
   public string GetArtifactPath(string module, string uri_str) {
     Uri uri = new(uri_str);
     string location = GetDiskLocation(uri);
-    CreateModuleDirectory(module);
     string path = GetModulePath(module, location);
-    CreateArtifactDirectory(Path.GetDirectoryName(path));
     return path;
   }
 
-  public long GetFileSize(string filepath) {
-    FileInfo info = new FileInfo(filepath);
-    return info.Length;
+  public async Task<long> GetFileSize(string filepath) {
+    FileSpec spec = await storage_backend_.GetFileInfoAsync(filepath);
+    return spec.Size;
   }
 
   private string GetDiskLocation(Uri uri) {
@@ -48,18 +70,9 @@ public class FileSystem {
   }
 
   private string GetModulePath(string module, string filepath) {
-    return Path.Join(GetModuleDir(module), filepath);
+    return Path.Join(module, filepath);
   }
-
-  private void CreateArtifactDirectory(string path) {
-    Directory.CreateDirectory(path);
-  }
-
-  private void CreateModuleDirectory(string module) {
-    Directory.CreateDirectory(GetModuleDir(module));
-  }
-
-
+  
   public string GetModuleDir(string module, bool create = false) {
     string dir = Path.Join(BASE_DIR_, module);
     if (create) {
@@ -67,9 +80,5 @@ public class FileSystem {
     }
 
     return dir;
-  }
-
-  public bool Exists(string filepath) {
-    return File.Exists(filepath);
   }
 }
