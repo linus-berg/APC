@@ -4,7 +4,8 @@
     "APC.Tester": {
       "commandName": "Project",
       "environmentVariables": {
-        "APC_MONGO_STR": "mongodb://root:example@localhost:27017"
+        "APC_MONGO_STR": "mongodb://root:example@localhost:27017",
+        "ACM_CONTAINER_REGISTRY": "localhost:6000"
       }
     }
   }

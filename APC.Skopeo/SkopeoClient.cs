@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using APC.Kernel;
 using APC.Kernel.Extensions;
 using APC.Skopeo.Models;
 using CliWrap;
@@ -6,31 +7,34 @@ using CliWrap;
 namespace APC.Skopeo;
 
 public class SkopeoClient {
-  public async Task CopyToOci(string input, string oci_dir) {
-    Image image = new(input);
-    OciDir oci = new(oci_dir);
-    Directory.CreateDirectory(oci.Repositories);
-    Directory.CreateDirectory(Path.Join(oci.Repositories, image.Destination));
+  public async Task<bool> CopyToRegistry(string remote_image) {
+    Image image = new(remote_image);
+    string registry =
+      Configuration.GetApcVar(ApcVariable.ACM_CONTAINER_REGISTRY);
+
+    string internal_image = $"docker://{registry}/{image.Repository}";
+    StringBuilder std_out = new StringBuilder();
+    StringBuilder std_err = new StringBuilder();
     Command cmd = Cli.Wrap("skopeo")
-                     .WithWorkingDirectory(oci.Repositories)
                      .WithArguments(args => {
                        args.Add("copy");
-                       args.Add("--quiet");
-                       args.Add("--dest-shared-blob-dir");
-                       args.Add(oci.Shared);
+                       args.Add("--dest-tls-verify=false");
                        args.Add(image.Uri);
-                       args.Add(
-                         $"oci:{image.Repository}");
-                     });
-    StringBuilder sb = new();
-    Console.WriteLine($"Pulling {image.Uri} -> oci:{image.Repository}");
+                       args.Add(internal_image);
+                     })
+                     .WithStandardOutputPipe(
+                       PipeTarget.ToStringBuilder(std_out))
+                     .WithStandardErrorPipe(
+                       PipeTarget.ToStringBuilder(std_err));
+    Console.WriteLine($"Pulling {image.Uri} -> {internal_image}");
     try {
       CommandResult result =
-        await (cmd | PipeTarget.ToStringBuilder(sb)).ExecuteAsync();
+        await cmd.ExecuteAsync();
     } catch (Exception e) {
-      Console.WriteLine(e);
+      Console.WriteLine(std_err);
       throw;
     }
+    return true;
   }
 
 
@@ -50,26 +54,20 @@ public class SkopeoClient {
     return tags;
   }
 
-  public async Task<SkopeoManifest?> ImageExists(string input, string oci_dir) {
+  public async Task<SkopeoManifest?> ImageExists(string input) {
     Image image = new(input);
-    OciDir oci = new(oci_dir);
-    Directory.CreateDirectory(oci.Repositories);
-    if (!Directory.Exists(Path.Join(oci.Repositories, image.Destination))) {
-      return null;
-    }
+    string registry =
+      Configuration.GetApcVar(ApcVariable.ACM_CONTAINER_REGISTRY);
     Command cmd = Cli.Wrap("skopeo")
-                     .WithWorkingDirectory(oci.Repositories)
                      .WithArguments(args => {
                        args.Add("inspect");
-                       args.Add("--shared-blob-dir");
-                       args.Add(oci.Shared);
+                       args.Add("--tls-verify=false");
                        args.Add(
-                         $"oci:{image.Repository}");
+                         $"docker://{registry}/{image.Repository}");
                      });
     SkopeoManifest manifest;
     try {
       manifest = await cmd.ExecuteWithResult<SkopeoManifest>();
-      manifest.WorkingDirectory = oci_dir;
     } catch (Exception e) {
       return null;
     }

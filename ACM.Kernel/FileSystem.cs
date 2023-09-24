@@ -35,25 +35,28 @@ public class FileSystem {
   }
   
 
-  private string GetDailyDeposit(string module) {
-    string daily_deposit = Path.Join(BASE_DIR_, "Daily", module);
+  private string GetDeltaDeposit(string module) {
+    string daily_deposit = Path.Join("delta", module);
     return Path.Join(daily_deposit, DateTime.UtcNow.ToString("yyyy_MM_dd"));
   }
 
-  public void CreateDailyLink(string module, string uri_str) {
+  public async Task<bool> CreateDeltaLink(string module, string uri_str) {
     Uri uri = new(uri_str);
     string location = GetDiskLocation(uri);
-    string daily_deposit = GetDailyDeposit(module);
+    string daily_deposit = GetDeltaDeposit(module);
     string link = Path.Join(daily_deposit, location);
-    Directory.CreateDirectory(Path.GetDirectoryName(link));
-    File.CreateSymbolicLink(link, GetArtifactPath(module, uri_str));
+    string target = GetArtifactPath(module, uri_str);
+    return await CreateS3Link(link, target);
+  }
+  
+  private async Task<bool> CreateS3Link(string link, string target) {
+    return await storage_backend_.SaveFileAsync(link, target);
   }
 
   public string GetArtifactPath(string module, string uri_str) {
     Uri uri = new(uri_str);
     string location = GetDiskLocation(uri);
-    string path = GetModulePath(module, location);
-    return path;
+    return GetModulePath(module, location);
   }
 
   public async Task<long> GetFileSize(string filepath) {

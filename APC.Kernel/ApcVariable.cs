@@ -24,5 +24,8 @@ public enum ApcVariable {
   ACM_S3_SECRET_KEY,
   ACM_S3_REGION,
   ACM_S3_ENDPOINT,
-  ACM_S3_BUCKET
+  ACM_S3_BUCKET,
+  
+  // Registry proxy for S3 
+  ACM_CONTAINER_REGISTRY
 }

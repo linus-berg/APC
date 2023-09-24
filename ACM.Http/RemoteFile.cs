@@ -3,7 +3,6 @@ using ACM.Kernel;
 namespace ACM.Http;
 
 public class RemoteFile {
-  private const int BUFFER_SIZE_ = 8192;
   private static readonly HttpClient CLIENT_ = new();
   private readonly string url_;
   private readonly FileSystem fs_;
@@ -13,7 +12,7 @@ public class RemoteFile {
     fs_ = fs;
   }
 
-  public async Task<bool> Get(string filepath) {
+  public async Task<bool> Get(string path) {
     HttpResponseMessage response =
       await CLIENT_.GetAsync(url_, HttpCompletionOption.ResponseHeadersRead);
     if (!response.IsSuccessStatusCode ||
@@ -21,34 +20,41 @@ public class RemoteFile {
       return false;
     }
 
-    long size = (long)response.Content.Headers.ContentLength;
-    await using Stream s = await response.Content.ReadAsStreamAsync();
+    long remote_size = (long)response.Content.Headers.ContentLength;
+    await using Stream remote_stream = await response.Content.ReadAsStreamAsync();
+    bool result;
     try {
-      await ProcessStream(s, filepath);
+      result = await ProcessStream(path, remote_stream);
     } catch (Exception e) {
-      s.Close();
-      await ClearFile(filepath);
+      remote_stream.Close();
+      await ClearFile(path);
       throw;
     }
 
-    /* If downloaded file size matches remote, its complete */
-    if (await fs_.GetFileSize(filepath) == size) {
-      return true;
+    if (result) {
+      /* If downloaded file size matches remote, its complete */
+      long size = await fs_.GetFileSize(path);
+      if (size == remote_size) {
+        return true;
+      }
+    } else {
+      await ClearFile(path);
+      throw new HttpRequestException($"{url_} failed to collect.");
     }
 
-    await ClearFile(filepath);
     return false;
   }
 
-  private async Task
-    ProcessStream(Stream s, string filepath) {
-    
+  private async Task<bool>
+    ProcessStream(string path, Stream remote_stream) {
+    bool result;
     try {
-      await fs_.PutFile(filepath, s); 
+      result = await fs_.PutFile(path, remote_stream); 
     } catch (Exception e) {
-      await ClearFile(filepath);
+      await ClearFile(path);
       throw;
     }
+    return result;
   }
 
   private async Task<bool> ClearFile(string file) {

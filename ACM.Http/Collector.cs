@@ -24,7 +24,7 @@ public class Collector : ICollector {
       RemoteFile rf = new(location, fs_);
       if (await rf.Get(fp)) {
         if (delta_) {
-          fs_.CreateDailyLink(module, location);
+          await fs_.CreateDeltaLink(module, location);
         }
       }
     }
