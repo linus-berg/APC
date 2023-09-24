@@ -50,6 +50,7 @@ services:
       - 27017:27017
     volumes:
       - "./volumes/mongo_data:/data/db"
+      - "./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example

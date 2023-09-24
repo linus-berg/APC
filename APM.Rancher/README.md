@@ -2,7 +2,7 @@ Processor configuration:
 ```json
 {
     "_id": "rancher",
-    "Config": {
+    "config": {
       "file": {
         "key": "file",
         "type": "string",
@@ -11,7 +11,7 @@ Processor configuration:
       }
       
     },
-    "DirectCollect": false,
-    "Description": "This processor should be 'read only', however it's not implemented at the moment"
+    "direct_collect": false,
+    "description": "This processor should be 'read only', however it's not implemented at the moment"
 }
 ```

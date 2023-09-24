@@ -2,7 +2,7 @@ Processor configuration:
 ```json
 {
     "_id": "maven",
-    "Config": {
+    "config": {
         "group": {
             "key": "group",
             "type": "string",
@@ -10,7 +10,7 @@ Processor configuration:
             "placeholder": ""
         }
     },
-    "DirectCollect": false,
-    "Description": ""
+    "direct_collect": false,
+    "description": ""
 }
 ```

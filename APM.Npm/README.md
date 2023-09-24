@@ -2,8 +2,8 @@ Processor configuration:
 ```json
 {
     "_id": "npm",
-    "Config": {},
-    "DirectCollect": false,
-    "Description": ""
+    "config": {},
+    "direct_collect": false,
+    "description": ""
 }
 ```

@@ -2,8 +2,8 @@ Processor configuration:
 ```json
 {
     "_id": "pypi",
-    "Config": {},
-    "DirectCollect": false,
-    "Description": ""
+    "config": {},
+    "direct_collect": false,
+    "description": ""
 }
 ```
