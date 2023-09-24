@@ -1,3 +1,4 @@
+using APC.Kernel;
 using APC.Kernel.Models;
 using APC.Services;
 using MongoDB.Driver;
@@ -10,7 +11,7 @@ public class MongoDatabase : IApcDatabase {
   private readonly string PROCCESSOR_COLLECTION_ = "apc-processors";
 
   public MongoDatabase() {
-    string c_str = Environment.GetEnvironmentVariable("APC_MONGO_STR");
+    string c_str = Configuration.GetApcVar(ApcVariable.APC_MONGO_STR);
     client_ = new MongoClient(c_str);
     database_ = client_.GetDatabase("apc");
   }
@@ -37,7 +38,7 @@ public class MongoDatabase : IApcDatabase {
 
   public async Task<bool> UpdateProcessor(Processor processor) {
     IMongoCollection<Processor> collection =
-      GetCollection<Processor>("apc-processors");
+      GetCollection<Processor>(PROCCESSOR_COLLECTION_);
     ReplaceOneResult result =
       await collection.ReplaceOneAsync(a => a.id == processor.id, processor);
     return result.IsAcknowledged;

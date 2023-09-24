@@ -1,4 +1,5 @@
 # Artifact Processor Complex
+:warning: Warning: This project is still under heavy development, to be considered a beta, at best.
 
 The APC is used to collect and store a varied and large amounts of artifacts, for example npm, nuget...
 
@@ -17,14 +18,31 @@ Processors can safely rely on the core infrastructure of the APC, the core infra
 and the collection via standard protocols, for example http, git, or docker.
 
 ## Recommended minimum requirements (single node)
-|     | Req                                 |
-|-----|-------------------------------------|
-| RAM | 16GB                                |
-| CPU | 8 cores                             |
-| Storage | 2TB * APM (depending on usage)  |
-| Network | >= 1 Gbps                       |
+| Resource | Req                              |
+|----------|----------------------------------|
+| RAM      | 16GB                             |
+| CPU      | 8 cores                          |
+| Storage  | 2TB * APM (depending on usage)   |
+| Network  | >= 1 Gbps                        |
 
 The APC is designed to be horizontally scalable and suitable for kubernetes, however, kubernetes deployments have not been tested thoroughly.
+
+The following services are required to run the complete suite of APC capabilities.
+A batteries included starter pack is included under /examples and /Compose, however, these are not production ready configurations, and are only intended as an development/test environment.
+
+
+| Service                 | Requirement                            |
+|-------------------------|--------------------------------------|
+| Keycloak                | Required (only for API and GUI)        |
+| RabbitMq                | Required                               |
+| Minio                   | Required                               |
+| MongoDb                 | Required                               |
+| Redis                   | Required                               |
+| Container Registry      | Required (only for ACM.Container)      |
+| OpenTelemetry Collector | Recommended but required for Telemetry | 
+| Grafana                 | Recommended                            | 
+| Prometheus              | Recommended                            | 
+| Tempo                   | Recommended                            | 
 
 
 ## Modules
@@ -36,15 +54,24 @@ The APC is designed to be horizontally scalable and suitable for kubernetes, how
 | ACM | Artifact Collector Module   | The ACM handles the collection of artifact-types based on standard protocols. |
 
 ## Environment Variables
-| Name               | Default   | Modules               |
-|--------------------|-----------|-----------------------|
-| APC_OTEL_HOST      | -         | Ingest, API, APM, ACM |
-| APC_RABBIT_MQ_HOST | localhost | Ingest, API, APM, ACM |
-| APC_RABBIT_MQ_USER | guest     | Ingest, API, APM, ACM |
-| APC_RABBIT_MQ_PASS | guest     | Ingest, API, APM, ACM |
-| APC_REDIS_HOST     | localhost | Ingest, API           |
-| APC_REDIS_USER     | -         | Ingest, API           |
-| APC_REDIS_PASS     | -         | Ingest, API           |
-| APC_API_HOST       | localhost | GUI, ATM, API         |
-| APC_API_PORT       | 4000      | GUI, ATM, API         |
-| APC_ACM_DIR        | /data/    | ACM                   |
+| Name                   | Default   | Modules               |
+|------------------------|-----------|-----------------------|
+| APC_OTEL_HOST          | -         | Ingest, API, APM, ACM |
+| APC_RABBIT_MQ_HOST     | localhost | Ingest, API, APM, ACM |
+| APC_RABBIT_MQ_USER     | guest     | Ingest, API, APM, ACM |
+| APC_RABBIT_MQ_PASS     | guest     | Ingest, API, APM, ACM |
+| APC_REDIS_HOST         | localhost | Ingest, API           |
+| APC_REDIS_USER         | -         | Ingest, API           |
+| APC_REDIS_PASS         | -         | Ingest, API           |
+| APC_MONGO_STR          | -         | Ingest, API           |
+| APC_API_HOST           | localhost | GUI, ATM, API         |
+| APC_API_PORT           | 4000      | GUI, ATM, API         |
+| APC_ACM_DIR            | /data/    | ACM.Git               |
+| ACM_HTTP_DELTA         | true      | ACM.Http              |
+| ACM_HTTP_MODE          | lake      | ACM.Http              |
+| ACM_S3_ACCESS_KEY      | -         | ACM                   |
+| ACM_S3_SECRET_KEY      | -         | ACM                   |
+| ACM_S3_REGION          | -         | ACM                   |
+| ACM_S3_ENDPOINT        | -         | ACM                   |
+| ACM_S3_BUCKET          | -         | ACM                   |
+| ACM_CONTAINER_REGISTRY | -         | ACM.Container         |

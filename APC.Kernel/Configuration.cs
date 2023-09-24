@@ -33,7 +33,7 @@ public static class Configuration {
   };
 
   public static string GetApcVar(ApcVariable variable) {
-    string value = Environment.GetEnvironmentVariable(variable.ToString());
+    string? value = Environment.GetEnvironmentVariable(variable.ToString());
 
     /* If variable is set */
     if (value != null) {
@@ -41,8 +41,8 @@ public static class Configuration {
     }
 
     /* If variable has default */
-    if (DEFAULTS_.ContainsKey(variable)) {
-      return DEFAULTS_[variable];
+    if (DEFAULTS_.TryGetValue(variable, out string? default_value)) {
+      return default_value;
     }
 
     throw new NoNullAllowedException($"{variable.ToString()} is null!");

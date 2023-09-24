@@ -11,7 +11,6 @@ public class FileSystem {
   private readonly IFileStorage storage_backend_;
 
   public FileSystem(IFileStorage storage_backend) {
-    Console.WriteLine($"Storage Directory: {BASE_DIR_}");
     storage_backend_ = storage_backend;
   }
 
