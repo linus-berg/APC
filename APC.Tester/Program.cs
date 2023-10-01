@@ -23,6 +23,6 @@ MinioFileStorage storage = new(minio_options);
 FileSystem fs = new(storage);
 Git git = new(fs);
 
-await git.Mirror("***REMOVED***");
+await git.Mirror("git://github.com/linus-berg/ATM.Npm");
 //await client.CopyToRegistry("docker://docker.io/registry:2");
 Console.WriteLine("---");
