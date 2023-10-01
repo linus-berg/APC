@@ -19,11 +19,6 @@ public class GithubReleases : IGithubReleases {
     string[] files = artifact.config["files"].Split(";");
 
     foreach (GithubRelease release in releases) {
-      if (artifact.HasVersion(release.tag_name)) {
-        continue;
-      }
-
-
       ArtifactVersion version = new() {
         version = release.tag_name
       };
