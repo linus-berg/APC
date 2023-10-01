@@ -5,6 +5,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["APM.Rancher/APM.Rancher.csproj", "APM.Rancher/"]
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["APC.Github/APC.Github.csproj", "APC.Github/"]
 RUN dotnet restore "APM.Rancher/APM.Rancher.csproj"
 COPY . .
 WORKDIR "/src/APM.Rancher"
