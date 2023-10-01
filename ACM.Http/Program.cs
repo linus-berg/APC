@@ -28,7 +28,7 @@ MinioFileStorage storage = new(minio_options);
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
                    services.AddTelemetry(registration);
-                   services.AddSingleton<IFileStorage>(storage);
+                   services.AddStorage();
                    services.AddSingleton<FileSystem>();
                    services.Register(registration);
                    services.AddHostedService<Worker>();

@@ -11,6 +11,7 @@ registration.AddEndpoint("git");
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
                    services.AddTelemetry(registration);
+                   services.AddStorage();
                    services.AddSingleton<FileSystem>();
                    services.AddSingleton<Git>();
                    services.Register(registration);
