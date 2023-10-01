@@ -4,6 +4,11 @@ on:
   # run it on push to the default repository branch
   push:
     branches: [master]
+    paths-ignore:
+      - '**/README.md'
+      - '**/*.drawio.svg'
+      - 'example/**'
+      - 'Compose/**'
   # run it during pull request
   pull_request:
 
