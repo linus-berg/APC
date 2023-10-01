@@ -1,4 +1,6 @@
-namespace APM.Rancher.Models;
+using System.Text.RegularExpressions;
+
+namespace APC.Github.Models;
 
 public class GithubRelease {
   public string url { get; set; }
@@ -16,7 +18,15 @@ public class GithubRelease {
   public bool prerelease { get; set; }
   public List<GithubReleaseAsset> assets { get; set; }
 
-  public string GetRancherImageFile(string name) {
+  public string GetReleaseFileRegexp(Regex regex) {
+    foreach (GithubReleaseAsset asset in assets) {
+      if (regex.IsMatch(asset.name)) {
+        return asset.browser_download_url;
+      }
+    }
+    return null;
+  }
+  public string GetReleaseFile(string name) {
     foreach (GithubReleaseAsset asset in assets) {
       if (asset.name == name) {
         return asset.browser_download_url;

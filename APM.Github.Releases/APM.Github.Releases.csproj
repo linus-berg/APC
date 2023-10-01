@@ -4,23 +4,22 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>dotnet-APM.Rancher-610F6403-6238-4A67-9842-8FACC3242833</UserSecretsId>
+        <UserSecretsId>dotnet-APM.Github.Releases-BCD3F7FB-8F8F-4B80-AAAE-3D66BDDE41A6</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
-        <PackageReference Include="RestSharp" Version="110.2.1-alpha.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="..\.dockerignore">
-            <Link>.dockerignore</Link>
-        </Content>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\APC.Github\APC.Github.csproj" />
-        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
+      <ProjectReference Include="..\APC.Github\APC.Github.csproj" />
+      <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj" />
     </ItemGroup>
 </Project>

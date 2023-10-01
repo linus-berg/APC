@@ -3,15 +3,15 @@ using APC.Kernel;
 using APC.Kernel.Constants;
 using APC.Kernel.Extensions;
 using APC.Kernel.Registrations;
-using APM.Rancher;
+using APM.Github.Releases;
 
 ModuleRegistration registration = new(ModuleType.APM, typeof(Processor));
-registration.AddEndpoint("rancher");
+registration.AddEndpoint("github-releases");
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
                    services.AddTelemetry(registration);
                    services.AddSingleton<IGithubClient, GithubClient>();
-                   services.AddSingleton<IRancher, Rancher>();
+                   services.AddSingleton<IGithubReleases, GithubReleases>();
                    services.Register(registration);
                    services.AddHostedService<Worker>();
                  })

@@ -2,7 +2,10 @@
 
 using ACM.Git;
 using ACM.Kernel;
+using APC.Github;
 using APC.Kernel;
+using APC.Kernel.Models;
+using APM.Github.Releases;
 using Foundatio.Storage;
 
 /* SETUP STORAGE */
@@ -22,7 +25,14 @@ MinioFileStorage storage = new(minio_options);
 
 FileSystem fs = new(storage);
 Git git = new(fs);
+IGithubReleases ghr = new GithubReleases(new GithubClient());
 
+
+Artifact artifact = new Artifact() {
+  id = "helm/helm",
+};
+artifact.config["files"] = @"^helm-v\d+.\d+.\d+-darwin-arm64.tar.gz.sha256sum.asc$";
+await ghr.ProcessArtifact(artifact);
 await git.Mirror("git://github.com/linus-berg/ATM.Npm");
 //await client.CopyToRegistry("docker://docker.io/registry:2");
 Console.WriteLine("---");

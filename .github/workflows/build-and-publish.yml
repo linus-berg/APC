@@ -30,6 +30,9 @@ jobs:
 
           - name: apm/npm
             directory: APM.Npm
+          
+          - name: apm/github/releases
+            directory: APM.Github.Releases
 
           - name: apm/jetbrains
             directory: APM.Jetbrains

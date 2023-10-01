@@ -1,4 +1,4 @@
-namespace APM.Rancher.Models;
+namespace APC.Github.Models;
 
 public class GithubReleaseAsset {
   public string url { get; set; }

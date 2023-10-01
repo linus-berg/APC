@@ -1,6 +1,7 @@
+using APC.Github;
+using APC.Github.Models;
 using APC.Kernel.Exceptions;
 using APC.Kernel.Models;
-using APM.Rancher.Models;
 using RestSharp;
 
 namespace APM.Rancher;
@@ -14,7 +15,7 @@ public class Rancher : IRancher {
   }
 
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
-    List<GithubRelease> releases = await gh_.GetRancherReleases(artifact.id);
+    List<GithubRelease> releases = await gh_.GetReleases(artifact.id);
     string file = artifact.config["file"];
 
     foreach (GithubRelease release in releases) {
@@ -22,7 +23,7 @@ public class Rancher : IRancher {
         continue;
       }
 
-      string url = release.GetRancherImageFile(file);
+      string url = release.GetReleaseFile(file);
       if (url == null) {
         continue;
       }
