@@ -24,8 +24,10 @@ public class GithubRelease {
         return asset.browser_download_url;
       }
     }
+
     return null;
   }
+
   public string GetReleaseFile(string name) {
     foreach (GithubReleaseAsset asset in assets) {
       if (asset.name == name) {

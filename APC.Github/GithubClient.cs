@@ -13,8 +13,8 @@ public class GithubClient : IGithubClient {
                    .ToList();
   }
 
-  private async Task<List<GithubRelease>> GetReleasePage(
-    string repo, int page) {
+  private async Task<List<GithubRelease>>
+    GetReleasePage(string repo, int page) {
     return await client_.GetJsonAsync<List<GithubRelease>>(
              $"/repos/{repo}/releases?page={page}&per_page=100",
              new {

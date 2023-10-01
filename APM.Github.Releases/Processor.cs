@@ -1,4 +1,3 @@
-using APC.Github;
 using APC.Kernel;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;

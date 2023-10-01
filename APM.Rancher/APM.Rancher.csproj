@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\APC.Github\APC.Github.csproj" />
+        <ProjectReference Include="..\APC.Github\APC.Github.csproj"/>
         <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
     </ItemGroup>
 </Project>

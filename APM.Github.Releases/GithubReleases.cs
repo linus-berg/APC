@@ -25,8 +25,10 @@ public class GithubReleases : IGithubReleases {
         if (string.IsNullOrEmpty(url)) {
           continue;
         }
+
         version.AddFile(Path.GetFileName(url), url);
       }
+
       artifact.AddVersion(version);
     }
 

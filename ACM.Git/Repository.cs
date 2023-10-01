@@ -5,18 +5,18 @@ public class Repository {
   private readonly UriBuilder uri_;
 
 
-  public Repository(string repo) {
+  public Repository(string repo, string local_directory) {
     original_uri_ = repo;
     uri_ = new UriBuilder(original_uri_) {
       Scheme = Uri.UriSchemeHttps,
       Port = -1
     };
-
     Owner = GetOwner();
     Remote = uri_.Uri.ToString();
 
     Name = GetName();
     Directory = GetDirectory();
+    LocalPath = Path.Join(local_directory, Directory);
   }
 
   public string Name { get; }
@@ -26,6 +26,8 @@ public class Repository {
   public string Remote { get; }
 
   public string Directory { get; }
+
+  public string LocalPath { get; }
 
   private string GetName() {
     string name = Path.GetFileName(original_uri_);

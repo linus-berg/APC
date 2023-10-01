@@ -7,83 +7,74 @@ using CliWrap;
 namespace ACM.Git;
 
 public class Git {
+  private const string INCREMENT_FORMAT_ = "yyyy-MM-ddTHH:mm:ssZ";
   private readonly string bundle_dir_;
   private readonly string dir_;
   private readonly FileSystem fs_;
-  private const string INCREMENT_FORMAT_ = "yyyy-MM-ddTHH:mm:ssZ";
 
   public Git(FileSystem fs) {
     fs_ = fs;
     dir_ = fs_.GetModuleDir("git", true);
     bundle_dir_ = Path.GetFullPath(Path.Join(dir_, "/tmp", "/bundles"));
-    ConfigureProxy().Wait();
+    ConfigureProxy();
   }
 
-  private async Task<bool> ConfigureProxy() {
-    Command cmd = Cli.Wrap("git")
-                     .WithArguments(
-                       $"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}");
-    return await cmd.ExecuteToConsole();
+  private void ConfigureProxy() {
+    ExecuteGitCommand($"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}");
   }
 
   public async Task<bool> Mirror(string remote) {
-    Repository repository = new(remote);
-    string local_path = GetFullRepoPath(repository);
-    CloneOrUpdateLocalMirror(local_path, repository);
-    await CreateIncrementalGitBundle(local_path, repository);
+    Repository repository = new(remote, dir_);
+    CloneOrUpdateLocalMirror(repository);
+    await CreateIncrementalGitBundle(repository);
     return true;
   }
 
-  private string GetFullRepoPath(Repository repository) {
-    return Path.Join(dir_, repository.Directory);
-  }
-
-  private void CloneOrUpdateLocalMirror(string local_path,
-                                        Repository repository) {
-    if (!Directory.Exists(local_path)) {
+  private void CloneOrUpdateLocalMirror(Repository repository) {
+    if (!Directory.Exists(repository.LocalPath)) {
       // Clone the mirror repository
-      ExecuteGitCommand($"clone --mirror {repository.Remote} {local_path}");
+      ExecuteGitCommand(
+        $"clone --mirror {repository.Remote} {repository.LocalPath}");
     } else {
       // Fetch updates to the mirror repository
-      ExecuteGitCommand("fetch --prune", local_path);
+      ExecuteGitCommand("fetch --prune", repository.LocalPath);
     }
   }
 
-  private async Task CreateIncrementalGitBundle(string local_path,
-                                                Repository repository) {
+  private async Task CreateIncrementalGitBundle(Repository repository) {
     string bundle_dir = Path.Join(bundle_dir_, repository.Owner);
     if (!Directory.Exists(bundle_dir)) {
       Directory.CreateDirectory(bundle_dir);
     }
 
-
     DateTime now = DateTime.UtcNow;
     /* Get latest update from storage */
     DateTime reference_date = await GetTimestamp(repository);
     int index = await GetIndex(repository);
-    
+
     // Calculate the range of commits based on the reference date
     string since_date = reference_date.ToString(INCREMENT_FORMAT_);
     string until_date = now.ToString(INCREMENT_FORMAT_);
-    
+
     string bundle_file_name = $"{repository.Name}-{++index}.bundle";
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
-    
+
     // Create an incremental bundle
     bool success = ExecuteGitCommand(
       $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
-      local_path);
+      repository.LocalPath);
     if (success) {
       bool uploaded = await PushToStorage(bundle_file_path);
       if (uploaded) {
         await UpdateIndex(repository, index);
         await UpdateTimestamp(repository, now);
         await fs_.CreateDeltaLink(
-          "git", $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
+          "git",
+          $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
       }
     }
   }
-  
+
   private async Task<int> GetIndex(Repository repository) {
     string path = GetIndexPath(repository);
     bool exists = await fs_.Exists(path);
@@ -126,11 +117,12 @@ public class Git {
   }
 
   private async Task<bool> UpdateIndex(Repository repository, int index) {
-    return await fs_.PutString(GetIndexPath(repository), (index + 1).ToString());
+    return await fs_.PutString(GetIndexPath(repository),
+                               (index + 1).ToString());
   }
-  
+
   private async Task<bool> UpdateTimestamp(Repository repository,
-                                        DateTime timestamp) {
+                                           DateTime timestamp) {
     return await fs_.PutString(GetTimestampPath(repository),
                                $"{timestamp:yyyyMMddHHmmss}");
   }
@@ -138,6 +130,7 @@ public class Git {
   private string GetIndexPath(Repository repository) {
     return Path.Join("git", repository.Owner, $"{repository.Name}.index");
   }
+
   private string GetTimestampPath(Repository repository) {
     return Path.Join("git", repository.Owner, $"{repository.Name}.timestamp");
   }
