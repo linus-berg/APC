@@ -15,7 +15,7 @@ public class Git {
   public Git(FileSystem fs) {
     fs_ = fs;
     dir_ = fs_.GetModuleDir("git", true);
-    bundle_dir_ = Path.Join(dir_, "/.tmp", "/bundles");
+    bundle_dir_ = Path.GetFullPath(Path.Join(dir_, "/tmp", "/bundles"));
     ConfigureProxy().Wait();
   }
 

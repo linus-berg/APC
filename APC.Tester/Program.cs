@@ -32,7 +32,7 @@ Artifact artifact = new Artifact() {
   id = "helm/helm",
 };
 artifact.config["files"] = @"^helm-v\d+.\d+.\d+-darwin-arm64.tar.gz.sha256sum.asc$";
-await ghr.ProcessArtifact(artifact);
+//await ghr.ProcessArtifact(artifact);
 await git.Mirror("git://github.com/linus-berg/ATM.Npm");
 //await client.CopyToRegistry("docker://docker.io/registry:2");
 Console.WriteLine("---");

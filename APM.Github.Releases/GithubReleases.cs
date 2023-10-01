@@ -1,9 +1,7 @@
 using System.Text.RegularExpressions;
 using APC.Github;
 using APC.Github.Models;
-using APC.Kernel.Exceptions;
 using APC.Kernel.Models;
-using RestSharp;
 
 namespace APM.Github.Releases;
 
