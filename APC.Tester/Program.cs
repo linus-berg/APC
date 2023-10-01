@@ -1,19 +1,28 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using ACM.Http;
+using ACM.Git;
 using ACM.Kernel;
-using APC.Kernel.Models;
-using APC.Skopeo;
-using APM.Jetbrains.IDE;
-using APM.Pypi;
-using Foundatio;
+using APC.Kernel;
 using Foundatio.Storage;
-using IJetbrains = APM.Jetbrains.IDE.IJetbrains;
-//Artifact p = await pypi.ProcessArtifact(artifact);
 
+/* SETUP STORAGE */
+MinioFileStorageConnectionStringBuilder connection = new();
 
-SkopeoClient client = new SkopeoClient();
+connection.Region = Configuration.GetApcVar(ApcVariable.ACM_S3_REGION);
+connection.AccessKey = Configuration.GetApcVar(ApcVariable.ACM_S3_ACCESS_KEY);
+connection.SecretKey = Configuration.GetApcVar(ApcVariable.ACM_S3_SECRET_KEY);
+connection.EndPoint = Configuration.GetApcVar(ApcVariable.ACM_S3_ENDPOINT);
+connection.Bucket = Configuration.GetApcVar(ApcVariable.ACM_S3_BUCKET);
 
+MinioFileStorageOptions minio_options = new() {
+  AutoCreateBucket = true,
+  ConnectionString = connection.ToString()
+};
+MinioFileStorage storage = new(minio_options);
 
-await client.CopyToRegistry("docker://docker.io/registry:2");
+FileSystem fs = new(storage);
+Git git = new(fs);
+
+await git.Mirror("***REMOVED***");
+//await client.CopyToRegistry("docker://docker.io/registry:2");
 Console.WriteLine("---");

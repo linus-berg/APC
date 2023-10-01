@@ -2,6 +2,7 @@ using APC.Kernel;
 using MassTransit;
 
 namespace APC.Ingestion;
+
 /* Endpoint for messages not using the standard MT format. */
 public class ProcessedRawDefinition : ConsumerDefinition<ProcessedRawConsumer> {
   public ProcessedRawDefinition() {

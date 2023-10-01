@@ -1,4 +1,4 @@
-namespace APM.Jetbrains.IDE; 
+namespace APM.Jetbrains.IDE;
 
 public class JetbrainsProductDownload {
   public string link { get; set; }

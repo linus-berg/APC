@@ -12,7 +12,7 @@ public class Helm {
   public Helm() {
     AddApiKeyIfAvailable();
   }
-  
+
   private void AddApiKeyIfAvailable() {
     string? api_key_id =
       Environment.GetEnvironmentVariable("ARTIFACTHUB_API_KEY_ID");
@@ -35,6 +35,7 @@ public class Helm {
       if (artifact.HasVersion(hv.version)) {
         continue;
       }
+
       HelmChartMetadata vm = await GetMetadata(artifact.id, hv.version);
       ArtifactVersion version = new();
       version.AddFile("chart", vm.content_url);
@@ -70,6 +71,7 @@ public class Helm {
     if (data?.dependencies == null) {
       return;
     }
+
     foreach (HelmChartDependency chart in data.dependencies) {
       TryAddDependency(artifact, chart);
     }
@@ -82,25 +84,25 @@ public class Helm {
       Console.WriteLine(e);
       return false;
     }
+
     return true;
   }
 
   private bool AddDependency(Artifact artifact, HelmChartDependency chart) {
-      if (string.IsNullOrEmpty(chart.repository)) {
-        return false;
-      }
+    if (string.IsNullOrEmpty(chart.repository)) {
+      return false;
+    }
 
-      Uri uri = new(chart.repository);
-      if (uri.Scheme == "file" ||
-          string.IsNullOrEmpty(chart.artifacthub_repository_name)) {
-        return false;
-      }
+    Uri uri = new(chart.repository);
+    if (uri.Scheme == "file" ||
+        string.IsNullOrEmpty(chart.artifacthub_repository_name)) {
+      return false;
+    }
 
-      artifact.AddDependency(
-        $"{chart.artifacthub_repository_name}/{chart.name}",
-        artifact.processor);
-      return true; 
-    
+    artifact.AddDependency(
+      $"{chart.artifacthub_repository_name}/{chart.name}",
+      artifact.processor);
+    return true;
   }
 
   private async Task<HelmChartMetadata> GetMetadata(string id, string version) {

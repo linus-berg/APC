@@ -6,9 +6,10 @@ using MassTransit;
 namespace ACM.Http;
 
 public class Collector : ICollector {
-  private readonly FileSystem fs_;
   private readonly bool delta_;
   private readonly bool forward_;
+  private readonly FileSystem fs_;
+
   public Collector(FileSystem fs) {
     fs_ = fs;
     delta_ = Configuration.GetApcVar(ApcVariable.ACM_HTTP_DELTA) == "true";

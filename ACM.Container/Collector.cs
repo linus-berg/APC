@@ -1,4 +1,3 @@
-using ACM.Kernel;
 using APC.Kernel;
 using APC.Kernel.Messages;
 using APC.Skopeo;
@@ -21,6 +20,7 @@ public class Collector : ICollector {
     if (manifest != null) {
       return;
     }
+
     await skopeo_.CopyToRegistry(request.location);
   }
 }

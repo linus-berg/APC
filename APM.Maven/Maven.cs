@@ -37,6 +37,7 @@ public class Maven : IMaven {
       if (artifact.HasVersion(version)) {
         continue;
       }
+
       /* Get pom for version */
       Project project = await GetPom(group_id, artifact_id, version);
       if (project == null) {

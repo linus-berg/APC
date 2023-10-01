@@ -1,4 +1,3 @@
-using APC.Kernel;
 using APC.Kernel.Exceptions;
 using APC.Kernel.Models;
 using APM.Rancher.Models;
@@ -17,18 +16,18 @@ public class Rancher : IRancher {
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     List<GithubRelease> releases = await gh_.GetRancherReleases(artifact.id);
     string file = artifact.config["file"];
-    
+
     foreach (GithubRelease release in releases) {
       if (artifact.HasVersion(release.tag_name)) {
         continue;
       }
-      
+
       string url = release.GetRancherImageFile(file);
       if (url == null) {
         continue;
       }
 
-      ArtifactVersion version = new ArtifactVersion() {
+      ArtifactVersion version = new() {
         version = release.tag_name
       };
 
@@ -37,17 +36,20 @@ public class Rancher : IRancher {
       if (rancher_file == null) {
         throw new ArtifactMetadataException($"Could not get {url}");
       }
+
       string[] images = rancher_file.Split('\n');
       foreach (string image in images) {
         if (string.IsNullOrEmpty(image)) {
           continue;
         }
+
         string clean =
           image.Contains("docker.io")
             ? image
             : $"docker.io/{image}";
         version.AddFile(image, $"docker://{clean}");
-      } 
+      }
+
       artifact.AddVersion(version);
     }
 
@@ -56,7 +58,7 @@ public class Rancher : IRancher {
 
   private async Task<string?> GetRancherFile(string url) {
     RestResponse response =
-       await http_client_.GetAsync(new RestRequest(url));
+      await http_client_.GetAsync(new RestRequest(url));
     return response.Content ?? null;
   }
 }

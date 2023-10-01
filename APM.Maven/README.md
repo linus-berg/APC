@@ -1,4 +1,5 @@
 Processor configuration:
+
 ```json
 {
     "_id": "maven",

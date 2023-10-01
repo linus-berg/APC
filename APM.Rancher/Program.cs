@@ -4,8 +4,7 @@ using APC.Kernel.Extensions;
 using APC.Kernel.Registrations;
 using APM.Rancher;
 
-ModuleRegistration registration =
-  new ModuleRegistration(ModuleType.APM, typeof(Processor));
+ModuleRegistration registration = new(ModuleType.APM, typeof(Processor));
 registration.AddEndpoint("rancher");
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {

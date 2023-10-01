@@ -13,8 +13,8 @@ public class SkopeoClient {
       Configuration.GetApcVar(ApcVariable.ACM_CONTAINER_REGISTRY);
 
     string internal_image = $"docker://{registry}/{image.Repository}";
-    StringBuilder std_out = new StringBuilder();
-    StringBuilder std_err = new StringBuilder();
+    StringBuilder std_out = new();
+    StringBuilder std_err = new();
     Command cmd = Cli.Wrap("skopeo")
                      .WithArguments(args => {
                        args.Add("copy");
@@ -34,6 +34,7 @@ public class SkopeoClient {
       Console.WriteLine(std_err);
       throw;
     }
+
     return true;
   }
 

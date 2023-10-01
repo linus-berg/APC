@@ -22,6 +22,7 @@ public class Pypi : IPypi {
       if (artifact.HasVersion(version)) {
         continue;
       }
+
       ArtifactVersion a_version = new() {
         version = version
       };

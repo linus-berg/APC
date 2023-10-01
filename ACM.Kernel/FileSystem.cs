@@ -17,22 +17,31 @@ public class FileSystem {
   public async Task<bool> Exists(string path) {
     return await storage_backend_.ExistsAsync(path);
   }
-  
+
   public async Task<bool> Delete(string path) {
     return await storage_backend_.DeleteFileAsync(path);
   }
-  
-  public async Task<bool> Rename(string a, string b) { 
+
+  public async Task<bool> Rename(string a, string b) {
     return await storage_backend_.RenameFileAsync(a, b);
   }
+
   public async Task<Stream> GetStream(string path) {
     return await storage_backend_.GetFileStreamAsync(path);
+  }
+
+  public async Task<string> GetString(string path) {
+    return await storage_backend_.GetFileContentsAsync(path);
+  }
+
+  public async Task<bool> PutString(string path, string content) {
+    return await storage_backend_.SaveFileAsync(path, content);
   }
 
   public async Task<bool> PutFile(string path, Stream stream) {
     return await storage_backend_.SaveFileAsync(path, stream);
   }
-  
+
 
   private string GetDeltaDeposit(string module) {
     string daily_deposit = Path.Join("delta", module);
@@ -47,9 +56,9 @@ public class FileSystem {
     string target = GetArtifactPath(module, uri_str);
     return await CreateS3Link(link, target);
   }
-  
+
   private async Task<bool> CreateS3Link(string link, string target) {
-    return await storage_backend_.SaveFileAsync(link, target);
+    return await PutString(link, target);
   }
 
   public string GetArtifactPath(string module, string uri_str) {
@@ -74,7 +83,7 @@ public class FileSystem {
   private string GetModulePath(string module, string filepath) {
     return Path.Join(module, filepath);
   }
-  
+
   public string GetModuleDir(string module, bool create = false) {
     string dir = Path.Join(BASE_DIR_, module);
     if (create) {

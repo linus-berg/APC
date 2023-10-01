@@ -11,7 +11,7 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
   private readonly IApcDatabase db_;
 
   public ProcessedRawConsumer(IArtifactService aps, IApcDatabase db,
-                           IApcCache cache) {
+                              IApcCache cache) {
     db_ = db;
     cache_ = cache;
     aps_ = aps;

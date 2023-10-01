@@ -2,11 +2,10 @@ using APC.Kernel.Registrations;
 using MassTransit.Logging;
 using MassTransit.Monitoring;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using APC.Kernel;
-using OpenTelemetry.Exporter;
 
 namespace APC.Kernel.Extensions;
 
@@ -28,7 +27,8 @@ public static class ServiceExtensions {
         builder.AddHttpClientInstrumentation();
         builder.AddRedisInstrumentation();
         builder.AddOtlpExporter(cfg => {
-          cfg.Endpoint = new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
+          cfg.Endpoint =
+            new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
           cfg.Protocol = OtlpExportProtocol.Grpc;
         });
       }).WithMetrics(builder => {
@@ -36,7 +36,8 @@ public static class ServiceExtensions {
       builder.AddRuntimeInstrumentation();
       builder.AddMeter(InstrumentationOptions.MeterName);
       builder.AddOtlpExporter(cfg => {
-        cfg.Endpoint = new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
+        cfg.Endpoint =
+          new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
         cfg.Protocol = OtlpExportProtocol.Grpc;
       });
     });

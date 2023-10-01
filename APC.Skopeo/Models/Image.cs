@@ -10,9 +10,9 @@ public class Image {
 
   public string Uri { get; }
   public string Repository { get; }
-  
+
   public string Destination { get; }
-  
+
   private string GetDestination() {
     int index = Repository.LastIndexOf(':');
     return index != -1 ? Repository.Remove(index) : Repository;

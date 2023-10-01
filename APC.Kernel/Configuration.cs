@@ -1,5 +1,4 @@
 using System.Data;
-using APC.Kernel.Constants;
 
 namespace APC.Kernel;
 
@@ -23,11 +22,9 @@ public static class Configuration {
       ApcVariable.APC_RABBIT_MQ_PASS, "guest"
     }, {
       ApcVariable.APC_OTEL_HOST, "http://localhost:4318"
-    },
-    {
+    }, {
       ApcVariable.ACM_HTTP_DELTA, "true" // Create daily deltas
-    },
-    {
+    }, {
       ApcVariable.ACM_HTTP_MODE, "lake" // lake, forward 
     }
   };

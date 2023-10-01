@@ -4,8 +4,8 @@ namespace ACM.Http;
 
 public class RemoteFile {
   private static readonly HttpClient CLIENT_ = new();
-  private readonly string url_;
   private readonly FileSystem fs_;
+  private readonly string url_;
 
   public RemoteFile(string url, FileSystem fs) {
     url_ = url;
@@ -21,7 +21,8 @@ public class RemoteFile {
     }
 
     long remote_size = (long)response.Content.Headers.ContentLength;
-    await using Stream remote_stream = await response.Content.ReadAsStreamAsync();
+    await using Stream remote_stream =
+      await response.Content.ReadAsStreamAsync();
     bool result;
     try {
       result = await ProcessStream(path, remote_stream);
@@ -49,17 +50,17 @@ public class RemoteFile {
     ProcessStream(string path, Stream remote_stream) {
     bool result;
     try {
-      result = await fs_.PutFile(path, remote_stream); 
+      result = await fs_.PutFile(path, remote_stream);
     } catch (Exception e) {
       await ClearFile(path);
       throw;
     }
+
     return result;
   }
 
   private async Task<bool> ClearFile(string file) {
-    
-    if (!(await fs_.Exists(file))) {
+    if (!await fs_.Exists(file)) {
       return false;
     }
 

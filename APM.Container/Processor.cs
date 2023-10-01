@@ -30,6 +30,7 @@ public class Processor : IProcessor {
       if (artifact.HasVersion(tag)) {
         continue;
       }
+
       ArtifactVersion version = new() {
         version = tag
       };

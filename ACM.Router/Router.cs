@@ -9,7 +9,7 @@ namespace ACM.Router;
 public class Router : IConsumer<ArtifactRouteRequest> {
   public async Task Consume(ConsumeContext<ArtifactRouteRequest> context) {
     Artifact artifact = context.Message.Artifact;
-    Regex regex = null;
+    Regex? regex = null;
     if (!string.IsNullOrEmpty(artifact.filter)) {
       regex = new Regex(artifact.filter);
     }

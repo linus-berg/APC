@@ -3,7 +3,7 @@ using APC.Kernel.Messages;
 using APC.Kernel.Models;
 using MassTransit;
 
-namespace APM.Rancher; 
+namespace APM.Rancher;
 
 public class Processor : IProcessor {
   private readonly IRancher rancher_;

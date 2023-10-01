@@ -49,6 +49,7 @@ public class Nuget : INuget {
       if (artifact.HasVersion(v)) {
         continue;
       }
+
       ArtifactVersion a_v = new() {
         version = v
       };
