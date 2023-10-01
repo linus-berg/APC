@@ -5,7 +5,13 @@
       "commandName": "Project",
       "environmentVariables": {
         "APC_MONGO_STR": "mongodb://root:example@localhost:27017",
-        "ACM_CONTAINER_REGISTRY": "localhost:6000"
+        "ACM_CONTAINER_REGISTRY": "localhost:6000",
+        "ACM_S3_ACCESS_KEY": "minio-apc",
+        "ACM_S3_SECRET_KEY": "minio-apc",
+        "ACM_S3_REGION": "",
+        "ACM_S3_ENDPOINT": "localhost:9000",
+        "ACM_S3_BUCKET": "apc",
+        "APC_ACM_DIR": "/data"
       }
     }
   }
