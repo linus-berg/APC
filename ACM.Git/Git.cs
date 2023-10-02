@@ -149,7 +149,6 @@ public class Git {
                                            DateTime timestamp) {
     bool success = await fs_.PutString(GetTimestampPath(repository),
                                $"{timestamp:yyyyMMddHHmmss}");
-    throw new Exception("Test");
     if (!success) {
       throw new MinioException(
         $"{repository.Owner} - Failed to put timestamp file");
