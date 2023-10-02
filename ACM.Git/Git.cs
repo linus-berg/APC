@@ -74,7 +74,9 @@ public class Git {
           "git",
           $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
       } else {
-        File.Delete(bundle_file_path);
+        if (File.Exists(bundle_file_path)) {
+          File.Delete(bundle_file_path);
+        }
       }
     }
   }
