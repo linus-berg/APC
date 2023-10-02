@@ -3,6 +3,9 @@ using System.Globalization;
 using ACM.Kernel;
 using APC.Kernel.Extensions;
 using CliWrap;
+using Minio.Exceptions;
+using Polly;
+using Polly.Registry;
 
 namespace ACM.Git;
 
@@ -11,11 +14,13 @@ public class Git {
   private readonly string bundle_dir_;
   private readonly string dir_;
   private readonly FileSystem fs_;
+  private readonly ResiliencePipeline<bool> pipeline_;
 
-  public Git(FileSystem fs) {
+  public Git(FileSystem fs, ResiliencePipelineProvider<string> polly_) {
     fs_ = fs;
     dir_ = fs_.GetModuleDir("git", true);
     bundle_dir_ = Path.GetFullPath(Path.Join(dir_, "/tmp", "/bundles"));
+    pipeline_ = polly_.GetPipeline<bool>("minio-retry");
     ConfigureProxy();
   }
 
@@ -66,10 +71,15 @@ public class Git {
       $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
       repository.LocalPath);
     if (success) {
-      bool uploaded = await PushToStorage(bundle_file_path);
+      bool uploaded =
+        await pipeline_.ExecuteAsync(async token =>
+                                       await PushToStorage(bundle_file_path));
       if (uploaded) {
-        await UpdateIndex(repository, index);
-        await UpdateTimestamp(repository, now);
+        await pipeline_.ExecuteAsync(async token => {
+          await UpdateIndex(repository, index);
+          await UpdateTimestamp(repository, now);
+          return true;
+        });
         await fs_.CreateDeltaLink(
           "git",
           $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
@@ -117,20 +127,35 @@ public class Git {
     stream.Close();
     if (success) {
       File.Delete(bundle_file_path);
+    } else {
+      throw new MinioException($"Failed to upload {bundle_file_path}");
     }
 
     return success;
   }
 
   private async Task<bool> UpdateIndex(Repository repository, int index) {
-    return await fs_.PutString(GetIndexPath(repository),
+    bool success = await fs_.PutString(GetIndexPath(repository),
                                (index + 1).ToString());
+    if (!success) {
+      throw new MinioException(
+        $"{repository.Owner} - Failed to put index file");
+    }
+
+    return success;
   }
 
   private async Task<bool> UpdateTimestamp(Repository repository,
                                            DateTime timestamp) {
-    return await fs_.PutString(GetTimestampPath(repository),
+    bool success = await fs_.PutString(GetTimestampPath(repository),
                                $"{timestamp:yyyyMMddHHmmss}");
+    throw new Exception("Test");
+    if (!success) {
+      throw new MinioException(
+        $"{repository.Owner} - Failed to put timestamp file");
+    }
+
+    return success;
   }
 
   private string GetIndexPath(Repository repository) {

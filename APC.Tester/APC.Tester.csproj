@@ -25,4 +25,10 @@
         <Compile Remove="pip.peg.g.cs"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Polly" Version="8.0.0" />
+      <PackageReference Include="Polly.Core" Version="8.0.0" />
+      <PackageReference Include="Polly.Extensions" Version="8.0.0" />
+    </ItemGroup>
+
 </Project>

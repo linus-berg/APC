@@ -4,6 +4,8 @@ using APC.Kernel;
 using APC.Kernel.Constants;
 using APC.Kernel.Extensions;
 using APC.Kernel.Registrations;
+using Polly;
+using Polly.Retry;
 
 ModuleRegistration registration = new(ModuleType.ACM, typeof(Collector));
 registration.AddEndpoint("git");
@@ -12,6 +14,12 @@ IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
                    services.AddTelemetry(registration);
                    services.AddStorage();
+                   services.AddResiliencePipeline("minio-retry", builder => {
+                     builder.AddRetry(new RetryStrategyOptions() {
+                       Delay = TimeSpan.FromSeconds(10),
+                       MaxRetryAttempts = 10
+                     });
+                   });
                    services.AddSingleton<FileSystem>();
                    services.AddSingleton<Git>();
                    services.Register(registration);
