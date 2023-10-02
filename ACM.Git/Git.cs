@@ -25,19 +25,21 @@ public class Git {
 
   public async Task<bool> Mirror(string remote) {
     Repository repository = new(remote, dir_);
-    CloneOrUpdateLocalMirror(repository);
-    await CreateIncrementalGitBundle(repository);
+    if (CloneOrUpdateLocalMirror(repository)) {
+      await CreateIncrementalGitBundle(repository);
+    }
     return true;
   }
 
-  private void CloneOrUpdateLocalMirror(Repository repository) {
+  private bool CloneOrUpdateLocalMirror(Repository repository) {
     if (!Directory.Exists(repository.LocalPath)) {
+      Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
-      ExecuteGitCommand(
+      return ExecuteGitCommand(
         $"clone --mirror {repository.Remote} {repository.LocalPath}");
     } else {
       // Fetch updates to the mirror repository
-      ExecuteGitCommand("fetch --prune", repository.LocalPath);
+      return ExecuteGitCommand("fetch --prune", repository.LocalPath);
     }
   }
 
