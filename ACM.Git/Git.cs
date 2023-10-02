@@ -73,6 +73,8 @@ public class Git {
         await fs_.CreateDeltaLink(
           "git",
           $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
+      } else {
+        File.Delete(bundle_file_path);
       }
     }
   }
