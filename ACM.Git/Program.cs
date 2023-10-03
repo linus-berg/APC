@@ -16,8 +16,8 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddStorage();
                    services.AddResiliencePipeline("minio-retry", builder => {
                      builder.AddRetry(new RetryStrategyOptions() {
-                       Delay = TimeSpan.FromSeconds(10),
-                       MaxRetryAttempts = 10
+                       Delay = TimeSpan.FromSeconds(5),
+                       MaxRetryAttempts = 5
                      });
                    });
                    services.AddSingleton<FileSystem>();

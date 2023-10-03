@@ -8,6 +8,8 @@ using APC.Kernel.Models;
 using APM.Github.Releases;
 using Foundatio.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
 using Polly.Registry;
 using Polly.Retry;
@@ -46,7 +48,7 @@ IServiceProvider serviceProvider = services.BuildServiceProvider();
 ResiliencePipelineProvider<string> provider = serviceProvider.GetRequiredService<ResiliencePipelineProvider<string>>();
 
 // Execute the pipeline
-Git git = new(fs, provider);
+Git git = new(fs, provider, new Logger<Git>(new NullLoggerFactory()));
 IGithubReleases ghr = new GithubReleases(new GithubClient());
 
 

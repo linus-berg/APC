@@ -15,12 +15,14 @@ public class Git {
   private readonly string dir_;
   private readonly FileSystem fs_;
   private readonly ResiliencePipeline<bool> pipeline_;
+  private readonly ILogger<Git> logger_;
 
-  public Git(FileSystem fs, ResiliencePipelineProvider<string> polly_) {
+  public Git(FileSystem fs, ResiliencePipelineProvider<string> polly_, ILogger<Git> logger) {
     fs_ = fs;
     dir_ = fs_.GetModuleDir("git", true);
     bundle_dir_ = Path.GetFullPath(Path.Join(dir_, "/tmp", "/bundles"));
     pipeline_ = polly_.GetPipeline<bool>("minio-retry");
+    logger_ = logger;
     ConfigureProxy();
   }
 
@@ -84,6 +86,7 @@ public class Git {
           "git",
           $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
       } else {
+        logger_.LogError($"Failed to push {bundle_file_path} to storage");
         if (File.Exists(bundle_file_path)) {
           File.Delete(bundle_file_path);
         }
@@ -138,8 +141,9 @@ public class Git {
     bool success = await fs_.PutString(GetIndexPath(repository),
                                (index + 1).ToString());
     if (!success) {
-      throw new MinioException(
-        $"{repository.Owner} - Failed to put index file");
+      string error = $"{repository.Owner} - Failed to put index file";
+      logger_.LogError(error);
+      throw new MinioException(error);
     }
 
     return success;
@@ -150,8 +154,9 @@ public class Git {
     bool success = await fs_.PutString(GetTimestampPath(repository),
                                $"{timestamp:yyyyMMddHHmmss}");
     if (!success) {
-      throw new MinioException(
-        $"{repository.Owner} - Failed to put timestamp file");
+      string error = $"{repository.Owner} - Failed to put timestamp file";
+      logger_.LogError(error);
+      throw new MinioException(error);
     }
 
     return success;
