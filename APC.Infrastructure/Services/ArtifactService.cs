@@ -3,6 +3,7 @@ using APC.Kernel.Messages;
 using APC.Kernel.Models;
 using APC.Services;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace APC.Infrastructure.Services;
 
@@ -10,12 +11,14 @@ public class ArtifactService : IArtifactService {
   private readonly ISendEndpointProvider bus_;
   private readonly IApcCache cache_;
   private readonly IApcDatabase db_;
+  private readonly ILogger<ArtifactService> logger_;
 
   public ArtifactService(IApcCache cache, IApcDatabase db,
-                         ISendEndpointProvider bus) {
+                         ISendEndpointProvider bus, ILogger<ArtifactService> logger) {
     cache_ = cache;
     bus_ = bus;
     db_ = db;
+    logger_ = logger;
   }
 
   public async Task<Artifact> AddArtifact(string id, string processor,
@@ -116,10 +119,9 @@ public class ArtifactService : IArtifactService {
     IEnumerable<Processor> processors = await db_.GetProcessors();
     foreach (Processor processor in processors) {
       try {
-        Console.WriteLine($"Trying to validate {processor}");
         await Validate(processor);
       } catch (Exception e) {
-        Console.WriteLine(e);
+        logger_.LogError(e.ToString());
       }
     }
   }
@@ -127,7 +129,7 @@ public class ArtifactService : IArtifactService {
   public async Task Validate(Processor processor) {
     IEnumerable<Artifact>
       artifacts = await db_.GetArtifacts(processor.id, false);
-    Console.WriteLine($"Validating {processor}: {artifacts.Count()}");
+    logger_.LogInformation($"Validating> {processor}={artifacts.Count()}");
     ArtifactRouteRequest route_request = new();
     foreach (Artifact artifact in artifacts) {
       route_request.Artifact = artifact;

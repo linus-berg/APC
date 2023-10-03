@@ -14,7 +14,6 @@ public class Processor : IProcessor {
 
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     Artifact artifact = context.Message.artifact;
-    Console.WriteLine($"PROCESSING: {artifact.id}");
     await nuget_.ProcessArtifact(artifact);
     await context.Send(Endpoints.APC_INGEST_PROCESSED,
                        new ArtifactProcessedRequest {

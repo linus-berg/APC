@@ -63,7 +63,6 @@ public class RemoteFile {
     if (!await fs_.Exists(file)) {
       return false;
     }
-
     Console.WriteLine($"Clearing {file}");
     await fs_.Delete(file);
     return true;

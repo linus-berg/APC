@@ -18,8 +18,10 @@ public class Maven : IMaven {
   private const string MAVEN_SEARCH_ = "https://search.maven.org";
   private readonly RestClient mvn_search_ = new(MAVEN_SEARCH_);
   private readonly MavenCentralRepository repo_;
+  private readonly ILogger<Maven> logger_;
 
-  public Maven() {
+  public Maven(ILogger<Maven> logger) {
+    logger_ = logger;
     repo_ = MavenRepository.FromMavenCentral();
   }
 
@@ -93,7 +95,7 @@ public class Maven : IMaven {
       await using Stream s = await repo_.OpenMavenMetadataFile(g, id);
       m = Parse<Metadata>(s);
     } catch (Exception e) {
-      Console.WriteLine(e);
+      logger_.LogError(e.ToString());
     }
 
     return m;
@@ -105,7 +107,7 @@ public class Maven : IMaven {
       await using Stream s = await repo_.OpenArtifactPomFile(g, id, v);
       p = Parse<Project>(s, false);
     } catch (Exception e) {
-      Console.WriteLine(e);
+      logger_.LogError(e.ToString());
     }
 
     return p;

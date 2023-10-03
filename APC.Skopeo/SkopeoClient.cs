@@ -3,10 +3,16 @@ using APC.Kernel;
 using APC.Kernel.Extensions;
 using APC.Skopeo.Models;
 using CliWrap;
+using Microsoft.Extensions.Logging;
 
 namespace APC.Skopeo;
 
 public class SkopeoClient {
+  private readonly ILogger<SkopeoClient> logger_;
+
+  public SkopeoClient(ILogger<SkopeoClient> logger) {
+    logger_ = logger;
+  }
   public async Task<bool> CopyToRegistry(string remote_image) {
     Image image = new(remote_image);
     string registry =
@@ -26,12 +32,12 @@ public class SkopeoClient {
                        PipeTarget.ToStringBuilder(std_out))
                      .WithStandardErrorPipe(
                        PipeTarget.ToStringBuilder(std_err));
-    Console.WriteLine($"Pulling {image.Uri} -> {internal_image}");
+    logger_.LogInformation($"Pull> {image.Uri}=>{internal_image}");
     try {
       CommandResult result =
         await cmd.ExecuteAsync();
     } catch (Exception e) {
-      Console.WriteLine(std_err);
+      logger_.LogError(std_err.ToString());
       throw;
     }
 
@@ -48,7 +54,7 @@ public class SkopeoClient {
     try {
       tags = await cmd.ExecuteWithResult<SkopeoListTagsOutput>();
     } catch (Exception e) {
-      Console.WriteLine(e);
+      logger_.LogError(e.ToString());
       return null;
     }
 

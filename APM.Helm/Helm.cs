@@ -8,8 +8,10 @@ namespace APM.Helm;
 public class Helm {
   private const string API_ = "https://artifacthub.io/api/v1/packages/helm";
   private readonly RestClient client_ = new(API_);
+  private readonly ILogger<Helm> logger_;
 
-  public Helm() {
+  public Helm(ILogger<Helm> logger) {
+    logger_ = logger;
     AddApiKeyIfAvailable();
   }
 
@@ -81,7 +83,7 @@ public class Helm {
     try {
       AddDependency(artifact, chart);
     } catch (Exception e) {
-      Console.WriteLine(e);
+      logger_.LogError(e.ToString());
       return false;
     }
 

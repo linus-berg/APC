@@ -9,9 +9,11 @@ namespace APM.Rancher;
 public class Rancher : IRancher {
   private readonly IGithubClient gh_;
   private readonly RestClient http_client_ = new();
+  private readonly ILogger<Rancher> logger_;
 
-  public Rancher(IGithubClient gh) {
+  public Rancher(IGithubClient gh, ILogger<Rancher> logger) {
     gh_ = gh;
+    logger_ = logger;
   }
 
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
@@ -31,8 +33,7 @@ public class Rancher : IRancher {
       ArtifactVersion version = new() {
         version = release.tag_name
       };
-
-      Console.WriteLine($"New release found {url}");
+      logger_.LogInformation($"Release detected={url}");
       string? rancher_file = await GetRancherFile(url);
       if (rancher_file == null) {
         throw new ArtifactMetadataException($"Could not get {url}");

@@ -112,7 +112,7 @@ public class ArtifactController : ControllerBase {
 
   [HttpPost("collect")]
   public async Task<ActionResult> Collect(ArtifactCollectRequest request) {
-    Console.WriteLine($"Collecting {request.location}");
+    log_.Information($"Collecting {request.location}");
     await aps_.Collect(request.location, request.module);
     return Ok("OK");
   }
