@@ -14,8 +14,8 @@ IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
                    services.AddTelemetry(registration);
                    services.AddStorage();
-                   services.AddResiliencePipeline("minio-retry", builder => {
-                     builder.AddRetry(new RetryStrategyOptions() {
+                   services.AddResiliencePipeline<string, bool>("minio-retry", builder => {
+                     builder.AddRetry<bool>(new RetryStrategyOptions<bool>() {
                        Delay = TimeSpan.FromSeconds(5),
                        MaxRetryAttempts = 5
                      });

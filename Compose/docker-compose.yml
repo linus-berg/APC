@@ -92,7 +92,7 @@ services:
 
 
   apc-ingest-redis:
-    image: redis/redis-stack:latest
+    image: redis/redis-stack:6.2.6-v9
     container_name: apc-ingest-redis
     volumes:
       - "./volumes/redis_data:/data"

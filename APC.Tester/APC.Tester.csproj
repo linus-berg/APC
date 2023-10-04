@@ -9,26 +9,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ACM.Git\ACM.Git.csproj"/>
-        <ProjectReference Include="..\ACM.Http\ACM.Http.csproj"/>
-        <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj"/>
-        <ProjectReference Include="..\APC.Skopeo\APC.Skopeo.csproj"/>
-        <ProjectReference Include="..\APM.Github.Releases\APM.Github.Releases.csproj"/>
-        <ProjectReference Include="..\APM.Helm\APM.Helm.csproj"/>
-        <ProjectReference Include="..\APM.Jetbrains.IDE\APM.Jetbrains.IDE.csproj"/>
-        <ProjectReference Include="..\APM.Jetbrains\APM.Jetbrains.csproj"/>
-        <ProjectReference Include="..\APM.Maven\APM.Maven.csproj"/>
-        <ProjectReference Include="..\APM.Pypi\APM.Pypi.csproj"/>
+        <ProjectReference Include="..\ACM.Git\ACM.Git.csproj" />
+        <ProjectReference Include="..\ACM.Http\ACM.Http.csproj" />
+        <ProjectReference Include="..\APC.Infrastructure\APC.Infrastructure.csproj" />
+        <ProjectReference Include="..\APC.Skopeo\APC.Skopeo.csproj" />
+        <ProjectReference Include="..\APM.Github.Releases\APM.Github.Releases.csproj" />
+        <ProjectReference Include="..\APM.Helm\APM.Helm.csproj" />
+        <ProjectReference Include="..\APM.Jetbrains.IDE\APM.Jetbrains.IDE.csproj" />
+        <ProjectReference Include="..\APM.Jetbrains\APM.Jetbrains.csproj" />
+        <ProjectReference Include="..\APM.Maven\APM.Maven.csproj" />
+        <ProjectReference Include="..\APM.Pypi\APM.Pypi.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="pip.peg.g.cs"/>
+        <Compile Remove="pip.peg.g.cs" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Polly" Version="8.0.0" />
       <PackageReference Include="Polly.Core" Version="8.0.0" />
       <PackageReference Include="Polly.Extensions" Version="8.0.0" />
+      <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
     </ItemGroup>
 
 </Project>

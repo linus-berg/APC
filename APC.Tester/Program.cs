@@ -3,8 +3,11 @@
 using ACM.Git;
 using ACM.Kernel;
 using APC.Github;
+using APC.Infrastructure;
+using APC.Infrastructure.Services;
 using APC.Kernel;
 using APC.Kernel.Models;
+using APC.Services;
 using APM.Github.Releases;
 using Foundatio.Storage;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +16,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
 using Polly.Registry;
 using Polly.Retry;
+using StackExchange.Redis;
 
 /* SETUP STORAGE */
 MinioFileStorageConnectionStringBuilder connection = new();
@@ -55,6 +59,9 @@ IGithubReleases ghr = new GithubReleases(new GithubClient());
 Artifact artifact = new() {
   id = "helm/helm"
 };
+IConnectionMultiplexer mx = ConnectionMultiplexer.Connect(
+  Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST));
+
 artifact.config["files"] =
   @"^helm-v\d+.\d+.\d+-darwin-arm64.tar.gz.sha256sum.asc$";
 //await ghr.ProcessArtifact(artifact);
