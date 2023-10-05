@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using ACM.Kernel;
-using APC.Kernel.Extensions;
-using CliWrap;
 using Minio.Exceptions;
 using Polly;
 using Polly.Registry;
@@ -14,39 +12,44 @@ public class Git {
   private readonly string bundle_dir_;
   private readonly string dir_;
   private readonly FileSystem fs_;
-  private readonly ResiliencePipeline<bool> pipeline_;
+  private readonly ResiliencePipeline<bool> minio_pipeline_;
+  private readonly ResiliencePipeline<bool> git_pipeline_;
   private readonly ILogger<Git> logger_;
 
   public Git(FileSystem fs, ResiliencePipelineProvider<string> polly_, ILogger<Git> logger) {
     fs_ = fs;
     dir_ = fs_.GetModuleDir("git", true);
     bundle_dir_ = Path.GetFullPath(Path.Join(dir_, "/tmp", "/bundles"));
-    pipeline_ = polly_.GetPipeline<bool>("minio-retry");
+    minio_pipeline_ = polly_.GetPipeline<bool>("minio-retry");
+    git_pipeline_ = polly_.GetPipeline<bool>("git-timeout");
     logger_ = logger;
     ConfigureProxy();
   }
 
   private void ConfigureProxy() {
-    ExecuteGitCommand($"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}");
+    ExecuteGitCommand(
+        $"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}")
+      .Wait();
   }
 
   public async Task<bool> Mirror(string remote) {
     Repository repository = new(remote, dir_);
-    if (CloneOrUpdateLocalMirror(repository)) {
+    bool success = await git_pipeline_.ExecuteAsync(async (token) => await CloneOrUpdateLocalMirror(repository));
+    if (success) {
       await CreateIncrementalGitBundle(repository);
     }
     return true;
   }
 
-  private bool CloneOrUpdateLocalMirror(Repository repository) {
+  private async Task<bool> CloneOrUpdateLocalMirror(Repository repository) {
     if (!Directory.Exists(repository.LocalPath)) {
       Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
-      return ExecuteGitCommand(
+      return await ExecuteGitCommand(
         $"clone --mirror {repository.Remote} {repository.LocalPath}");
     } else {
       // Fetch updates to the mirror repository
-      return ExecuteGitCommand("fetch --prune", repository.LocalPath);
+      return await ExecuteGitCommand("fetch --prune", repository.LocalPath);
     }
   }
 
@@ -69,15 +72,15 @@ public class Git {
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
-    bool success = ExecuteGitCommand(
+    bool success = await ExecuteGitCommand(
       $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
       repository.LocalPath);
     if (success) {
       bool uploaded =
-        await pipeline_.ExecuteAsync(async token =>
+        await minio_pipeline_.ExecuteAsync(async token =>
                                        await PushToStorage(bundle_file_path));
       if (uploaded) {
-        await pipeline_.ExecuteAsync(async token => {
+        await minio_pipeline_.ExecuteAsync(async token => {
           await UpdateIndex(repository, index);
           await UpdateTimestamp(repository, now);
           return true;
@@ -170,7 +173,7 @@ public class Git {
     return Path.Join("git", repository.Owner, $"{repository.Name}.timestamp");
   }
 
-  private static bool ExecuteGitCommand(string command,
+  private static async Task<bool> ExecuteGitCommand(string command,
                                         string working_directory = "") {
     ProcessStartInfo psi = new() {
       FileName = "git",
@@ -186,7 +189,7 @@ public class Git {
       StartInfo = psi
     };
     process.Start();
-    process.WaitForExit();
+    await process.WaitForExitAsync();
     return process.ExitCode == 0;
   }
 }
