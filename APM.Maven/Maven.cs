@@ -16,9 +16,9 @@ namespace APM.Maven;
 public class Maven : IMaven {
   private const string MAVEN_ = "https://repo1.maven.org/maven2";
   private const string MAVEN_SEARCH_ = "https://search.maven.org";
+  private readonly ILogger<Maven> logger_;
   private readonly RestClient mvn_search_ = new(MAVEN_SEARCH_);
   private readonly MavenCentralRepository repo_;
-  private readonly ILogger<Maven> logger_;
 
   public Maven(ILogger<Maven> logger) {
     logger_ = logger;

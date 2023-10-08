@@ -3,11 +3,8 @@
 using ACM.Git;
 using ACM.Kernel;
 using APC.Github;
-using APC.Infrastructure;
-using APC.Infrastructure.Services;
 using APC.Kernel;
 using APC.Kernel.Models;
-using APC.Services;
 using APM.Github.Releases;
 using Foundatio.Storage;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,21 +32,22 @@ MinioFileStorage storage = new(minio_options);
 
 FileSystem fs = new(storage);
 
-var services = new ServiceCollection();
+ServiceCollection services = new ServiceCollection();
 
 // Define a resilience pipeline with the name "my-pipeline"
 services.AddResiliencePipeline("minio-retry", builder =>
                                  builder
-                                   .AddRetry(new RetryStrategyOptions() {
+                                   .AddRetry(new RetryStrategyOptions {
                                      Delay = TimeSpan.FromSeconds(10),
-                                     MaxRetryAttempts = 10,
+                                     MaxRetryAttempts = 10
                                    }));
 
 // Build the service provider
 IServiceProvider serviceProvider = services.BuildServiceProvider();
 
 // Retrieve ResiliencePipelineProvider that caches and dynamically creates the resilience pipelines
-ResiliencePipelineProvider<string> provider = serviceProvider.GetRequiredService<ResiliencePipelineProvider<string>>();
+ResiliencePipelineProvider<string> provider = serviceProvider
+  .GetRequiredService<ResiliencePipelineProvider<string>>();
 
 // Execute the pipeline
 Git git = new(fs, provider, new Logger<Git>(new NullLoggerFactory()));

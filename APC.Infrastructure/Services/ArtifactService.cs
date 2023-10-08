@@ -14,7 +14,8 @@ public class ArtifactService : IArtifactService {
   private readonly ILogger<ArtifactService> logger_;
 
   public ArtifactService(IApcCache cache, IApcDatabase db,
-                         ISendEndpointProvider bus, ILogger<ArtifactService> logger) {
+                         ISendEndpointProvider bus,
+                         ILogger<ArtifactService> logger) {
     cache_ = cache;
     bus_ = bus;
     db_ = db;

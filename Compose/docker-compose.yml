@@ -12,6 +12,18 @@ services:
       - "9090:9090"
     volumes:
       - "./prometheus.yml:/etc/prometheus.yaml"
+  
+  apc-telemetry-otel:
+    image: otel/opentelemetry-collector-contrib:0.79.0
+    command: [ "--config=/etc/otel-collector.yaml" ]
+    volumes:
+      - "./otel.yml:/etc/otel-collector.yaml"
+    networks:
+      apc-infra-network:
+        aliases:
+          - apc-telemetry-otel
+    extra_hosts: ["host.docker.internal:host-gateway"]
+
   apc-minio:
     image: minio/minio
     restart: always

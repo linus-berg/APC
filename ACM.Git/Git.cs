@@ -12,11 +12,12 @@ public class Git {
   private readonly string bundle_dir_;
   private readonly string dir_;
   private readonly FileSystem fs_;
-  private readonly ResiliencePipeline<bool> minio_pipeline_;
   private readonly ResiliencePipeline<bool> git_pipeline_;
   private readonly ILogger<Git> logger_;
+  private readonly ResiliencePipeline<bool> minio_pipeline_;
 
-  public Git(FileSystem fs, ResiliencePipelineProvider<string> polly_, ILogger<Git> logger) {
+  public Git(FileSystem fs, ResiliencePipelineProvider<string> polly_,
+             ILogger<Git> logger) {
     fs_ = fs;
     dir_ = fs_.GetModuleDir("git", true);
     bundle_dir_ = Path.GetFullPath(Path.Join(dir_, "/tmp", "/bundles"));
@@ -34,10 +35,14 @@ public class Git {
 
   public async Task<bool> Mirror(string remote) {
     Repository repository = new(remote, dir_);
-    bool success = await git_pipeline_.ExecuteAsync(async (token) => await CloneOrUpdateLocalMirror(repository));
+    bool success =
+      await git_pipeline_.ExecuteAsync(async token =>
+                                         await CloneOrUpdateLocalMirror(
+                                           repository));
     if (success) {
       await CreateIncrementalGitBundle(repository);
     }
+
     return true;
   }
 
@@ -46,11 +51,11 @@ public class Git {
       Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
       return await ExecuteGitCommand(
-        $"clone --mirror {repository.Remote} {repository.LocalPath}");
-    } else {
-      // Fetch updates to the mirror repository
-      return await ExecuteGitCommand("fetch --prune", repository.LocalPath);
+               $"clone --mirror {repository.Remote} {repository.LocalPath}");
     }
+
+    // Fetch updates to the mirror repository
+    return await ExecuteGitCommand("fetch --prune", repository.LocalPath);
   }
 
   private async Task CreateIncrementalGitBundle(Repository repository) {
@@ -73,12 +78,13 @@ public class Git {
 
     // Create an incremental bundle
     bool success = await ExecuteGitCommand(
-      $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
-      repository.LocalPath);
+                     $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
+                     repository.LocalPath);
     if (success) {
       bool uploaded =
         await minio_pipeline_.ExecuteAsync(async token =>
-                                       await PushToStorage(bundle_file_path));
+                                             await PushToStorage(
+                                               bundle_file_path));
       if (uploaded) {
         await minio_pipeline_.ExecuteAsync(async token => {
           await UpdateIndex(repository, index);
@@ -142,7 +148,7 @@ public class Git {
 
   private async Task<bool> UpdateIndex(Repository repository, int index) {
     bool success = await fs_.PutString(GetIndexPath(repository),
-                               (index + 1).ToString());
+                                       (index + 1).ToString());
     if (!success) {
       string error = $"{repository.Owner} - Failed to put index file";
       logger_.LogError(error);
@@ -155,7 +161,7 @@ public class Git {
   private async Task<bool> UpdateTimestamp(Repository repository,
                                            DateTime timestamp) {
     bool success = await fs_.PutString(GetTimestampPath(repository),
-                               $"{timestamp:yyyyMMddHHmmss}");
+                                       $"{timestamp:yyyyMMddHHmmss}");
     if (!success) {
       string error = $"{repository.Owner} - Failed to put timestamp file";
       logger_.LogError(error);
@@ -174,7 +180,8 @@ public class Git {
   }
 
   private static async Task<bool> ExecuteGitCommand(string command,
-                                        string working_directory = "") {
+                                                    string working_directory =
+                                                      "") {
     ProcessStartInfo psi = new() {
       FileName = "git",
       Arguments = command,

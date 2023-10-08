@@ -13,6 +13,7 @@ public class SkopeoClient {
   public SkopeoClient(ILogger<SkopeoClient> logger) {
     logger_ = logger;
   }
+
   public async Task<bool> CopyToRegistry(string remote_image) {
     Image image = new(remote_image);
     string registry =
