@@ -29,7 +29,19 @@ public static class Configuration {
     }
   };
 
-  public static string GetApcVar(ApcVariable variable) {
+  public static bool HasOtelHost() {
+    bool has_otel_host = false;
+    try {
+      has_otel_host =
+        !string.IsNullOrEmpty(GetApcVar(ApcVariable.APC_OTEL_HOST));
+    } catch {
+      has_otel_host = false;
+    }
+
+    return has_otel_host;
+  }
+
+  public static string? GetApcVar(ApcVariable variable) {
     string? value = Environment.GetEnvironmentVariable(variable.ToString());
 
     /* If variable is set */

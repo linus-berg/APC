@@ -5,7 +5,7 @@ using Foundatio.Storage;
 namespace ACM.Kernel;
 
 public class FileSystem {
-  private readonly string BASE_DIR_ =
+  private readonly string? BASE_DIR_ =
     Configuration.GetApcVar(ApcVariable.APC_ACM_DIR);
 
   private readonly IFileStorage storage_backend_;

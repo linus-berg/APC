@@ -10,6 +10,10 @@ namespace APC.Kernel.Extensions;
 public static class HostBuilderExtensions {
   public static IHostBuilder AddLogging(this IHostBuilder builder,
                                         ModuleRegistration registration) {
+    if (Configuration.HasOtelHost()) {
+      return builder;
+    }
+
     builder.ConfigureLogging(logs => {
       logs.AddOpenTelemetry(otel => {
         otel.IncludeScopes = true;
@@ -21,8 +25,10 @@ public static class HostBuilderExtensions {
             .AddOtlpExporter(exporter => {
               exporter.Endpoint =
                 new Uri(
+#pragma warning disable CS8604 // Possible null reference argument.
                   Configuration.GetApcVar(
                     ApcVariable.APC_OTEL_HOST));
+#pragma warning restore CS8604 // Possible null reference argument.
               exporter.Protocol =
                 OtlpExportProtocol.Grpc;
             });

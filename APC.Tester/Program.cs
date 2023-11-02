@@ -32,7 +32,7 @@ MinioFileStorage storage = new(minio_options);
 
 FileSystem fs = new(storage);
 
-ServiceCollection services = new ServiceCollection();
+ServiceCollection services = new();
 
 // Define a resilience pipeline with the name "my-pipeline"
 services.AddResiliencePipeline("minio-retry", builder =>

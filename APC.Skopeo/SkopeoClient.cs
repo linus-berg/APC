@@ -16,7 +16,7 @@ public class SkopeoClient {
 
   public async Task<bool> CopyToRegistry(string remote_image) {
     Image image = new(remote_image);
-    string registry =
+    string? registry =
       Configuration.GetApcVar(ApcVariable.ACM_CONTAINER_REGISTRY);
 
     string internal_image = $"docker://{registry}/{image.Repository}";
@@ -64,7 +64,7 @@ public class SkopeoClient {
 
   public async Task<SkopeoManifest?> ImageExists(string input) {
     Image image = new(input);
-    string registry =
+    string? registry =
       Configuration.GetApcVar(ApcVariable.ACM_CONTAINER_REGISTRY);
     Command cmd = Cli.Wrap("skopeo")
                      .WithArguments(args => {

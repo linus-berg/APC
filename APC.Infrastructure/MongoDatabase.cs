@@ -11,7 +11,7 @@ public class MongoDatabase : IApcDatabase {
   private readonly string PROCCESSOR_COLLECTION_ = "apc-processors";
 
   public MongoDatabase() {
-    string c_str = Configuration.GetApcVar(ApcVariable.APC_MONGO_STR);
+    string? c_str = Configuration.GetApcVar(ApcVariable.APC_MONGO_STR);
     client_ = new MongoClient(c_str);
     database_ = client_.GetDatabase("apc");
   }
