@@ -9,10 +9,12 @@ using APC.Services;
 using MassTransit;
 using StackExchange.Redis;
 
+ModuleRegistration registration =
+  new ModuleRegistration(ModuleType.APC, typeof(IHost));
 IHost host = Host.CreateDefaultBuilder(args)
+                 .AddLogging(registration)
                  .ConfigureServices(services => {
-                   services.AddTelemetry(
-                     new ModuleRegistration(ModuleType.APC, typeof(IHost)));
+                   services.AddTelemetry(registration);
                    services.AddMassTransit(b => {
                      b.AddConsumer<ProcessedConsumer>(
                        typeof(ProcessedDefinition));

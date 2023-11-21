@@ -188,6 +188,7 @@ public class Git {
       RedirectStandardOutput = true,
       RedirectStandardError = true,
       UseShellExecute = false,
+      
       CreateNoWindow = true,
       WorkingDirectory = working_directory
     };

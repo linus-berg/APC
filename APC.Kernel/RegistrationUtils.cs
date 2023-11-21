@@ -18,6 +18,7 @@ public static class RegistrationUtils {
 
             // use the outbox to prevent duplicate events from being published
             c.UseInMemoryOutbox();
+            c.UseTimeout(x => x.Timeout = TimeSpan.FromMinutes(30));
             c.ConfigureConsumer(ctx, registration.consumer);
           });
         }
