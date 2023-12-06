@@ -10,6 +10,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {
                    services.AddTelemetry(registration);
                    services.Register(registration);
+                   services.AddSingleton<RSync>();
                    services.AddHostedService<Worker>();
                  })
                  .Build();
