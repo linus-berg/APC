@@ -14,7 +14,6 @@ public class Wget {
   }
   
   public async Task<bool> Mirror(string remote) {
-    /* Bucket is hardcoded to rsync */
     return await Archive(remote);
   }
 
