@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using ACM.Kernel;
+using APC.Kernel;
 using Minio.Exceptions;
 using Polly;
 using Polly.Registry;
@@ -16,21 +17,23 @@ public class Git {
   private readonly ILogger<Git> logger_;
   private readonly ResiliencePipeline<bool> minio_pipeline_;
 
-  public Git(FileSystem fs, ResiliencePipelineProvider<string> polly_,
+  public Git(FileSystem fs, ResiliencePipelineProvider<string> polly,
              ILogger<Git> logger) {
     fs_ = fs;
     dir_ = fs_.GetModuleDir("git", true);
     bundle_dir_ = Path.GetFullPath(Path.Join(dir_, "/tmp", "/bundles"));
-    minio_pipeline_ = polly_.GetPipeline<bool>("minio-retry");
-    git_pipeline_ = polly_.GetPipeline<bool>("git-timeout");
+    minio_pipeline_ = polly.GetPipeline<bool>("minio-retry");
+    git_pipeline_ = polly.GetPipeline<bool>("git-timeout");
     logger_ = logger;
     ConfigureProxy();
   }
 
   private void ConfigureProxy() {
-    ExecuteGitCommand(
-        $"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}")
-      .Wait();
+    Bin
+      .Execute(
+        "git",
+        $"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}",
+        "").Wait();
   }
 
   public async Task<bool> Mirror(string remote) {
@@ -50,12 +53,12 @@ public class Git {
     if (!Directory.Exists(repository.LocalPath)) {
       Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
-      return await ExecuteGitCommand(
-               $"clone --mirror {repository.Remote} {repository.LocalPath}");
+      return await Bin.Execute("git",
+                                       $"clone --mirror {repository.Remote} {repository.LocalPath}");
     }
 
     // Fetch updates to the mirror repository
-    return await ExecuteGitCommand("fetch --prune", repository.LocalPath);
+    return await Bin.Execute("git", "fetch --prune", repository.LocalPath);
   }
 
   private async Task CreateIncrementalGitBundle(Repository repository) {
@@ -77,9 +80,9 @@ public class Git {
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
-    bool success = await ExecuteGitCommand(
-                     $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
-                     repository.LocalPath);
+    bool success = await Bin.Execute("git",
+                                             $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
+                                             repository.LocalPath);
     if (success) {
       bool uploaded =
         await minio_pipeline_.ExecuteAsync(async token =>
@@ -177,27 +180,5 @@ public class Git {
 
   private string GetTimestampPath(Repository repository) {
     return Path.Join("git", repository.Owner, $"{repository.Name}.timestamp");
-  }
-
-  private static async Task<bool> ExecuteGitCommand(string command,
-                                                    string working_directory =
-                                                      "") {
-    ProcessStartInfo psi = new() {
-      FileName = "git",
-      Arguments = command,
-      RedirectStandardOutput = true,
-      RedirectStandardError = true,
-      UseShellExecute = false,
-      
-      CreateNoWindow = true,
-      WorkingDirectory = working_directory
-    };
-
-    Process process = new() {
-      StartInfo = psi
-    };
-    process.Start();
-    await process.WaitForExitAsync();
-    return process.ExitCode == 0;
   }
 }

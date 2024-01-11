@@ -63,9 +63,7 @@ public class ArtifactController : ControllerBase {
       await aps_.Ingest(artifact);
     }
 
-    return Ok(new {
-      Message = $"Added {input.processor}/{input.id}"
-    });
+    return Ok(input);
   }
 
   // POST: api/Artifact/track
@@ -106,8 +104,7 @@ public class ArtifactController : ControllerBase {
     if (!await database_.DeleteArtifact(artifact)) {
       return Problem();
     }
-
-    return Ok();
+    return Ok(artifact);
   }
 
   [HttpPost("collect")]

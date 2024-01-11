@@ -61,13 +61,11 @@ db["apc-processors"].insertMany([
   {
     _id: 'maven',
     config: {
-      "config": {
-        "group": {
-          "key": "group",
-          "type": "string",
-          "name": "Group ID",
-          "placeholder": ""
-        }
+      "group": {
+        "key": "group",
+        "type": "string",
+        "name": "Group ID",
+        "placeholder": ""
       },
     },
     direct_collect: false,

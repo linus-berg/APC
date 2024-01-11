@@ -18,25 +18,6 @@ public class Wget {
   }
 
   private async Task<bool> Archive(string remote) {
-    return await ExecuteCommand($"--mirror {remote}");
-  }
-  
-  private async Task<bool> ExecuteCommand(string command) {
-    ProcessStartInfo psi = new() {
-      FileName = "wget",
-      Arguments = command,
-      WorkingDirectory = wd_,
-      RedirectStandardOutput = true,
-      RedirectStandardError = true,
-      UseShellExecute = false,
-      CreateNoWindow = true,
-    };
-
-    Process process = new() {
-      StartInfo = psi
-    };
-    process.Start();
-    await process.WaitForExitAsync();
-    return process.ExitCode == 0;
+    return await Bin.Execute("wget", $"--mirror {remote}", wd_);
   }
 }

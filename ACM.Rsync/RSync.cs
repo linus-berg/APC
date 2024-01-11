@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using APC.Kernel;
 
 namespace ACM.Rsync; 
 
@@ -10,25 +11,6 @@ public class RSync {
   }
 
   private async Task<bool> Archive(string remote, string bucket) {
-    return await ExecuteRsyncCommand($"{remote} ${bucket}");
-  }
-  
-  private static async Task<bool> ExecuteRsyncCommand(string command) {
-    /* rsync-os is a go implementation of rsync allowing syncing to S3. */
-    ProcessStartInfo psi = new() {
-      FileName = "rsync-os",
-      Arguments = command,
-      RedirectStandardOutput = true,
-      RedirectStandardError = true,
-      UseShellExecute = false,
-      CreateNoWindow = true,
-    };
-
-    Process process = new() {
-      StartInfo = psi
-    };
-    process.Start();
-    await process.WaitForExitAsync();
-    return process.ExitCode == 0;
+    return await Bin.Execute("rsync-os", $"{remote} ${bucket}");
   }
 }
