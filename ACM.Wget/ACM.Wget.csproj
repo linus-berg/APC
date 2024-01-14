@@ -13,13 +13,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ACM.Kernel\ACM.Kernel.csproj" />
-      <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj" />
+        <ProjectReference Include="..\ACM.Kernel\ACM.Kernel.csproj"/>
+        <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
     </ItemGroup>
 </Project>

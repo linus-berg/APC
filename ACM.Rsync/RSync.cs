@@ -1,10 +1,8 @@
-using System.Diagnostics;
 using APC.Kernel;
 
-namespace ACM.Rsync; 
+namespace ACM.Rsync;
 
 public class RSync {
-  
   public async Task<bool> Mirror(string remote) {
     /* Bucket is hardcoded to rsync */
     return await Archive(remote, "rsync");

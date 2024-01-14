@@ -104,6 +104,7 @@ public class ArtifactController : ControllerBase {
     if (!await database_.DeleteArtifact(artifact)) {
       return Problem();
     }
+
     return Ok(artifact);
   }
 

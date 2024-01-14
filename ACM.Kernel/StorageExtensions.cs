@@ -1,12 +1,21 @@
 using APC.Kernel;
 using Foundatio.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Retry;
 
 namespace ACM.Kernel;
 
 public static class StorageExtensions {
   public static IServiceCollection AddStorage(
     this IServiceCollection services) {
+    services.AddResiliencePipeline<string, bool>(
+      "storage-pipeline", builder => {
+        builder.AddRetry(new RetryStrategyOptions<bool> {
+          Delay = TimeSpan.FromSeconds(5),
+          MaxRetryAttempts = 5
+        });
+      });
     /* SETUP STORAGE */
     MinioFileStorageConnectionStringBuilder connection = new();
 

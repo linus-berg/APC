@@ -36,15 +36,15 @@ public static class ServiceExtensions {
           cfg.Protocol = OtlpExportProtocol.Grpc;
         });
       }).WithMetrics(builder => {
-        builder.AddHttpClientInstrumentation();
-        builder.AddRuntimeInstrumentation();
-        builder.AddMeter(InstrumentationOptions.MeterName);
-        builder.AddOtlpExporter(cfg => {
-          cfg.Endpoint =
-            new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
-          cfg.Protocol = OtlpExportProtocol.Grpc;
-        });
+      builder.AddHttpClientInstrumentation();
+      builder.AddRuntimeInstrumentation();
+      builder.AddMeter(InstrumentationOptions.MeterName);
+      builder.AddOtlpExporter(cfg => {
+        cfg.Endpoint =
+          new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
+        cfg.Protocol = OtlpExportProtocol.Grpc;
       });
+    });
     return s;
   }
 }

@@ -1,8 +1,7 @@
-using System.Diagnostics;
 using ACM.Kernel;
 using APC.Kernel;
 
-namespace ACM.Wget; 
+namespace ACM.Wget;
 
 public class Wget {
   private readonly FileSystem fs_;
@@ -12,7 +11,7 @@ public class Wget {
     fs_ = fs;
     wd_ = fs_.GetModuleDir("wget", true);
   }
-  
+
   public async Task<bool> Mirror(string remote) {
     return await Archive(remote);
   }

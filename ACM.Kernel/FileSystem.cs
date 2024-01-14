@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
 using APC.Kernel;
 using Foundatio.Storage;
+using Polly;
+using Polly.Registry;
 
 namespace ACM.Kernel;
 
@@ -9,9 +11,10 @@ public class FileSystem {
     Configuration.GetApcVar(ApcVariable.APC_ACM_DIR);
 
   private readonly IFileStorage storage_backend_;
-
-  public FileSystem(IFileStorage storage_backend) {
+  private readonly ResiliencePipeline<bool> storage_pipeline_;
+  public FileSystem(IFileStorage storage_backend, ResiliencePipelineProvider<string> polly) {
     storage_backend_ = storage_backend;
+    storage_pipeline_ = polly.GetPipeline<bool>("storage-pipeline");
   }
 
   public async Task<bool> Exists(string path) {
@@ -35,11 +38,18 @@ public class FileSystem {
   }
 
   public async Task<bool> PutString(string path, string content) {
-    return await storage_backend_.SaveFileAsync(path, content);
+    return await storage_pipeline_.ExecuteAsync(
+             static async (state, _) =>
+               await state.storage_backend_.SaveFileAsync(
+                 state.path, state.content), (storage_backend_, path, content));
   }
 
   public async Task<bool> PutFile(string path, Stream stream) {
-    return await storage_backend_.SaveFileAsync(path, stream);
+    return await storage_pipeline_.ExecuteAsync(
+             static async (state, token) =>
+               await state.storage_backend_.SaveFileAsync(
+                 state.path, state.stream, token),
+             (storage_backend_, path, stream));
   }
 
 

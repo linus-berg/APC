@@ -9,7 +9,6 @@ using MavenNet;
 using MavenNet.Models;
 using RestSharp;
 using Artifact = APC.Kernel.Models.Artifact;
-using MavenArtifact = MavenNet.Models.Artifact;
 
 namespace APM.Maven;
 

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Globalization;
 using ACM.Kernel;
 using APC.Kernel;
@@ -13,17 +12,15 @@ public class Git {
   private readonly string bundle_dir_;
   private readonly string dir_;
   private readonly FileSystem fs_;
-  private readonly ResiliencePipeline<bool> git_pipeline_;
+  private readonly ResiliencePipeline<bool> git_timeout_;
   private readonly ILogger<Git> logger_;
-  private readonly ResiliencePipeline<bool> minio_pipeline_;
 
   public Git(FileSystem fs, ResiliencePipelineProvider<string> polly,
              ILogger<Git> logger) {
     fs_ = fs;
     dir_ = fs_.GetModuleDir("git", true);
     bundle_dir_ = Path.GetFullPath(Path.Join(dir_, "/tmp", "/bundles"));
-    minio_pipeline_ = polly.GetPipeline<bool>("minio-retry");
-    git_pipeline_ = polly.GetPipeline<bool>("git-timeout");
+    git_timeout_ = polly.GetPipeline<bool>("git-timeout");
     logger_ = logger;
     ConfigureProxy();
   }
@@ -32,16 +29,16 @@ public class Git {
     Bin
       .Execute(
         "git",
-        $"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}",
-        "").Wait();
+        $"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}")
+      .Wait();
   }
 
   public async Task<bool> Mirror(string remote) {
     Repository repository = new(remote, dir_);
     bool success =
-      await git_pipeline_.ExecuteAsync(async token =>
-                                         await CloneOrUpdateLocalMirror(
-                                           repository));
+      await git_timeout_.ExecuteAsync(async (state, token) =>
+                                        await CloneOrUpdateLocalMirror(
+                                          state, token), repository);
     if (success) {
       await CreateIncrementalGitBundle(repository);
     }
@@ -49,16 +46,16 @@ public class Git {
     return true;
   }
 
-  private async Task<bool> CloneOrUpdateLocalMirror(Repository repository) {
+  private async Task<bool> CloneOrUpdateLocalMirror(Repository repository, CancellationToken token = default(CancellationToken)) {
     if (!Directory.Exists(repository.LocalPath)) {
       Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
       return await Bin.Execute("git",
-                                       $"clone --mirror {repository.Remote} {repository.LocalPath}");
+                               $"clone --mirror {repository.Remote} {repository.LocalPath}", token: token);
     }
 
     // Fetch updates to the mirror repository
-    return await Bin.Execute("git", "fetch --prune", repository.LocalPath);
+    return await Bin.Execute("git", "fetch --prune", repository.LocalPath, token: token);
   }
 
   private async Task CreateIncrementalGitBundle(Repository repository) {
@@ -81,24 +78,19 @@ public class Git {
 
     // Create an incremental bundle
     bool success = await Bin.Execute("git",
-                                             $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
-                                             repository.LocalPath);
+                                     $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
+                                     repository.LocalPath);
     if (success) {
       bool uploaded =
-        await minio_pipeline_.ExecuteAsync(async token =>
-                                             await PushToStorage(
-                                               bundle_file_path));
+        await PushToStorage(bundle_file_path);
       if (uploaded) {
-        await minio_pipeline_.ExecuteAsync(async token => {
-          await UpdateIndex(repository, index);
-          await UpdateTimestamp(repository, now);
-          return true;
-        });
+        await UpdateIndex(repository, index);
+        await UpdateTimestamp(repository, now);
         await fs_.CreateDeltaLink(
           "git",
           $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
       } else {
-        logger_.LogError($"Failed to push {bundle_file_path} to storage");
+        logger_.LogError("Failed to push {BundleFilePath} to storage", bundle_file_path);
         if (File.Exists(bundle_file_path)) {
           File.Delete(bundle_file_path);
         }

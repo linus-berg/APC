@@ -9,8 +9,7 @@ using APC.Services;
 using MassTransit;
 using StackExchange.Redis;
 
-ModuleRegistration registration =
-  new ModuleRegistration(ModuleType.APC, typeof(IHost));
+ModuleRegistration registration = new(ModuleType.APC, typeof(IHost));
 IHost host = Host.CreateDefaultBuilder(args)
                  .AddLogging(registration)
                  .ConfigureServices(services => {

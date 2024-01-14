@@ -1,9 +1,13 @@
 using System.Diagnostics;
 
-namespace APC.Kernel; 
+namespace APC.Kernel;
 
 public static class Bin {
-  public static async Task<bool> Execute(string binary, string args, string wd = "", int success_code = 0) {
+  public static async Task<bool> Execute(string binary, string args,
+                                         string wd = "", 
+                                         int success_code = 0,
+                                         CancellationToken token =
+                                           default(CancellationToken)) {
     ProcessStartInfo psi = new() {
       FileName = binary,
       Arguments = args,
@@ -11,14 +15,14 @@ public static class Bin {
       RedirectStandardOutput = true,
       RedirectStandardError = true,
       UseShellExecute = false,
-      CreateNoWindow = true,
+      CreateNoWindow = true
     };
 
     Process process = new() {
       StartInfo = psi
     };
     process.Start();
-    await process.WaitForExitAsync();
+    await process.WaitForExitAsync(token);
     return process.ExitCode == success_code;
   }
 }
