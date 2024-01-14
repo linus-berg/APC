@@ -29,8 +29,7 @@ MinioFileStorageOptions minio_options = new() {
   ConnectionString = connection.ToString()
 };
 MinioFileStorage storage = new(minio_options);
-
-FileSystem fs = new(storage);
+FileSystem fs = new(storage, new ResiliencePipelineRegistry<string>());
 
 ServiceCollection services = new();
 
