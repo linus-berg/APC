@@ -26,9 +26,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Polly" Version="8.0.0"/>
-        <PackageReference Include="Polly.Core" Version="8.0.0"/>
-        <PackageReference Include="Polly.Extensions" Version="8.0.0"/>
         <PackageReference Include="StackExchange.Redis" Version="2.6.122"/>
     </ItemGroup>
 
