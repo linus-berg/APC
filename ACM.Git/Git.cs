@@ -1,6 +1,7 @@
 using System.Globalization;
 using ACM.Kernel;
 using APC.Kernel;
+using Foundatio.Storage;
 using Minio.Exceptions;
 using Polly;
 using Polly.Registry;
@@ -46,16 +47,19 @@ public class Git {
     return true;
   }
 
-  private async Task<bool> CloneOrUpdateLocalMirror(Repository repository, CancellationToken token = default(CancellationToken)) {
+  private async Task<bool> CloneOrUpdateLocalMirror(
+    Repository repository, CancellationToken token = default) {
     if (!Directory.Exists(repository.LocalPath)) {
       Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
       return await Bin.Execute("git",
-                               $"clone --mirror {repository.Remote} {repository.LocalPath}", token: token);
+                               $"clone --mirror {repository.Remote} {repository.LocalPath}",
+                               token: token);
     }
 
     // Fetch updates to the mirror repository
-    return await Bin.Execute("git", "fetch --prune", repository.LocalPath, token: token);
+    return await Bin.Execute("git", "fetch --prune", repository.LocalPath,
+                             token: token);
   }
 
   private async Task CreateIncrementalGitBundle(Repository repository) {
@@ -66,14 +70,13 @@ public class Git {
 
     DateTime now = DateTime.UtcNow;
     /* Get latest update from storage */
-    DateTime reference_date = await GetTimestamp(repository);
-    int index = await GetIndex(repository);
+    DateTime reference_date = await GetLastTimestamp(repository);
 
     // Calculate the range of commits based on the reference date
     string since_date = reference_date.ToString(INCREMENT_FORMAT_);
     string until_date = now.ToString(INCREMENT_FORMAT_);
 
-    string bundle_file_name = $"{repository.Name}-{++index}.bundle";
+    string bundle_file_name = $"{repository.Name}-{now:yyyyMMddHHmmss}.bundle";
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
@@ -81,96 +84,63 @@ public class Git {
                                      $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
                                      repository.LocalPath);
     if (success) {
-      bool uploaded =
-        await PushToStorage(bundle_file_path);
-      if (uploaded) {
-        await UpdateIndex(repository, index);
-        await UpdateTimestamp(repository, now);
-        await fs_.CreateDeltaLink(
-          "git",
-          $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
-      } else {
-        logger_.LogError("Failed to push {BundleFilePath} to storage", bundle_file_path);
-        if (File.Exists(bundle_file_path)) {
-          File.Delete(bundle_file_path);
+      try {
+        bool uploaded = await PushToStorage(bundle_file_path);
+        if (uploaded) {
+          await fs_.CreateDeltaLink(
+            "git",
+            $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
+        } else {
+          logger_.LogError("Failed to push {BundleFilePath} to storage",
+                           bundle_file_path);
         }
+      } catch (Exception e) {
+        logger_.LogError("Failed to upload {Bundle}, {Error}", bundle_file_path,
+                         e.ToString());
       }
     }
   }
 
-  private async Task<int> GetIndex(Repository repository) {
-    string path = GetIndexPath(repository);
-    bool exists = await fs_.Exists(path);
-
-    if (exists) {
-      string index = await fs_.GetString(path);
-      return int.Parse(index);
+  private async Task<DateTime> GetLastTimestamp(Repository repository) {
+    string path = Path.Join("git", repository.Owner, $"{repository.Name}-*");
+    IReadOnlyCollection<FileSpec> files = await fs_.GetFileList(path);
+    if (files.Count == 0) {
+      return DateTime.MinValue;
     }
 
-    return -1;
+    string timestamp = Path.GetFileNameWithoutExtension(files.Last().Path)
+                           .Split("-").Last();
+    return DateTime.TryParseExact(timestamp, "yyyyMMddHHmmss", null,
+                                  DateTimeStyles.None,
+                                  out DateTime reference_date)
+             ? reference_date
+             : DateTime.MinValue;
   }
 
-  private async Task<DateTime> GetTimestamp(Repository repository) {
-    string path = GetTimestampPath(repository);
-    bool exists = await fs_.Exists(path);
-
-    if (exists) {
-      string timestamp = await fs_.GetString(path);
-      if (DateTime.TryParseExact(timestamp, "yyyyMMddHHmmss", null,
-                                 DateTimeStyles.None,
-                                 out DateTime reference_date)) {
-        return reference_date;
-      }
-    }
-
-    return DateTime.MinValue;
-  }
 
   private async Task<bool> PushToStorage(string bundle_file_path) {
+    if (!File.Exists(bundle_file_path)) {
+      throw new FileNotFoundException(
+        $"{bundle_file_path} not found on disk.");
+    }
+
+    /* Open bundle and stream to S3 */
     await using Stream stream = File.OpenRead(bundle_file_path);
     string storage_path =
       Path.Join("git", Path.GetRelativePath(bundle_dir_, bundle_file_path));
+
+    /* Try uploading to S3. */
     bool success = await fs_.PutFile(storage_path, stream);
     stream.Close();
-    if (success) {
-      File.Delete(bundle_file_path);
-    } else {
+
+    /* Delete bundle file on disk */
+    File.Delete(bundle_file_path);
+
+    /* If S3 upload failed */
+    if (!success) {
       throw new MinioException($"Failed to upload {bundle_file_path}");
     }
 
     return success;
-  }
-
-  private async Task<bool> UpdateIndex(Repository repository, int index) {
-    bool success = await fs_.PutString(GetIndexPath(repository),
-                                       (index + 1).ToString());
-    if (!success) {
-      string error = $"{repository.Owner} - Failed to put index file";
-      logger_.LogError(error);
-      throw new MinioException(error);
-    }
-
-    return success;
-  }
-
-  private async Task<bool> UpdateTimestamp(Repository repository,
-                                           DateTime timestamp) {
-    bool success = await fs_.PutString(GetTimestampPath(repository),
-                                       $"{timestamp:yyyyMMddHHmmss}");
-    if (!success) {
-      string error = $"{repository.Owner} - Failed to put timestamp file";
-      logger_.LogError(error);
-      throw new MinioException(error);
-    }
-
-    return success;
-  }
-
-  private string GetIndexPath(Repository repository) {
-    return Path.Join("git", repository.Owner, $"{repository.Name}.index");
-  }
-
-  private string GetTimestampPath(Repository repository) {
-    return Path.Join("git", repository.Owner, $"{repository.Name}.timestamp");
   }
 }

@@ -26,13 +26,13 @@ IHost host = Host.CreateDefaultBuilder(args)
                                  10)
                            });
                      });
-                  services.AddResiliencePipeline<string, bool>(
-                    "git-retry", builder => {
-                      builder.AddRetry(new RetryStrategyOptions<bool> {
-                        Delay = TimeSpan.FromSeconds(5),
-                        MaxRetryAttempts = 5
-                      });
-                    });
+                   services.AddResiliencePipeline<string, bool>(
+                     "git-retry", builder => {
+                       builder.AddRetry(new RetryStrategyOptions<bool> {
+                         Delay = TimeSpan.FromSeconds(5),
+                         MaxRetryAttempts = 5
+                       });
+                     });
                    services.AddSingleton<FileSystem>();
                    services.AddSingleton<Git>();
                    services.Register(registration);

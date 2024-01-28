@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
 using Polly.Registry;
 using Polly.Retry;
+using Polly.Timeout;
 using StackExchange.Redis;
 
 /* SETUP STORAGE */
@@ -29,17 +30,36 @@ MinioFileStorageOptions minio_options = new() {
   ConnectionString = connection.ToString()
 };
 MinioFileStorage storage = new(minio_options);
-FileSystem fs = new(storage, new ResiliencePipelineRegistry<string>());
 
 ServiceCollection services = new();
 
 // Define a resilience pipeline with the name "my-pipeline"
-services.AddResiliencePipeline("minio-retry", builder =>
-                                 builder
-                                   .AddRetry(new RetryStrategyOptions {
-                                     Delay = TimeSpan.FromSeconds(10),
-                                     MaxRetryAttempts = 10
-                                   }));
+services.AddResiliencePipeline<string, bool>("storage-pipeline", builder =>
+                                               builder
+                                                 .AddRetry(
+                                                   new RetryStrategyOptions<
+                                                     bool> {
+                                                     Delay = TimeSpan
+                                                       .FromSeconds(10),
+                                                     MaxRetryAttempts = 10
+                                                   }));
+services.AddResiliencePipeline<string, bool>("git-timeout",
+                                             builder => {
+                                               builder.AddTimeout(
+                                                 new
+                                                   TimeoutStrategyOptions {
+                                                     Timeout =
+                                                       TimeSpan.FromMinutes(
+                                                         10)
+                                                   });
+                                             });
+services.AddResiliencePipeline<string, bool>(
+  "git-retry", builder => {
+    builder.AddRetry(new RetryStrategyOptions<bool> {
+      Delay = TimeSpan.FromSeconds(5),
+      MaxRetryAttempts = 5
+    });
+  });
 
 // Build the service provider
 IServiceProvider serviceProvider = services.BuildServiceProvider();
@@ -49,6 +69,7 @@ ResiliencePipelineProvider<string> provider = serviceProvider
   .GetRequiredService<ResiliencePipelineProvider<string>>();
 
 // Execute the pipeline
+FileSystem fs = new(storage, provider);
 Git git = new(fs, provider, new Logger<Git>(new NullLoggerFactory()));
 IGithubReleases ghr = new GithubReleases(new GithubClient());
 

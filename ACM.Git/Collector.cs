@@ -6,14 +6,21 @@ namespace ACM.Git;
 
 public class Collector : ICollector {
   private readonly Git git_;
+  private readonly Logger<Collector> logger_;
 
-  public Collector(Git git) {
+  public Collector(Git git, Logger<Collector> logger) {
     git_ = git;
+    logger_ = logger;
   }
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {
     string location = context.Message.location;
     string module = context.Message.module;
-    await git_.Mirror(location);
+    try {
+      await git_.Mirror(location);
+    } catch (Exception e) {
+      logger_.LogError("{Location} failed with error {Error}", location,
+                       e.ToString());
+    }
   }
 }

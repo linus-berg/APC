@@ -12,13 +12,20 @@ public class FileSystem {
 
   private readonly IFileStorage storage_backend_;
   private readonly ResiliencePipeline<bool> storage_pipeline_;
-  public FileSystem(IFileStorage storage_backend, ResiliencePipelineProvider<string> polly) {
+
+  public FileSystem(IFileStorage storage_backend,
+                    ResiliencePipelineProvider<string> polly) {
     storage_backend_ = storage_backend;
     storage_pipeline_ = polly.GetPipeline<bool>("storage-pipeline");
   }
 
   public async Task<bool> Exists(string path) {
     return await storage_backend_.ExistsAsync(path);
+  }
+
+  public async Task<IReadOnlyCollection<FileSpec>> GetFileList(
+    string search_pattern) {
+    return await storage_backend_.GetFileListAsync(search_pattern);
   }
 
   public async Task<bool> Delete(string path) {

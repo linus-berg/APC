@@ -13,6 +13,7 @@ FROM build AS publish
 RUN dotnet publish "ACM.Wget.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
+RUN apt-get -y update && apt-get install -y wget
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ACM.Wget.dll"]

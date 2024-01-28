@@ -4,10 +4,10 @@ namespace APC.Kernel;
 
 public static class Bin {
   public static async Task<bool> Execute(string binary, string args,
-                                         string wd = "", 
+                                         string wd = "",
                                          int success_code = 0,
                                          CancellationToken token =
-                                           default(CancellationToken)) {
+                                           default) {
     ProcessStartInfo psi = new() {
       FileName = binary,
       Arguments = args,
