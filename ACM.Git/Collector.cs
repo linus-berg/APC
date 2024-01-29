@@ -6,9 +6,9 @@ namespace ACM.Git;
 
 public class Collector : ICollector {
   private readonly Git git_;
-  private readonly Logger<Collector> logger_;
+  private readonly ILogger<Collector> logger_;
 
-  public Collector(Git git, Logger<Collector> logger) {
+  public Collector(Git git, ILogger<Collector> logger) {
     git_ = git;
     logger_ = logger;
   }
