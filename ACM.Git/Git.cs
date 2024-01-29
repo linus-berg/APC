@@ -76,7 +76,8 @@ public class Git {
     string since_date = reference_date.ToString(INCREMENT_FORMAT_);
     string until_date = now.ToString(INCREMENT_FORMAT_);
 
-    string bundle_file_name = $"{repository.Name}-{now:yyyyMMddHHmmss}.bundle";
+    string bundle_file_name =
+      $"{repository.Name}@{reference_date:yyyyMMddHHmmss}-{now:yyyyMMddHHmmss}.bundle";
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
@@ -97,14 +98,14 @@ public class Git {
   }
 
   private async Task<DateTime> GetLastTimestamp(Repository repository) {
-    string path = Path.Join("git", repository.Owner, $"{repository.Name}-*");
+    string path = Path.Join("git", repository.Owner, $"{repository.Name}@*-*");
     IReadOnlyCollection<FileSpec> files = await fs_.GetFileList(path);
     if (files.Count == 0) {
       return DateTime.MinValue;
     }
 
     string timestamp = Path.GetFileNameWithoutExtension(files.Last().Path)
-                           .Split("-").Last();
+                           .Split("@").Last().Split("-").Last();
     return DateTime.TryParseExact(timestamp, "yyyyMMddHHmmss", null,
                                   DateTimeStyles.None,
                                   out DateTime reference_date)
