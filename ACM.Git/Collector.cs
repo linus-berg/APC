@@ -21,6 +21,7 @@ public class Collector : ICollector {
     } catch (Exception e) {
       logger_.LogError("{Location} failed with error {Error}", location,
                        e.ToString());
+      throw;
     }
   }
 }

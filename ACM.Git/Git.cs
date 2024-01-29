@@ -84,19 +84,14 @@ public class Git {
                                      $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
                                      repository.LocalPath);
     if (success) {
-      try {
-        bool uploaded = await PushToStorage(bundle_file_path);
-        if (uploaded) {
-          await fs_.CreateDeltaLink(
-            "git",
-            $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
-        } else {
-          logger_.LogError("Failed to push {BundleFilePath} to storage",
-                           bundle_file_path);
-        }
-      } catch (Exception e) {
-        logger_.LogError("Failed to upload {Bundle}, {Error}", bundle_file_path,
-                         e.ToString());
+      bool uploaded = await PushToStorage(bundle_file_path);
+      if (uploaded) {
+        await fs_.CreateDeltaLink(
+          "git",
+          $"git://{Path.GetRelativePath(bundle_dir_, bundle_file_path)}");
+      } else {
+        logger_.LogError("Failed to push {BundleFilePath} to storage",
+                         bundle_file_path);
       }
     }
   }
