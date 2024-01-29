@@ -28,6 +28,12 @@ public class FileSystem {
     return await storage_backend_.GetFileListAsync(search_pattern);
   }
 
+  public async Task<PagedFileListResult> GetPagedFileList(
+    string search_pattern, int page_size = 10000) {
+    return await storage_backend_.GetPagedFileListAsync(
+             page_size, search_pattern);
+  }
+
   public async Task<bool> Delete(string path) {
     return await storage_backend_.DeleteFileAsync(path);
   }

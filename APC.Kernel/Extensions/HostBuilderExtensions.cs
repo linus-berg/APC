@@ -11,10 +11,9 @@ public static class HostBuilderExtensions {
   public static IHostBuilder AddLogging(this IHostBuilder builder,
                                         ModuleRegistration registration) {
     if (!Configuration.HasOtelHost()) {
-      
       return builder;
     }
-    
+
     builder.ConfigureLogging(logs => {
       logs.ClearProviders();
       logs.AddOpenTelemetry(otel => {

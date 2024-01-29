@@ -1,11 +1,12 @@
-﻿{
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "ACM.Git": {
+    "APC.Toolbox": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
+      "commandLineArgs": "create-data --processor test --files 10000",
       "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development",
-        "APC_OTEL_HOST": "http://localhost:4017",
+        "APC_MONGO_STR": "mongodb://root:example@localhost:27017",
+        "ACM_CONTAINER_REGISTRY": "localhost:6000",
         "ACM_S3_ACCESS_KEY": "minio-apc",
         "ACM_S3_SECRET_KEY": "minio-apc",
         "ACM_S3_REGION": "",
