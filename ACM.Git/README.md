@@ -29,7 +29,7 @@ mv <repository> /storage/applied/<repository>@00010101000000-<xxx>.bundle
 ```
 ```console
 # This should work for the above.
-sed '/url = */a\\tfetch = +refs/*:refs/*' config
+sed -i '/url = */a\\tfetch = +refs/*:refs/*' config
 ```
 
 ```console
