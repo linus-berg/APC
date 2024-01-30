@@ -19,11 +19,17 @@ git clone --bare <repository>
 # Move the initial bundle to a applied folder and rename to original name
 mv <repository> /storage/applied/<repository>@00010101000000-<xxx>.bundle
 ```
+
+
 ```ini
 # Edit the $GIT_DIR/config to include
 [remote "origin"]
   url = path/to/bundle
   fetch = +refs/*:refs/*
+```
+```console
+# This should work for the above.
+sed '/url = */a\\tfetch = +refs/*:refs/*' config
 ```
 
 ```console
