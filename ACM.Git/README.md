@@ -16,14 +16,23 @@ mv <repository>@00010101000000-<xxx>.bundle <repository>
 # This creates a mirror for serving via http
 git clone --bare <repository>
 
-# If serving over http
-git update-server-info
-
 # Move the initial bundle to a applied folder and rename to original name
 mv <repository> /storage/applied/<repository>@00010101000000-<xxx>.bundle
 ```
+```ini
+# Edit the $GIT_DIR/config to include
+[remote "origin"]
+  url = path/to/bundle
+  fetch = +refs/*:refs/*
+```
 
-To apply the next updates do the following:
+```console
+# If serving over http
+git update-server-info
+```
+
+
+## To apply the next incremental updates updates do the following:
 ```console
 # Before applying the next update, always verify if it can be applied first!
 cd <repository>
@@ -39,7 +48,7 @@ mv <repository@<xxx>-<yyy>.bundle <repository>
 
 cd <repository>
 
-git fetch origin '*:*'
+git fetch --all
 
 # If serving over http
 git update-server-info
