@@ -5,9 +5,9 @@
       "dotnetRunMessages": true,
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
-        "GIT_BUNDLE_INPUT": "./input",
-        "GIT_BUNDLE_APPLIED": "./applied",
-        "GIT_BUNDLE_REPOS": "./repos"
+        "GIT_BUNDLE_INPUT": "/Users/ember/Development/git/input",
+        "GIT_BUNDLE_ARCHIVE": "/Users/ember/Development/git/archive",
+        "GIT_BUNDLE_REPOS": "/Users/ember/Development/git/repos"
       }
     }
   }

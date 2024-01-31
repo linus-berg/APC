@@ -3,11 +3,19 @@ using System.Globalization;
 namespace APC.GitUnpack.Models;
 
 public class GitBundle {
-
   public GitBundle(string filepath) {
     Filepath = filepath;
     Parse();
   }
+
+  public bool IsFirstBundle { get; private set; }
+
+  public string Filepath { get; } = "";
+  public string Repository { get; private set; }
+  public string RepositoryDir { get; private set; }
+
+  public DateTime From { get; private set; }
+  public DateTime To { get; private set; }
 
   private void Parse() {
     string[] parts = Path.GetFileNameWithoutExtension(Filepath).Split("@");
@@ -32,12 +40,4 @@ public class GitBundle {
     File.Move(Filepath, tmp_file);
     return tmp_file;
   }
-  public bool IsFirstBundle { get; private set; }
-
-  public string Filepath { get; private set; } = "";
-  public string Repository { get; private set; }
-  public string RepositoryDir { get; private set; }
-  
-  public DateTime From { get; private set; }
-  public DateTime To { get; private set; }
 }
