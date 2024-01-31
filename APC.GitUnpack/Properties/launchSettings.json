@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "APC.GitUnpack": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "GIT_BUNDLE_INPUT": "./input",
+        "GIT_BUNDLE_APPLIED": "./applied",
+        "GIT_BUNDLE_REPOS": "./repos"
+      }
+    }
+  }
+}
