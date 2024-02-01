@@ -131,9 +131,7 @@ public class ArtifactService : IArtifactService {
     IEnumerable<Artifact>
       artifacts = await db_.GetArtifacts(processor.id, false);
     logger_.LogInformation($"Validating> {processor}={artifacts.Count()}");
-    ArtifactRouteRequest route_request = new();
     foreach (Artifact artifact in artifacts) {
-      route_request.Artifact = artifact;
       await Route(artifact);
     }
   }

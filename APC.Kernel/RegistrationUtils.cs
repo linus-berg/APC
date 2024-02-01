@@ -11,6 +11,7 @@ public static class RegistrationUtils {
     sc.AddMassTransit(mt => {
       mt.AddConsumer(registration.consumer);
       mt.UsingRabbitMq((ctx, cfg) => {
+        cfg.UseTimeout(x => x.Timeout = TimeSpan.FromMinutes(30));
         foreach (Endpoint endpoint in registration.endpoints) {
           cfg.ReceiveEndpoint(endpoint.name, c => {
             c.ConfigureRetrying();
