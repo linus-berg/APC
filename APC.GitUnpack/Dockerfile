@@ -16,6 +16,7 @@ ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "APC.GitUnpack.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
+RUN apt-get -y update && apt-get install -y git
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "APC.GitUnpack.dll"]
