@@ -1,4 +1,5 @@
-﻿using APC.Kernel.Exceptions;
+﻿using System;
+using APC.Kernel.Exceptions;
 using APC.Kernel.Registrations;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ public static class RegistrationUtils {
     sc.AddMassTransit(mt => {
       mt.AddConsumer(registration.consumer);
       mt.UsingRabbitMq((ctx, cfg) => {
+        cfg.UseTimeout(t => t.Timeout = TimeSpan.FromMinutes(30));
         foreach (Endpoint endpoint in registration.endpoints) {
           cfg.ReceiveEndpoint(endpoint.name, c => {
             c.ConfigureRetrying();

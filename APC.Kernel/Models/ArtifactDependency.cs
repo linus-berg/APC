@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace APC.Kernel.Models;
 
 public class ArtifactDependency {

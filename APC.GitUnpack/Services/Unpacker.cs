@@ -32,6 +32,10 @@ public class Unpacker {
       /* Order by To date */
       IOrderedEnumerable<GitBundle> ordered = bg.OrderBy(gb => gb.To);
       foreach (GitBundle git_bundle in ordered) {
+        if (Path.GetFileNameWithoutExtension(git_bundle.Filepath)
+                .StartsWith(".")) {
+          continue;
+        }
         await TryApplyBundle(git_bundle, token);
       }
     }

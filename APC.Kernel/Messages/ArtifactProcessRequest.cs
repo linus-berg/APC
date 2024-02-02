@@ -1,3 +1,4 @@
+using System;
 using APC.Kernel.Models;
 
 namespace APC.Kernel.Messages;
