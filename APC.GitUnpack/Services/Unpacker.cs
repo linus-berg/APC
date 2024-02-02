@@ -1,3 +1,4 @@
+using System.Security.AccessControl;
 using APC.GitUnpack.Models;
 using APC.Kernel;
 
@@ -110,6 +111,8 @@ public class Unpacker {
   }
 
   private void MoveToArchive(string file, GitBundle bundle) {
+    string dir = Path.Join(archive_dir_, bundle.Owner);
+    Directory.CreateDirectory(dir);
     File.Move(file,
               Path.Join(archive_dir_, bundle.Owner,
                         Path.GetFileName(bundle.Filepath)), true);
