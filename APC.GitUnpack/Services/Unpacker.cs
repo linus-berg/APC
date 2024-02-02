@@ -23,7 +23,10 @@ public class Unpacker {
   public async Task<int> ProcessBundles(CancellationToken token) {
     IEnumerable<GitBundle> bundles =
       Directory.GetFiles(in_dir_, "*.bundle", SearchOption.AllDirectories)
-               .Select(f => new GitBundle(f));
+               .Select(f => new GitBundle(
+                         f,
+                         Path.GetDirectoryName(
+                           Path.GetRelativePath(in_dir_, f))));
 
     IEnumerable<IGrouping<string, GitBundle>> bundle_groups =
       bundles.GroupBy(b => b.Repository);
@@ -52,9 +55,11 @@ public class Unpacker {
 
     string tmp_file = bundle.MoveToApply();
     if (bundle.IsFirstBundle) {
+      string dir = Path.Join(repo_dir_, bundle.Owner);
+      Directory.CreateDirectory(dir);
       await Bin.Execute("git",
                         $"clone --bare {tmp_file} {bundle.Repository}",
-                        repo_dir_, 0, token);
+                        dir, 0, token);
     } else {
       await Bin.Execute("git", "fetch --all", bundle.RepositoryDir, 0, token);
     }
@@ -106,6 +111,7 @@ public class Unpacker {
 
   private void MoveToArchive(string file, GitBundle bundle) {
     File.Move(file,
-              Path.Join(archive_dir_, Path.GetFileName(bundle.Filepath)), true);
+              Path.Join(archive_dir_, bundle.Owner,
+                        Path.GetFileName(bundle.Filepath)), true);
   }
 }

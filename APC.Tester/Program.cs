@@ -35,6 +35,14 @@ Artifact artifact = new() {
 artifact.config["files"] =
   @"^helm-v\d+.\d+.\d+-darwin-arm64.tar.gz.sha256sum.asc$";
 //await ghr.ProcessArtifact(artifact);
-await git.Mirror("git://github.com/linus-berg/ATM.Npm");
+//await git.Mirror("git://github.com/linus-berg/ATM.Npm");
+string ind = "/storage/artifacts/mirrors/git/input";
+string path =
+  $"{ind}/github.com/linus-berg/test@101001-201023.bundle";
+
+
+Console.WriteLine(Path.GetDirectoryName(path));
+
+Console.WriteLine(Path.GetDirectoryName(Path.GetRelativePath(ind, path)));
 //await client.CopyToRegistry("docker://docker.io/registry:2");
 Console.WriteLine("---");

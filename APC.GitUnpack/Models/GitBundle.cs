@@ -3,8 +3,9 @@ using System.Globalization;
 namespace APC.GitUnpack.Models;
 
 public class GitBundle {
-  public GitBundle(string filepath) {
+  public GitBundle(string filepath, string owner) {
     Filepath = filepath;
+    Owner = owner;
     Parse();
   }
 
@@ -16,6 +17,7 @@ public class GitBundle {
 
   public DateTime From { get; private set; }
   public DateTime To { get; private set; }
+  public string Owner { get; private set; }
 
   private void Parse() {
     string[] parts = Path.GetFileNameWithoutExtension(Filepath).Split("@");
@@ -32,7 +34,7 @@ public class GitBundle {
     IsFirstBundle = From == DateTime.MinValue;
     RepositoryDir =
       Path.Join(
-        Environment.GetEnvironmentVariable("GIT_BUNDLE_REPOS"), Repository);
+        Environment.GetEnvironmentVariable("GIT_BUNDLE_REPOS"), Owner, Repository);
   }
 
   public string MoveToApply() {
