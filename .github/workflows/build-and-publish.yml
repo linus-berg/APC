@@ -30,7 +30,7 @@ jobs:
           - name: ingestion
             directory: APC.Ingestion
           
-          - name: apc/git-unpack
+          - name: git-unpack
             directory: APC.GitUnpack
           
           - name: apm/container
