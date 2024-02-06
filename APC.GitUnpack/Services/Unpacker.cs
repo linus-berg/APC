@@ -24,10 +24,15 @@ public class Unpacker {
   public async Task<int> ProcessBundles(CancellationToken token) {
     IEnumerable<GitBundle> bundles =
       Directory.GetFiles(in_dir_, "*.bundle", SearchOption.AllDirectories)
-               .Select(f => new GitBundle(
-                         f,
-                         Path.GetDirectoryName(
-                           Path.GetRelativePath(in_dir_, f))));
+               .Select(f => {
+                 string relative_path = Path.GetRelativePath(in_dir_, f);
+                 string? directory = Path.GetDirectoryName(relative_path);
+                 if (string.IsNullOrEmpty(directory)) {
+                   throw new ArgumentException(
+                     $"Could not get directory of ${relative_path}");
+                 }
+                 return new GitBundle(f, directory);
+               });
 
     IEnumerable<IGrouping<string, GitBundle>> bundle_groups =
       bundles.GroupBy(b => b.Repository);
