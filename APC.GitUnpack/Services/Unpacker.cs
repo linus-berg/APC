@@ -65,9 +65,9 @@ public class Unpacker {
       Directory.CreateDirectory(dir);
       await Bin.Execute("git",
                         $"clone --bare {tmp_file} {bundle.Repository}",
-                        dir, 0, token);
+                        dir, 0, true, token);
     } else {
-      await Bin.Execute("git", "fetch --all", bundle.RepositoryDir, 0, token);
+      await Bin.Execute("git", "fetch --all", bundle.RepositoryDir, 0, true, token);
     }
 
     await Cleanup(tmp_file, bundle);
@@ -87,7 +87,7 @@ public class Unpacker {
     /* If incremental bundle validate bundle */
     bool is_valid =
       await Bin.Execute("git", $"bundle verify {bundle.Filepath}",
-                        bundle.RepositoryDir, 0, token);
+                        bundle.RepositoryDir, 0, true, token);
     return is_valid;
   }
 
@@ -111,7 +111,7 @@ public class Unpacker {
 
   private async Task UpdateServerInfo(GitBundle bundle,
                                       CancellationToken token = default) {
-    await Bin.Execute("git", "update-server-info", bundle.RepositoryDir, 0,
+    await Bin.Execute("git", "update-server-info", bundle.RepositoryDir, 0, true,
                       token);
   }
 
