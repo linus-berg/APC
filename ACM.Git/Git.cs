@@ -37,11 +37,14 @@ public class Git {
 
   public async Task<bool> Mirror(string remote) {
     Repository repository = new(remote, dir_);
+    logger_.LogInformation($"{remote}: Starting");
     bool success =
       await git_timeout_.ExecuteAsync(async (state, token) =>
                                         await CloneOrUpdateLocalMirror(
                                           state, token), repository);
+    logger_.LogInformation($"{remote}: {success}");
     if (success) {
+      logger_.LogInformation($"{remote}: Creating bundle");
       await CreateIncrementalGitBundle(repository);
     }
 
