@@ -85,10 +85,12 @@ public class Git {
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
+    logger_.LogInformation($"{repository.Remote}: Bundling {since_date} - {until_date}");
     bool success = await Bin.Execute("git",
                                      $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
                                      repository.LocalPath);
     if (success) {
+      logger_.LogInformation($"{repository.Remote}: Pushing {bundle_file_path} to S3.");
       bool uploaded = await PushToStorage(bundle_file_path);
       if (uploaded) {
         await fs_.CreateDeltaLink(
