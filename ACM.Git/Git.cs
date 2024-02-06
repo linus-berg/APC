@@ -1,7 +1,9 @@
 using System.Globalization;
+using System.Text;
 using System.Threading;
 using ACM.Kernel;
 using APC.Kernel;
+using CliWrap;
 using Foundatio.Storage;
 using Minio.Exceptions;
 using Polly;
@@ -89,9 +91,28 @@ public class Git {
 
     // Create an incremental bundle
     logger_.LogInformation($"{repository.Remote}: Bundling {since_date} - {until_date}");
-    bool success = await Bin.Execute("git",
+    StringBuilder std_out = new();
+    StringBuilder std_err = new();
+    Command cmd = Cli.Wrap("git")
+                     .WithArguments(args => {
+                       args.Add("bundle");
+                       args.Add("create");
+                       args.Add(bundle_file_path);
+                       args.Add($"--since=\"{since_date}\"");
+                       args.Add($"--until=\"{until_date}\"");
+                       args.Add($"--all");
+                     })
+                     .WithStandardOutputPipe(
+                       PipeTarget.ToStringBuilder(std_out))
+                     .WithStandardErrorPipe(
+                       PipeTarget.ToStringBuilder(std_err));
+    CommandResult result =
+      await cmd.ExecuteAsync();
+    /*bool success = await Bin.Execute("git",
                                      $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
-                                     repository.LocalPath);
+                                     repository.LocalPath);*/
+    bool success = result.ExitCode == 0;
+    logger_.LogInformation($"{repository.Remote}: Bundle result {result.ExitCode}");
     if (success) {
       logger_.LogInformation($"{repository.Remote}: Pushing {bundle_file_path} to S3.");
       bool uploaded = await PushToStorage(bundle_file_path);
