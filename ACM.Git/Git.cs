@@ -56,12 +56,14 @@ public class Git {
     if (!Directory.Exists(repository.LocalPath)) {
       Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
+      logger_.LogInformation($"{repository.Remote}: Cloning initial repository.");
       return await Bin.Execute("git",
                                $"clone --mirror {repository.Remote} {repository.LocalPath}",
                                token: token);
     }
 
     // Fetch updates to the mirror repository
+    logger_.LogInformation($"{repository.Remote}: Fetching updates.");
     return await Bin.Execute("git", "fetch --prune", repository.LocalPath,
                              token: token);
   }
@@ -74,6 +76,7 @@ public class Git {
 
     DateTime now = DateTime.UtcNow;
     /* Get latest update from storage */
+    logger_.LogInformation($"{repository.Remote}: Getting timestamp");
     DateTime reference_date = await GetLastTimestamp(repository);
 
     // Calculate the range of commits based on the reference date
@@ -127,6 +130,7 @@ public class Git {
     }
 
     /* Open bundle and stream to S3 */
+    logger_.LogInformation($"Opening: {bundle_file_path}");
     await using Stream stream = File.OpenRead(bundle_file_path);
     string storage_path =
       Path.Join("git", Path.GetRelativePath(bundle_dir_, bundle_file_path));
