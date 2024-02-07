@@ -39,14 +39,14 @@ public class Git {
 
   public async Task<bool> Mirror(string remote) {
     Repository repository = new(remote, dir_);
-    logger_.LogInformation($"{remote}: Starting");
+    logger_.LogDebug($"{remote}: Starting");
     bool success =
       await git_timeout_.ExecuteAsync(async (state, token) =>
                                         await CloneOrUpdateLocalMirror(
                                           state, token), repository);
-    logger_.LogInformation($"{remote}: {success}");
+    logger_.LogDebug($"{remote}: {success}");
     if (success) {
-      logger_.LogInformation($"{remote}: Creating bundle");
+      logger_.LogDebug($"{remote}: Creating bundle");
       await CreateIncrementalGitBundle(repository);
     }
 
@@ -65,7 +65,7 @@ public class Git {
     }
 
     // Fetch updates to the mirror repository
-    logger_.LogInformation($"{repository.Remote}: Fetching updates.");
+    logger_.LogDebug($"{repository.Remote}: Fetching updates.");
     return await Bin.Execute("git", "fetch --prune", repository.LocalPath,
                              token: token);
   }
@@ -78,7 +78,7 @@ public class Git {
 
     DateTime now = DateTime.UtcNow;
     /* Get latest update from storage */
-    logger_.LogInformation($"{repository.Remote}: Getting timestamp");
+    logger_.LogDebug($"{repository.Remote}: Getting timestamp");
     DateTime reference_date = await GetLastTimestamp(repository);
 
     // Calculate the range of commits based on the reference date
@@ -90,8 +90,8 @@ public class Git {
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
-    logger_.LogInformation($"{repository.Remote}: Bundling {since_date} - {until_date}");
-    logger_.LogInformation($"{repository.Remote}: Dirs {repository.LocalPath} - {repository.Directory}");
+    logger_.LogDebug($"{repository.Remote}: Bundling {since_date} - {until_date}");
+    logger_.LogDebug($"{repository.Remote}: Dirs {repository.LocalPath} - {repository.Directory}");
     StringBuilder std_out = new();
     StringBuilder std_err = new();
     Command cmd = Cli.Wrap("git")
@@ -117,13 +117,13 @@ public class Git {
     /*bool success = await Bin.Execute("git",
                                      $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
                                      repository.LocalPath);*/
-    logger_.LogInformation(std_out.ToString());
-    logger_.LogInformation(std_err.ToString());
+    logger_.LogDebug(std_out.ToString());
+    logger_.LogDebug(std_err.ToString());
     if (result == null) {
       return;
     }
     bool success = result.ExitCode == 0;
-    logger_.LogInformation($"{repository.Remote}: Bundle result {result.ExitCode}");
+    logger_.LogDebug($"{repository.Remote}: Bundle result {result.ExitCode}");
     if (success) {
       logger_.LogInformation($"{repository.Remote}: Pushing {bundle_file_path} to S3.");
       bool uploaded = await PushToStorage(bundle_file_path);
@@ -162,7 +162,7 @@ public class Git {
     }
 
     /* Open bundle and stream to S3 */
-    logger_.LogInformation($"Opening: {bundle_file_path}");
+    logger_.LogDebug($"Opening: {bundle_file_path}");
     await using Stream stream = File.OpenRead(bundle_file_path);
     string storage_path =
       Path.Join("git", Path.GetRelativePath(bundle_dir_, bundle_file_path));
