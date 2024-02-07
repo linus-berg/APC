@@ -91,6 +91,7 @@ public class Git {
 
     // Create an incremental bundle
     logger_.LogInformation($"{repository.Remote}: Bundling {since_date} - {until_date}");
+    logger_.LogInformation($"{repository.Remote}: Dirs {repository.LocalPath} - {repository.Directory}");
     StringBuilder std_out = new();
     StringBuilder std_err = new();
     Command cmd = Cli.Wrap("git")
@@ -102,6 +103,7 @@ public class Git {
                        args.Add($"--until=\"{until_date}\"");
                        args.Add($"--all");
                      })
+                     .WithWorkingDirectory(repository.LocalPath)
                      .WithStandardOutputPipe(
                        PipeTarget.ToStringBuilder(std_out))
                      .WithStandardErrorPipe(
