@@ -106,11 +106,20 @@ public class Git {
                        PipeTarget.ToStringBuilder(std_out))
                      .WithStandardErrorPipe(
                        PipeTarget.ToStringBuilder(std_err));
-    CommandResult result =
-      await cmd.ExecuteAsync();
+    CommandResult result = null;
+    try {
+      result = await cmd.ExecuteAsync();
+    } catch (Exception e) {
+      logger_.LogError(e.ToString());
+    }
     /*bool success = await Bin.Execute("git",
                                      $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
                                      repository.LocalPath);*/
+    logger_.LogInformation(std_out.ToString());
+    logger_.LogInformation(std_err.ToString());
+    if (result == null) {
+      return;
+    }
     bool success = result.ExitCode == 0;
     logger_.LogInformation($"{repository.Remote}: Bundle result {result.ExitCode}");
     if (success) {
