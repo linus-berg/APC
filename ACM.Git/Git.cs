@@ -38,9 +38,6 @@ public class Git {
   }
 
   public async Task<bool> Mirror(string remote) {
-    if (!remote.StartsWith("git://")) {
-      return false;
-    }
     Repository repository = new(remote, dir_);
     logger_.LogDebug($"{remote}: Starting");
     bool success =
