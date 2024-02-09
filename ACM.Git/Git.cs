@@ -66,7 +66,7 @@ public class Git {
 
     // Fetch updates to the mirror repository
     logger_.LogDebug($"{repository.Remote}: Fetching updates.");
-    return await Bin.Execute("git", "fetch", repository.LocalPath,
+    return await Bin.Execute("git", "remote update", repository.LocalPath,
                              token: token);
   }
 
