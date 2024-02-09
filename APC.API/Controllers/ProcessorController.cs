@@ -51,7 +51,9 @@ public class ProcessorController : ControllerBase {
   [Authorize(Roles = "Administrator")]
   public async Task<ActionResult> Post([FromBody] AddProcessorInput input) {
     await database_.AddProcessor(new Processor {
-      id = input.processor_id
+      id = input.processor_id,
+      description = "",
+      config = new Dictionary<string, ProcessorAuxiliaryField>()
     });
     return Ok(new {
       Message = $"Added {input.processor_id}!"
