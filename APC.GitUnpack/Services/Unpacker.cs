@@ -64,10 +64,10 @@ public class Unpacker {
       string dir = Path.Join(repo_dir_, bundle.Owner);
       Directory.CreateDirectory(dir);
       await Bin.Execute("git",
-                        $"clone --bare {tmp_file} {bundle.Repository}",
+                        $"clone --mirror {tmp_file} {bundle.Repository}",
                         dir, 0, true, token);
     } else {
-      await Bin.Execute("git", "fetch --all", bundle.RepositoryDir, 0, true, token);
+      await Bin.Execute("git", "fetch -all", bundle.RepositoryDir, 0, true, token);
     }
 
     await Cleanup(tmp_file, bundle);
@@ -94,7 +94,8 @@ public class Unpacker {
   private async Task Cleanup(string file, GitBundle bundle) {
     /* Add the necessary configurations */
     if (bundle.IsFirstBundle) {
-      await ModifyConfigFile(bundle);
+      /* Not needed anymore ? */
+      //await ModifyConfigFile(bundle);
     }
 
     await UpdateServerInfo(bundle);

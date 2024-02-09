@@ -82,19 +82,15 @@ public class Git {
     DateTime reference_date = await GetLastTimestamp(repository);
 
     // Calculate the range of commits based on the reference date
-    /* Use a 7 day sliding window, produces duplicated data, but necessary to ensure not missing commits. */
-    DateTime behind_point = reference_date == DateTime.MinValue ? reference_date : reference_date.Subtract(TimeSpan.FromDays(7));
-    string behind_date = behind_point.ToString(INCREMENT_FORMAT_);
-    
     string since_date = reference_date.ToString(INCREMENT_FORMAT_);
     string until_date = now.ToString(INCREMENT_FORMAT_);
 
     string bundle_file_name =
-      $"{repository.Name}@{behind_point:yyyyMMddHHmmss}-{now:yyyyMMddHHmmss}.bundle";
+      $"{repository.Name}@{reference_date:yyyyMMddHHmmss}-{now:yyyyMMddHHmmss}.bundle";
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
-    logger_.LogInformation($"{repository.Remote}: Bundling {behind_date} ({since_date}) - {until_date}");
+    logger_.LogInformation($"{repository.Remote}: Bundling {since_date} ({since_date}) - {until_date}");
     logger_.LogDebug($"{repository.Remote}: Dirs {repository.LocalPath} - {repository.Directory}");
     StringBuilder std_out = new();
     StringBuilder std_err = new();
@@ -103,7 +99,7 @@ public class Git {
                        args.Add("bundle");
                        args.Add("create");
                        args.Add(bundle_file_path);
-                       args.Add($"--since=\"{behind_date}\"");
+                       args.Add($"--since=\"{since_date}\"");
                        args.Add($"--until=\"{until_date}\"");
                        args.Add($"--all");
                      })
