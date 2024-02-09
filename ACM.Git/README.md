@@ -14,29 +14,17 @@ The approach I use is as following
 mv <repository>@00010101000000-<xxx>.bundle <repository>
 
 # This creates a mirror for serving via http
-git clone --bare <repository>
+git clone --mirror <repository>
 
 # Move the initial bundle to a applied folder and rename to original name
 mv <repository> /storage/applied/<repository>@00010101000000-<xxx>.bundle
 ```
 
 
-```ini
-# Edit the $GIT_DIR/config to include
-[remote "origin"]
-  url = path/to/bundle
-  fetch = +refs/*:refs/*
-```
-```console
-# This should work for the above.
-sed -i '/url = */a\\tfetch = +refs/*:refs/*' config
-```
-
 ```console
 # If serving over http
 git update-server-info
 ```
-
 
 ## To apply the next incremental updates updates do the following:
 ```console
@@ -54,7 +42,7 @@ mv <repository@<xxx>-<yyy>.bundle <repository>
 
 cd <repository>
 
-git fetch --all
+git remote update
 
 # If serving over http
 git update-server-info
