@@ -1,3 +1,4 @@
+using System;
 using APC.Kernel.Registrations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

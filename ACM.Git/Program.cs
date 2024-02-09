@@ -8,7 +8,7 @@ using Polly;
 using Polly.Timeout;
 
 ModuleRegistration registration = new(ModuleType.ACM, typeof(Collector));
-registration.AddEndpoint("git");
+registration.AddEndpoint("git", 1);
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .AddLogging(registration)
@@ -22,7 +22,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                            TimeoutStrategyOptions {
                              Timeout =
                                TimeSpan.FromMinutes(
-                                 10)
+                                 120)
                            });
                      });
                    services.AddSingleton<FileSystem>();

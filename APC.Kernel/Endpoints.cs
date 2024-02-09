@@ -1,3 +1,5 @@
+using System;
+
 namespace APC.Kernel;
 
 public static class Endpoints {

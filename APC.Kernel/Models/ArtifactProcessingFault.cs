@@ -1,3 +1,5 @@
+using System;
+
 namespace APC.Kernel.Models;
 
 public class ArtifactProcessingFault {
