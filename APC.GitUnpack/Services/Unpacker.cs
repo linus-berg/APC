@@ -65,9 +65,9 @@ public class Unpacker {
       Directory.CreateDirectory(dir);
       await Bin.Execute("git",
                         $"clone --mirror {tmp_file} {bundle.Repository}",
-                        dir, 0, true, token);
+                        dir, 0, false, token);
     } else {
-      await Bin.Execute("git", "remote update", bundle.RepositoryDir, 0, true, token);
+      await Bin.Execute("git", "remote update", bundle.RepositoryDir, 0, false, token);
     }
 
     await Cleanup(tmp_file, bundle);
@@ -87,7 +87,7 @@ public class Unpacker {
     /* If incremental bundle validate bundle */
     bool is_valid =
       await Bin.Execute("git", $"bundle verify {bundle.Filepath}",
-                        bundle.RepositoryDir, 0, true, token);
+                        bundle.RepositoryDir, 0, false, token);
     return is_valid;
   }
 
@@ -112,7 +112,7 @@ public class Unpacker {
 
   private async Task UpdateServerInfo(GitBundle bundle,
                                       CancellationToken token = default) {
-    await Bin.Execute("git", "update-server-info", bundle.RepositoryDir, 0, true,
+    await Bin.Execute("git", "update-server-info", bundle.RepositoryDir, 0, false,
                       token);
   }
 
