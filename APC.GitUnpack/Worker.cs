@@ -13,7 +13,11 @@ public class Worker : BackgroundService {
 
   protected override async Task ExecuteAsync(CancellationToken token) {
     while (!token.IsCancellationRequested) {
-      await unpacker_.ProcessBundles(token);
+      try {
+        await unpacker_.ProcessBundles(token);
+      } catch (Exception e) {
+        logger_.LogError($"Failed to process bundles: {e.ToString()}");
+      }
       await Task.Delay(2000, token);
     }
   }

@@ -1,4 +1,3 @@
-using System.Security.AccessControl;
 using APC.GitUnpack.Models;
 using APC.Kernel;
 
@@ -8,9 +7,11 @@ public class Unpacker {
   private readonly string archive_dir_;
   private readonly string in_dir_;
   private readonly string repo_dir_;
+  private readonly ILogger<Unpacker> logger_;
 
   /* TODO: This class should probably be cleaned up */
-  public Unpacker() {
+  public Unpacker(ILogger<Unpacker> logger) {
+    logger_ = logger;
     in_dir_ = Environment.GetEnvironmentVariable("GIT_BUNDLE_INPUT") ??
               throw new InvalidOperationException("GIT_BUNDLE_INPUT not set.");
     archive_dir_ = Environment.GetEnvironmentVariable("GIT_BUNDLE_ARCHIVE") ??
@@ -45,7 +46,13 @@ public class Unpacker {
                 .StartsWith(".")) {
           continue;
         }
-        await TryApplyBundle(git_bundle, token);
+
+        try {
+          await TryApplyBundle(git_bundle, token);
+        } catch (Exception e) {
+          logger_.LogError($"Failed to apply {git_bundle.Filepath}: {e}");      
+          ResetToInput(git_bundle);      
+        }
       }
     }
 
@@ -122,5 +129,12 @@ public class Unpacker {
     File.Move(file,
               Path.Join(archive_dir_, bundle.Owner,
                         Path.GetFileName(bundle.Filepath)), true);
+  }
+
+  private void ResetToInput(GitBundle bundle) {
+    string tmp_file = Path.Join(Path.GetDirectoryName(bundle.Filepath), bundle.Repository);
+    if (File.Exists(tmp_file)) {
+      File.Move(tmp_file, bundle.Filepath);
+    }
   }
 }
