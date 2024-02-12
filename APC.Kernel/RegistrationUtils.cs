@@ -12,7 +12,8 @@ public static class RegistrationUtils {
     sc.AddMassTransit(mt => {
       mt.AddConsumer(registration.consumer);
       mt.UsingRabbitMq((ctx, cfg) => {
-        cfg.UseTimeout(t => t.Timeout = TimeSpan.FromMinutes(30));
+        /* Absurdly high timeout */
+        cfg.UseTimeout(t => t.Timeout = TimeSpan.FromMinutes(180));
         foreach (Endpoint endpoint in registration.endpoints) {
           cfg.ReceiveEndpoint(endpoint.name, c => {
             c.ConfigureRetrying();
@@ -20,7 +21,8 @@ public static class RegistrationUtils {
 
             // use the outbox to prevent duplicate events from being published
             c.UseInMemoryOutbox();
-            c.UseTimeout(x => x.Timeout = TimeSpan.FromMinutes(30));
+            /* Absurdly high timeout */
+            c.UseTimeout(x => x.Timeout = TimeSpan.FromMinutes(180));
             c.ConfigureConsumer(ctx, registration.consumer);
           });
         }

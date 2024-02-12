@@ -22,7 +22,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                            TimeoutStrategyOptions {
                              Timeout =
                                TimeSpan.FromMinutes(
-                                 10)
+                                 120)
                            });
                      });
                    services.AddSingleton<FileSystem>();

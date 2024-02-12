@@ -18,6 +18,6 @@ public class Wget {
   }
 
   private async Task<bool> Archive(string remote) {
-    return await Bin.Execute("wget", $"--mirror {remote}", wd_);
+    return await Bin.Execute("wget", $"--mirror -k -p -E --no-parent {remote}", wd_);
   }
 }

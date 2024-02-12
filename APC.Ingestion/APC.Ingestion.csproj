@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-APO.Ingestion-0A046F41-F574-457B-9050-E5AB07383604</UserSecretsId>
@@ -9,9 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MassTransit" Version="8.0.16"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
-        <PackageReference Include="StackExchange.Redis" Version="2.6.66"/>
+        <PackageReference Include="MassTransit" Version="8.1.3" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+        <PackageReference Include="StackExchange.Redis" Version="2.7.17" />
     </ItemGroup>
 
     <ItemGroup>
