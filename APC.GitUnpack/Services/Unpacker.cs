@@ -61,23 +61,27 @@ public class Unpacker {
 
   private async Task<bool> TryApplyBundle(GitBundle bundle,
                                           CancellationToken token = default) {
+    logger_.LogInformation($"Processing: {bundle.Filepath}");
     bool is_valid = await CheckIfValid(bundle, token);
     if (!is_valid) {
       return false;
     }
 
     string tmp_file = bundle.MoveToApply();
+    bool success = false;
     if (bundle.IsFirstBundle) {
       string dir = Path.Join(repo_dir_, bundle.Owner);
       Directory.CreateDirectory(dir);
-      await Bin.Execute("git",
+      success = await Bin.Execute("git",
                         $"clone --mirror {tmp_file} {bundle.Repository}",
                         dir, 0, false, token);
     } else {
       await Bin.Execute("git", "remote update", bundle.RepositoryDir, 0, false, token);
     }
 
-    await Cleanup(tmp_file, bundle);
+    if (success) {
+      await Cleanup(tmp_file, bundle);
+    }
     return true;
   }
 
@@ -103,6 +107,10 @@ public class Unpacker {
     if (bundle.IsFirstBundle) {
       /* Not needed anymore ? */
       //await ModifyConfigFile(bundle);
+    }
+    if (!Directory.Exists(bundle.RepositoryDir)) {
+      ResetToInput(bundle);
+      return;
     }
 
     await UpdateServerInfo(bundle);

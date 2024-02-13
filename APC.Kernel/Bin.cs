@@ -27,8 +27,8 @@ public static class Bin {
     };
     process.Start();
     await process.WaitForExitAsync(token);
-    Console.WriteLine(await process.StandardOutput.ReadToEndAsync()); 
-    Console.WriteLine(await process.StandardError.ReadToEndAsync()); 
+    Console.WriteLine(await process.StandardOutput.ReadToEndAsync(token)); 
+    Console.WriteLine(await process.StandardError.ReadToEndAsync(token)); 
     return process.ExitCode == success_code;
   }
 }
