@@ -31,7 +31,7 @@ public class GitBundle {
                            DateTimeStyles.None, out DateTime to);
     To = to;
 
-    IsFirstBundle = From == DateTime.MinValue;
+    IsFirstBundle = From == DateTime.UnixEpoch;
     RepositoryDir =
       Path.Join(
         Environment.GetEnvironmentVariable("GIT_BUNDLE_REPOS"), Owner, Repository);

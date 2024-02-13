@@ -142,7 +142,7 @@ public class Git {
     string path = Path.Join("git", repository.Owner, $"{repository.Name}@*-*");
     IReadOnlyCollection<FileSpec> files = await fs_.GetFileList(path);
     if (files.Count == 0) {
-      return DateTime.MinValue;
+      return DateTime.UnixEpoch;
     }
 
     string timestamp = Path.GetFileNameWithoutExtension(files.Last().Path)
@@ -151,7 +151,7 @@ public class Git {
                                   DateTimeStyles.None,
                                   out DateTime reference_date)
              ? reference_date
-             : DateTime.MinValue;
+             : DateTime.UnixEpoch;
   }
 
 
