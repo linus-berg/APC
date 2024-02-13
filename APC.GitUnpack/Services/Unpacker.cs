@@ -140,9 +140,14 @@ public class Unpacker {
   }
 
   private void ResetToInput(GitBundle bundle) {
-    string tmp_file = Path.Join(Path.GetDirectoryName(bundle.Filepath), bundle.Repository);
-    if (File.Exists(tmp_file)) {
-      File.Move(tmp_file, bundle.Filepath);
+    try {
+      string tmp_file = Path.Join(Path.GetDirectoryName(bundle.Filepath),
+                                  bundle.Repository);
+      if (File.Exists(tmp_file)) {
+        File.Move(tmp_file, bundle.Filepath);
+      }
+    } catch (Exception e) {
+      logger_.LogError(e.ToString());
     }
   }
 }
