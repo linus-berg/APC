@@ -100,7 +100,7 @@ public class Git {
                        args.Add("create");
                        args.Add(bundle_file_path);
                        args.Add($"--since=\"{since_date}\"");
-                       args.Add($"--until=\"{until_date}\"");
+                       //args.Add($"--until=\"{until_date}\"");
                        args.Add($"--all");
                      })
                      .WithWorkingDirectory(repository.LocalPath)
