@@ -48,7 +48,9 @@ public class Unpacker {
         }
 
         try {
-          await TryApplyBundle(git_bundle, token);
+          if (!await TryApplyBundle(git_bundle, token)) {
+            ResetToInput(git_bundle);
+          }
         } catch (Exception e) {
           logger_.LogError($"Failed to apply {git_bundle.Filepath}: {e}");      
           ResetToInput(git_bundle);      
@@ -82,7 +84,7 @@ public class Unpacker {
     if (success) {
       await Cleanup(tmp_file, bundle);
     }
-    return true;
+    return success;
   }
 
   private async Task<bool> CheckIfValid(GitBundle bundle,
@@ -109,7 +111,6 @@ public class Unpacker {
       //await ModifyConfigFile(bundle);
     }
     if (!Directory.Exists(bundle.RepositoryDir)) {
-      ResetToInput(bundle);
       return;
     }
 
