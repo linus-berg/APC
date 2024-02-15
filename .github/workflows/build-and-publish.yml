@@ -66,6 +66,9 @@ jobs:
           - name: acm/git
             directory: ACM.Git
             
+          - name: acm/wget
+            directory: ACM.Wget
+            
           - name: acm/router
             directory: ACM.Router
             
