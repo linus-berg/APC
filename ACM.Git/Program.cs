@@ -8,7 +8,7 @@ using Polly;
 using Polly.Timeout;
 
 ModuleRegistration registration = new(ModuleType.ACM, typeof(Collector));
-registration.AddEndpoint("git", 1);
+registration.AddEndpoint("git");
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .AddLogging(registration)
