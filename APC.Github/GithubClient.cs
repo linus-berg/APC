@@ -4,8 +4,8 @@ using RestSharp;
 namespace APC.Github;
 
 public class GithubClient : IGithubClient {
-  private const string API_ = "https://api.github.com";
-  private readonly RestClient client_ = new(API_);
+  private const string C_API_ = "https://api.github.com";
+  private readonly RestClient client_ = new(C_API_);
 
   public async Task<List<GithubRelease>> GetReleases(string repo) {
     List<GithubRelease> releases = await GetReleasePage(repo, 1);

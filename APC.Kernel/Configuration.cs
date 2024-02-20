@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Data;
 
 namespace APC.Kernel;
 
 public static class Configuration {
-  private static readonly Dictionary<ApcVariable, string> DEFAULTS_ = new() {
+  private static readonly Dictionary<ApcVariable, string> S_DEFAULTS_ = new() {
     {
       ApcVariable.APC_API_HOST, "http://localhost:4001"
     }, {
@@ -52,7 +50,7 @@ public static class Configuration {
     }
 
     /* If variable has default */
-    if (DEFAULTS_.TryGetValue(variable, out string? default_value)) {
+    if (S_DEFAULTS_.TryGetValue(variable, out string? default_value)) {
       return default_value;
     }
 

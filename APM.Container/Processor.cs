@@ -17,10 +17,10 @@ public class Processor : IProcessor {
     ArtifactProcessRequest request = context.Message;
     Artifact artifact = request.artifact;
     await GetTags(artifact);
-    await context.Send(Endpoints.APC_INGEST_PROCESSED,
+    await context.Send(Endpoints.S_APC_INGEST_PROCESSED,
                        new ArtifactProcessedRequest {
-                         Context = context.Message.ctx,
-                         Artifact = artifact
+                         context = context.Message.ctx,
+                         artifact = artifact
                        });
   }
 

@@ -6,8 +6,8 @@ using RestSharp;
 namespace APM.Npm;
 
 public class Npm : INpm {
-  private const string REGISTRY_ = "https://registry.npmjs.org/";
-  private readonly RestClient client_ = new(REGISTRY_);
+  private const string C_REGISTRY_ = "https://registry.npmjs.org/";
+  private readonly RestClient client_ = new(C_REGISTRY_);
 
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     Metadata metadata = await GetMetadata(artifact.id);

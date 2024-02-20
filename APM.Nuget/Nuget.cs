@@ -10,8 +10,8 @@ using ILogger = NuGet.Common.ILogger;
 namespace APM.Nuget;
 
 public class Nuget : INuget {
-  private const string API_ = "https://api.nuget.org/v3/index.json";
-  private const string NUGET_ = "https://api.nuget.org/v3-flatcontainer/";
+  private const string C_API_ = "https://api.nuget.org/v3/index.json";
+  private const string C_NUGET_ = "https://api.nuget.org/v3-flatcontainer/";
   private readonly SourceCacheContext cache_;
   private readonly CancellationToken ct_ = CancellationToken.None;
   private readonly ILogger logger_;
@@ -20,7 +20,7 @@ public class Nuget : INuget {
   private FindPackageByIdResource resource_;
 
   public Nuget() {
-    repository_ = Repository.Factory.GetCoreV3(API_);
+    repository_ = Repository.Factory.GetCoreV3(C_API_);
     meta_res_ = repository_.GetResource<PackageMetadataResource>();
     resource_ = repository_.GetResource<FindPackageByIdResource>();
     cache_ = new SourceCacheContext();
@@ -44,7 +44,7 @@ public class Nuget : INuget {
 
     foreach (IPackageSearchMetadata version in versions) {
       string v = version.Identity.Version.ToString();
-      string u = NUGET_ +
+      string u = C_NUGET_ +
                  $"{artifact.id}/{v}/{artifact.id}.{v}.nupkg".ToLower();
       if (artifact.HasVersion(v)) {
         continue;

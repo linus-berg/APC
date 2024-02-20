@@ -6,8 +6,8 @@ using RestSharp;
 namespace APM.Jetbrains;
 
 public class Jetbrains : IJetbrains {
-  private const string API_ = "https://plugins.jetbrains.com";
-  private readonly RestClient client_ = new(API_);
+  private const string C_API_ = "https://plugins.jetbrains.com";
+  private readonly RestClient client_ = new(C_API_);
 
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     string id = GetPluginId(artifact.id);
@@ -27,7 +27,7 @@ public class Jetbrains : IJetbrains {
       ArtifactVersion version = new() {
         version = update.version
       };
-      version.AddFile("plugin", $"{API_}/files/{update.file}");
+      version.AddFile("plugin", $"{C_API_}/files/{update.file}");
       artifact.AddVersion(version);
     }
   }

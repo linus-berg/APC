@@ -1,5 +1,5 @@
 namespace APC.API.Input;
 
 public class DeleteArtifactInput {
-  public string id { get; init; }
+  public required string id { get; init; }
 }

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using APC.Kernel;
 using APC.Kernel.Messages;
 using MassTransit;

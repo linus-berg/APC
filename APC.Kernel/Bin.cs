@@ -1,7 +1,4 @@
-using System.Diagnostics;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Builders;
 using Microsoft.Extensions.Logging;
@@ -25,14 +22,15 @@ public static class Bin {
                        PipeTarget.ToStringBuilder(std_out))
                      .WithStandardErrorPipe(
                        PipeTarget.ToStringBuilder(std_err));
-    CommandResult result = null;
+    CommandResult? result = null;
     try {
       result = await cmd.ExecuteAsync(token);
     } catch (Exception e) {
-      logger.LogError(e.ToString());
+      logger.LogError("{Error}", e.ToString());
     }
-    logger.LogDebug(std_out.ToString());
-    logger.LogDebug(std_err.ToString());
+
+    logger.LogDebug("{StdOut}", std_out.ToString());
+    logger.LogDebug("{StdErr}", std_err.ToString());
     return result?.ExitCode == success_code;
   }
 }

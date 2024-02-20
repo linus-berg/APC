@@ -1,5 +1,4 @@
-﻿using System;
-using APC.Kernel.Exceptions;
+﻿using APC.Kernel.Exceptions;
 using APC.Kernel.Registrations;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +19,7 @@ public static class RegistrationUtils {
             c.ConcurrentMessageLimit = endpoint.concurrency;
 
             // use the outbox to prevent duplicate events from being published
-            c.UseInMemoryOutbox();
+            c.UseInMemoryOutbox(ctx);
             /* Absurdly high timeout */
             c.UseTimeout(x => x.Timeout = TimeSpan.FromMinutes(180));
             c.ConfigureConsumer(ctx, registration.consumer);

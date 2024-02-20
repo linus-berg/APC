@@ -1,9 +1,6 @@
 using System.Globalization;
-using System.Text;
-using System.Threading;
 using ACM.Kernel;
 using APC.Kernel;
-using CliWrap;
 using Foundatio.Storage;
 using Minio.Exceptions;
 using Polly;
@@ -12,7 +9,7 @@ using Polly.Registry;
 namespace ACM.Git;
 
 public class Git {
-  private const string INCREMENT_FORMAT_ = "yyyy-MM-ddTHH:mm:ssZ";
+  private const string C_INCREMENT_FORMAT_ = "yyyy-MM-ddTHH:mm:ssZ";
   private readonly string bundle_dir_;
   private readonly string dir_;
   private readonly FileSystem fs_;
@@ -43,14 +40,15 @@ public class Git {
 
   public async Task<bool> Mirror(string remote, CancellationToken token) {
     Repository repository = new(remote, dir_);
-    logger_.LogDebug($"{remote}: Starting");
+    logger_.LogDebug("{Remote}: Starting", remote);
     bool success =
-      await git_timeout_.ExecuteAsync(async (state, token) =>
+      await git_timeout_.ExecuteAsync(async (state, lambda_token) =>
                                         await CloneOrUpdateLocalMirror(
-                                          state, token), repository);
-    logger_.LogDebug($"{remote}: {success}");
+                                          state, lambda_token), repository,
+                                      token);
+    logger_.LogDebug("{Remote}: {Success}", remote, success);
     if (success) {
-      logger_.LogDebug($"{remote}: Creating bundle");
+      logger_.LogDebug("{Remote}: Creating bundle", remote);
       await CreateIncrementalGitBundle(repository, token);
     }
 
@@ -59,51 +57,58 @@ public class Git {
 
   private async Task<bool> CloneOrUpdateLocalMirror(
     Repository repository, CancellationToken token = default) {
-    if (!Directory.Exists(repository.LocalPath)) {
-      Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
+    if (!Directory.Exists(repository.local_path)) {
+      Directory.CreateDirectory(Path.Join(dir_, repository.owner));
       // Clone the mirror repository
-      logger_.LogInformation($"{repository.Remote}: Cloning initial repository.");
+      logger_.LogInformation("{RepositoryRemote}: Cloning initial repository",
+                             repository.remote);
 
       return await Bin.Execute("git",
                                args => {
                                  args.Add("clone");
                                  args.Add("--mirror");
-                                 args.Add(repository.Remote);
-                                 args.Add(repository.LocalPath);
+                                 args.Add(repository.remote);
+                                 args.Add(repository.local_path);
                                }, logger_, token: token);
     }
 
     // Fetch updates to the mirror repository
-    logger_.LogDebug($"{repository.Remote}: Fetching updates.");
+    logger_.LogDebug("{RepositoryRemote}: Fetching updates", repository.remote);
     return await Bin.Execute("git", args => {
       args.Add("remote");
       args.Add("update");
       args.Add("--prune");
-    }, logger_, repository.LocalPath, token: token);
+    }, logger_, repository.local_path, token: token);
   }
 
-  private async Task CreateIncrementalGitBundle(Repository repository, CancellationToken token) {
-    string bundle_dir = Path.Join(bundle_dir_, repository.Owner);
+  private async Task CreateIncrementalGitBundle(Repository repository,
+                                                CancellationToken token) {
+    string bundle_dir = Path.Join(bundle_dir_, repository.owner);
     if (!Directory.Exists(bundle_dir)) {
       Directory.CreateDirectory(bundle_dir);
     }
 
     DateTime now = DateTime.UtcNow;
     /* Get latest update from storage */
-    logger_.LogDebug($"{repository.Remote}: Getting timestamp");
+    logger_.LogDebug("{RepositoryRemote}: Getting timestamp",
+                     repository.remote);
     DateTime reference_date = await GetLastTimestamp(repository);
 
     // Calculate the range of commits based on the reference date
-    string since_date = reference_date.ToString(INCREMENT_FORMAT_);
-    string until_date = now.ToString(INCREMENT_FORMAT_);
+    string since_date = reference_date.ToString(C_INCREMENT_FORMAT_);
+    string until_date = now.ToString(C_INCREMENT_FORMAT_);
 
     string bundle_file_name =
-      $"{repository.Name}@{reference_date:yyyyMMddHHmmss}-{now:yyyyMMddHHmmss}.bundle";
+      $"{repository.name}@{reference_date:yyyyMMddHHmmss}-{now:yyyyMMddHHmmss}.bundle";
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
-    logger_.LogInformation($"{repository.Remote}: Bundling {since_date} ({since_date}) - {until_date}");
-    logger_.LogDebug($"{repository.Remote}: Dirs {repository.LocalPath} - {repository.Directory}");
+    logger_.LogInformation(
+      "{RepositoryRemote}: Bundling {SinceDate} - {UntilDate}",
+      repository.remote, since_date, until_date);
+    logger_.LogDebug(
+      "{RepositoryRemote}: Dirs {RepositoryLocalPath} - {RepositoryDirectory}",
+      repository.remote, repository.local_path, repository.directory);
 
     bool success = await Bin.Execute("git", args => {
       args.Add("bundle");
@@ -111,11 +116,14 @@ public class Git {
       args.Add(bundle_file_path);
       args.Add($"--since=\"{since_date}\"");
       //args.Add($"--until=\"{until_date}\"");
-      args.Add($"--all");
-    }, logger_, repository.LocalPath, 0, token);
-    logger_.LogDebug($"{repository.Remote}: Bundle result {success}");
+      args.Add("--all");
+    }, logger_, repository.local_path, 0, token);
+    logger_.LogDebug("{RepositoryRemote}: Bundle result {Success}",
+                     repository.remote, success);
     if (success) {
-      logger_.LogInformation($"{repository.Remote}: Pushing {bundle_file_path} to S3.");
+      logger_.LogInformation(
+        "{RepositoryRemote}: Pushing {BundleFilePath} to S3", repository.remote,
+        bundle_file_path);
       bool uploaded = await PushToStorage(bundle_file_path);
       if (uploaded) {
         await fs_.CreateDeltaLink(
@@ -129,7 +137,7 @@ public class Git {
   }
 
   private async Task<DateTime> GetLastTimestamp(Repository repository) {
-    string path = Path.Join("git", repository.Owner, $"{repository.Name}@*-*");
+    string path = Path.Join("git", repository.owner, $"{repository.name}@*-*");
     IReadOnlyCollection<FileSpec> files = await fs_.GetFileList(path);
     if (files.Count == 0) {
       return DateTime.UnixEpoch;
@@ -152,7 +160,7 @@ public class Git {
     }
 
     /* Open bundle and stream to S3 */
-    logger_.LogDebug($"Opening: {bundle_file_path}");
+    logger_.LogDebug("Opening: {BundleFilePath}", bundle_file_path);
     await using Stream stream = File.OpenRead(bundle_file_path);
     string storage_path =
       Path.Join("git", Path.GetRelativePath(bundle_dir_, bundle_file_path));

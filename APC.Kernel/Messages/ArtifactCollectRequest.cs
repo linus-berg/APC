@@ -1,10 +1,8 @@
-using System;
-
 namespace APC.Kernel.Messages;
 
 public class ArtifactCollectRequest {
-  public string location { get; set; }
-  public string module { get; set; }
+  public required string location { get; set; }
+  public required string module { get; set; }
 
   public bool force { get; set; } = false;
 

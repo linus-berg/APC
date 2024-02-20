@@ -6,9 +6,9 @@ using MongoDB.Driver;
 namespace APC.Infrastructure;
 
 public class MongoDatabase : IApcDatabase {
+  private const string C_PROCESSOR_COLLECTION_ = "apc-processors";
   private readonly MongoClient client_;
   private readonly IMongoDatabase database_;
-  private readonly string PROCCESSOR_COLLECTION_ = "apc-processors";
 
   public MongoDatabase() {
     string? c_str = Configuration.GetApcVar(ApcVariable.APC_MONGO_STR);
@@ -24,7 +24,7 @@ public class MongoDatabase : IApcDatabase {
 
   public async Task AddProcessor(Processor processor) {
     IMongoCollection<Processor> collection =
-      GetCollection<Processor>(PROCCESSOR_COLLECTION_);
+      GetCollection<Processor>(C_PROCESSOR_COLLECTION_);
     await collection.InsertOneAsync(processor);
   }
 
@@ -38,7 +38,7 @@ public class MongoDatabase : IApcDatabase {
 
   public async Task<bool> UpdateProcessor(Processor processor) {
     IMongoCollection<Processor> collection =
-      GetCollection<Processor>(PROCCESSOR_COLLECTION_);
+      GetCollection<Processor>(C_PROCESSOR_COLLECTION_);
     ReplaceOneResult result =
       await collection.ReplaceOneAsync(a => a.id == processor.id, processor);
     return result.IsAcknowledged;
@@ -46,14 +46,14 @@ public class MongoDatabase : IApcDatabase {
 
   public async Task<Processor> GetProcessor(string processor) {
     IMongoCollection<Processor> collection =
-      GetCollection<Processor>(PROCCESSOR_COLLECTION_);
+      GetCollection<Processor>(C_PROCESSOR_COLLECTION_);
     return await (await collection.FindAsync(a => a.id == processor))
              .FirstOrDefaultAsync();
   }
 
   public async Task<IEnumerable<Processor>> GetProcessors() {
     IMongoCollection<Processor> collection =
-      GetCollection<Processor>(PROCCESSOR_COLLECTION_);
+      GetCollection<Processor>(C_PROCESSOR_COLLECTION_);
     return await (await collection.FindAsync(a => true))
              .ToListAsync();
   }

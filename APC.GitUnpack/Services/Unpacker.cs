@@ -6,8 +6,8 @@ namespace APC.GitUnpack.Services;
 public class Unpacker {
   private readonly string archive_dir_;
   private readonly string in_dir_;
-  private readonly string repo_dir_;
   private readonly ILogger<Unpacker> logger_;
+  private readonly string repo_dir_;
 
   /* TODO: This class should probably be cleaned up */
   public Unpacker(ILogger<Unpacker> logger) {
@@ -32,17 +32,18 @@ public class Unpacker {
                    throw new ArgumentException(
                      $"Could not get directory of ${relative_path}");
                  }
+
                  return new GitBundle(f, directory);
                });
 
     IEnumerable<IGrouping<string, GitBundle>> bundle_groups =
-      bundles.GroupBy(b => b.Repository);
+      bundles.GroupBy(b => b.repository);
 
     foreach (IGrouping<string, GitBundle> bg in bundle_groups) {
       /* Order by To date */
-      IOrderedEnumerable<GitBundle> ordered = bg.OrderBy(gb => gb.To);
+      IOrderedEnumerable<GitBundle> ordered = bg.OrderBy(gb => gb.to);
       foreach (GitBundle git_bundle in ordered) {
-        if (Path.GetFileNameWithoutExtension(git_bundle.Filepath)
+        if (Path.GetFileNameWithoutExtension(git_bundle.filepath)
                 .StartsWith(".")) {
           continue;
         }
@@ -52,8 +53,8 @@ public class Unpacker {
             ResetToInput(git_bundle);
           }
         } catch (Exception e) {
-          logger_.LogError($"Failed to apply {git_bundle.Filepath}: {e}");      
-          ResetToInput(git_bundle);      
+          logger_.LogError($"Failed to apply {git_bundle.filepath}: {e}");
+          ResetToInput(git_bundle);
         }
       }
     }
@@ -63,7 +64,7 @@ public class Unpacker {
 
   private async Task<bool> TryApplyBundle(GitBundle bundle,
                                           CancellationToken token = default) {
-    logger_.LogInformation($"Processing: {bundle.Filepath}");
+    logger_.LogInformation($"Processing: {bundle.filepath}");
     bool is_valid = await CheckIfValid(bundle, token);
     if (!is_valid) {
       return false;
@@ -71,14 +72,14 @@ public class Unpacker {
 
     string tmp_file = bundle.MoveToApply();
     bool success = false;
-    if (bundle.IsFirstBundle) {
-      string dir = Path.Join(repo_dir_, bundle.Owner);
+    if (bundle.is_first_bundle) {
+      string dir = Path.Join(repo_dir_, bundle.owner);
       Directory.CreateDirectory(dir);
       success = await Bin.Execute("git", args => {
         args.Add("clone");
         args.Add("--mirror");
         args.Add(tmp_file);
-        args.Add(bundle.Repository);
+        args.Add(bundle.repository);
       }, logger_, dir, token: token);
     } else {
       success = await Bin.Execute("git",
@@ -87,21 +88,23 @@ public class Unpacker {
                                     args.Add("update");
                                   },
                                   logger_,
-                                  bundle.RepositoryDir, 0, token);
+                                  bundle.repository_dir, 0, token);
     }
+
     if (success) {
       await Cleanup(tmp_file, bundle);
     }
+
     return success;
   }
 
   private async Task<bool> CheckIfValid(GitBundle bundle,
                                         CancellationToken token = default) {
-    if (bundle.IsFirstBundle) {
+    if (bundle.is_first_bundle) {
       return true;
     }
 
-    if (!Directory.Exists(bundle.RepositoryDir)) {
+    if (!Directory.Exists(bundle.repository_dir)) {
       return false;
     }
 
@@ -110,18 +113,19 @@ public class Unpacker {
       await Bin.Execute("git", args => {
         args.Add("bundle");
         args.Add("verify");
-        args.Add(bundle.Filepath);
-      }, logger_, bundle.RepositoryDir, 0, token);
+        args.Add(bundle.filepath);
+      }, logger_, bundle.repository_dir, 0, token);
     return is_valid;
   }
 
   private async Task Cleanup(string file, GitBundle bundle) {
     /* Add the necessary configurations */
-    if (bundle.IsFirstBundle) {
+    if (bundle.is_first_bundle) {
       /* Not needed anymore ? */
       //await ModifyConfigFile(bundle);
     }
-    if (!Directory.Exists(bundle.RepositoryDir)) {
+
+    if (!Directory.Exists(bundle.repository_dir)) {
       return;
     }
 
@@ -131,7 +135,7 @@ public class Unpacker {
 
   private async Task ModifyConfigFile(GitBundle bundle) {
     /* Modify config, ensure this only happens ONCE */
-    string config_file = Path.Join(bundle.RepositoryDir, "config");
+    string config_file = Path.Join(bundle.repository_dir, "config");
     await File.AppendAllLinesAsync(config_file, new[] {
       "\tfetch = +refs/*:refs/*"
     });
@@ -140,27 +144,25 @@ public class Unpacker {
   private async Task UpdateServerInfo(GitBundle bundle,
                                       CancellationToken token = default) {
     await Bin.Execute("git",
-                      args => {
-                        args.Add("update-server-info");
-                      },
-                      logger_, bundle.RepositoryDir, 0,
+                      args => { args.Add("update-server-info"); },
+                      logger_, bundle.repository_dir, 0,
                       token);
   }
 
   private void MoveToArchive(string file, GitBundle bundle) {
-    string dir = Path.Join(archive_dir_, bundle.Owner);
+    string dir = Path.Join(archive_dir_, bundle.owner);
     Directory.CreateDirectory(dir);
     File.Move(file,
-              Path.Join(archive_dir_, bundle.Owner,
-                        Path.GetFileName(bundle.Filepath)), true);
+              Path.Join(archive_dir_, bundle.owner,
+                        Path.GetFileName(bundle.filepath)), true);
   }
 
   private void ResetToInput(GitBundle bundle) {
     try {
-      string tmp_file = Path.Join(Path.GetDirectoryName(bundle.Filepath),
-                                  bundle.Repository);
+      string tmp_file = Path.Join(Path.GetDirectoryName(bundle.filepath),
+                                  bundle.repository);
       if (File.Exists(tmp_file)) {
-        File.Move(tmp_file, bundle.Filepath);
+        File.Move(tmp_file, bundle.filepath);
       }
     } catch (Exception e) {
       logger_.LogError(e.ToString());

@@ -16,9 +16,9 @@ public class Processor : IProcessor {
     Artifact artifact = context.Message.artifact;
     await helm_.ProcessArtifact(artifact);
     ArtifactProcessedRequest request = new() {
-      Artifact = artifact,
-      Context = context.Message.ctx
+      artifact = artifact,
+      context = context.Message.ctx
     };
-    await context.Send(Endpoints.APC_INGEST_PROCESSED, request);
+    await context.Send(Endpoints.S_APC_INGEST_PROCESSED, request);
   }
 }

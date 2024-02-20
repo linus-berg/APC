@@ -32,10 +32,10 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddQuartz(q => {
                      q.UseMicrosoftDependencyInjectionJobFactory();
                      q.AddJob<TrackingJob>(
-                       j => j.WithIdentity(TrackingJob.Key));
+                       j => j.WithIdentity(TrackingJob.S_KEY));
                      q.AddTrigger(t => {
                        t.WithIdentity("tracking-trigger", "apc");
-                       t.ForJob(TrackingJob.Key);
+                       t.ForJob(TrackingJob.S_KEY);
                        t.WithCronSchedule("0 0 0/2 ? * * *");
                      });
                    });

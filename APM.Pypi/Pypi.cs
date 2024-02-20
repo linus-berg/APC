@@ -6,8 +6,8 @@ using RestSharp;
 namespace APM.Pypi;
 
 public class Pypi : IPypi {
-  private const string REGISTRY_ = "https://pypi.org/";
-  private readonly RestClient client_ = new(REGISTRY_);
+  private const string C_REGISTRY_ = "https://pypi.org/";
+  private readonly RestClient client_ = new(C_REGISTRY_);
 
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     PypiMetadata metadata = await GetMetadata(artifact.id);

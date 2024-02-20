@@ -1,5 +1,5 @@
 namespace APM.Helm.Models;
 
 public class HelmChartRepository {
-  public string name { get; set; }
+  public required string name { get; set; }
 }

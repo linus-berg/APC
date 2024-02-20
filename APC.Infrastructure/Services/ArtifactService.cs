@@ -43,8 +43,8 @@ public class ArtifactService : IArtifactService {
   }
 
   public async Task Route(Artifact artifact) {
-    await SendRequest(Endpoints.APC_ACM_ROUTER, new ArtifactRouteRequest {
-      Artifact = artifact
+    await SendRequest(Endpoints.S_APC_ACM_ROUTER, new ArtifactRouteRequest {
+      artifact = artifact
     });
   }
 
@@ -62,9 +62,9 @@ public class ArtifactService : IArtifactService {
   }
 
   public async Task Ingest(Artifact artifact) {
-    await SendRequest(Endpoints.APC_INGEST_UNPROCESSED,
+    await SendRequest(Endpoints.S_APC_INGEST_UNPROCESSED,
                       new ArtifactIngestRequest {
-                        Artifact = artifact
+                        artifact = artifact
                       });
   }
 

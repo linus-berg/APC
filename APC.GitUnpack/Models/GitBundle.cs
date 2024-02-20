@@ -4,42 +4,43 @@ namespace APC.GitUnpack.Models;
 
 public class GitBundle {
   public GitBundle(string filepath, string owner) {
-    Filepath = filepath;
-    Owner = owner;
+    this.filepath = filepath;
+    this.owner = owner;
     Parse();
   }
 
-  public bool IsFirstBundle { get; private set; }
+  public bool is_first_bundle { get; private set; }
 
-  public string Filepath { get; } = "";
-  public string Repository { get; private set; }
-  public string RepositoryDir { get; private set; }
+  public string filepath { get; } = "";
+  public string repository { get; private set; }
+  public string repository_dir { get; private set; }
 
-  public DateTime From { get; private set; }
-  public DateTime To { get; private set; }
-  public string Owner { get; private set; }
+  public DateTime from { get; private set; }
+  public DateTime to { get; private set; }
+  public string owner { get; }
 
   private void Parse() {
-    string[] parts = Path.GetFileNameWithoutExtension(Filepath).Split("@");
-    Repository = parts[0];
+    string[] parts = Path.GetFileNameWithoutExtension(filepath).Split("@");
+    repository = parts[0];
     string[] timeline = parts[1].Split("-");
     DateTime.TryParseExact(timeline[0], "yyyyMMddHHmmss", null,
                            DateTimeStyles.None, out DateTime from);
-    From = from;
+    this.from = from;
 
     DateTime.TryParseExact(timeline[1], "yyyyMMddHHmmss", null,
                            DateTimeStyles.None, out DateTime to);
-    To = to;
+    this.to = to;
 
-    IsFirstBundle = From == DateTime.UnixEpoch;
-    RepositoryDir =
+    is_first_bundle = this.from == DateTime.UnixEpoch;
+    repository_dir =
       Path.Join(
-        Environment.GetEnvironmentVariable("GIT_BUNDLE_REPOS"), Owner, Repository);
+        Environment.GetEnvironmentVariable("GIT_BUNDLE_REPOS"), owner,
+        repository);
   }
 
   public string MoveToApply() {
-    string tmp_file = Path.Join(Path.GetDirectoryName(Filepath), Repository);
-    File.Move(Filepath, tmp_file);
+    string tmp_file = Path.Join(Path.GetDirectoryName(filepath), repository);
+    File.Move(filepath, tmp_file);
     return tmp_file;
   }
 }

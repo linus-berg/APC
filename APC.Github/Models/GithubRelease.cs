@@ -3,20 +3,20 @@ using System.Text.RegularExpressions;
 namespace APC.Github.Models;
 
 public class GithubRelease {
-  public string url { get; set; }
-  public string html_url { get; set; }
-  public string assets_url { get; set; }
-  public string upload_url { get; set; }
-  public string tarball_url { get; set; }
-  public string zipball_url { get; set; }
+  public required string url { get; set; }
+  public required string html_url { get; set; }
+  public required string assets_url { get; set; }
+  public required string upload_url { get; set; }
+  public required string tarball_url { get; set; }
+  public required string zipball_url { get; set; }
   public int id { get; set; }
-  public string node_id { get; set; }
-  public string tag_name { get; set; }
-  public string target_commitish { get; set; }
-  public string name { get; set; }
+  public required string node_id { get; set; }
+  public required string tag_name { get; set; }
+  public required string target_commitish { get; set; }
+  public required string name { get; set; }
   public bool draft { get; set; }
   public bool prerelease { get; set; }
-  public List<GithubReleaseAsset> assets { get; set; }
+  public required List<GithubReleaseAsset> assets { get; set; }
 
   public string GetReleaseFileRegexp(Regex regex) {
     foreach (GithubReleaseAsset asset in assets) {

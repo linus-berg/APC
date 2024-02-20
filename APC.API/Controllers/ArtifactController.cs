@@ -29,7 +29,9 @@ public class ArtifactController : ControllerBase {
   [HttpGet]
   public async Task<IEnumerable<Artifact>> Get([FromQuery] string processor,
                                                [FromQuery] bool only_roots) {
-    return await database_.GetArtifacts(processor, only_roots);
+    IEnumerable<Artifact> artifacts =
+      await database_.GetArtifacts(processor, only_roots);
+    return artifacts;
   }
 
   // POST: api/Artifact
@@ -40,7 +42,8 @@ public class ArtifactController : ControllerBase {
       throw new AuthenticationException("Unauthenticated user.");
     }
 
-    log_.Information($"{u.Identity.Name} added {input.id}");
+    log_.Information("{IdentityName} added {InputId}", u.Identity.Name,
+                     input.id);
     Artifact artifact =
       await database_.GetArtifact(input.id, input.processor);
     if (artifact == null) {
@@ -110,7 +113,7 @@ public class ArtifactController : ControllerBase {
 
   [HttpPost("collect")]
   public async Task<ActionResult> Collect(ArtifactCollectRequest request) {
-    log_.Information($"Collecting {request.location}");
+    log_.Information("Collecting {RequestLocation}", request.location);
     await aps_.Collect(request.location, request.module);
     return Ok("OK");
   }

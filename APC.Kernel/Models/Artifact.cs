@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace APC.Kernel.Models;
 
 public class Artifact {
@@ -31,12 +29,7 @@ public class Artifact {
   }
 
   public bool AddVersion(ArtifactVersion version) {
-    if (versions.ContainsKey(version.version)) {
-      return false;
-    }
-
-    versions.Add(version.version, version);
-    return true;
+    return versions.TryAdd(version.version, version);
   }
 
   public bool HasVersion(string version) {

@@ -13,10 +13,10 @@ using Artifact = APC.Kernel.Models.Artifact;
 namespace APM.Maven;
 
 public class Maven : IMaven {
-  private const string MAVEN_ = "https://repo1.maven.org/maven2";
-  private const string MAVEN_SEARCH_ = "https://search.maven.org";
+  private const string C_MAVEN_ = "https://repo1.maven.org/maven2";
+  private const string C_MAVEN_SEARCH_ = "https://search.maven.org";
   private readonly ILogger<Maven> logger_;
-  private readonly RestClient mvn_search_ = new(MAVEN_SEARCH_);
+  private readonly RestClient mvn_search_ = new(C_MAVEN_SEARCH_);
   private readonly MavenCentralRepository repo_;
 
   public Maven(ILogger<Maven> logger) {
@@ -114,7 +114,7 @@ public class Maven : IMaven {
 
   public string GetFile(string group, string id, string version,
                         string extension) {
-    return Path.Combine(MAVEN_, group, id, version,
+    return Path.Combine(C_MAVEN_, group, id, version,
                         $"{id}-{version}{extension}");
   }
 

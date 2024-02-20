@@ -16,10 +16,10 @@ public class Processor : IProcessor {
     Artifact artifact = context.Message.artifact;
     await maven_.ProcessArtifact(artifact);
 
-    await context.Send(Endpoints.APC_INGEST_PROCESSED,
+    await context.Send(Endpoints.S_APC_INGEST_PROCESSED,
                        new ArtifactProcessedRequest {
-                         Context = context.Message.ctx,
-                         Artifact = artifact
+                         context = context.Message.ctx,
+                         artifact = artifact
                        });
   }
 }

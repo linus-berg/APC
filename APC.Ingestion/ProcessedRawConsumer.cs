@@ -20,7 +20,7 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
   /* On APM returning processed artifact */
   public async Task Consume(ConsumeContext<ArtifactProcessedRequest> context) {
     ArtifactProcessedRequest request = context.Message;
-    Artifact artifact = request.Artifact;
+    Artifact artifact = request.artifact;
     Artifact stored = await db_.GetArtifact(artifact.id, artifact.processor);
 
     if (await db_.UpdateArtifact(artifact)) {
@@ -36,7 +36,7 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
     /* Process all dependencies not already processed in this context */
     HashSet<ArtifactDependency> dependencies = artifact.dependencies;
     foreach (ArtifactDependency dependency in dependencies) {
-      if (await cache_.InCache(dependency.id, request.Context)) {
+      if (await cache_.InCache(dependency.id, request.context)) {
         continue;
       }
 
@@ -44,14 +44,14 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
       Artifact dep =
         await aps_.AddArtifact(dependency.id, dependency.processor, "",
                                dependency.config);
-      await aps_.Process(dep, request.Context);
+      await aps_.Process(dep, request.context);
     }
   }
 
   private async Task Collect(ConsumeContext<ArtifactProcessedRequest> context) {
     ArtifactProcessedRequest request = context.Message;
-    Artifact artifact = request.Artifact;
-    foreach (ArtifactCollectRequest collect in request.CollectRequests) {
+    Artifact artifact = request.artifact;
+    foreach (ArtifactCollectRequest collect in request.collect_requests) {
       await aps_.Collect(collect);
     }
 

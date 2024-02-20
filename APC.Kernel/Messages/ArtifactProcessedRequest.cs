@@ -1,21 +1,19 @@
-using System;
-using System.Collections.Generic;
 using APC.Kernel.Models;
 
 namespace APC.Kernel.Messages;
 
 public class ArtifactProcessedRequest {
   public ArtifactProcessedRequest() {
-    CollectRequests = new List<ArtifactCollectRequest>();
+    collect_requests = new List<ArtifactCollectRequest>();
   }
 
-  public List<ArtifactCollectRequest> CollectRequests { get; set; }
+  public List<ArtifactCollectRequest> collect_requests { get; set; }
 
-  public Guid Context { get; set; }
-  public Artifact Artifact { get; set; }
+  public Guid context { get; set; }
+  public Artifact artifact { get; set; }
 
   public void AddCollectRequest(string location, string module) {
-    CollectRequests.Add(new ArtifactCollectRequest {
+    collect_requests.Add(new ArtifactCollectRequest {
       module = module,
       location = location
     });

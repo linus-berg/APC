@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using ACM.Kernel;
 using APC.Kernel;
 
@@ -20,7 +19,6 @@ public class Wget {
   }
 
   private async Task<bool> Archive(string remote) {
-
     return await Bin.Execute("wget",
                              args => {
                                args.Add("--mirror");
