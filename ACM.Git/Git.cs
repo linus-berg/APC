@@ -59,6 +59,7 @@ public class Git {
       Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
       logger_.LogInformation($"{repository.Remote}: Cloning initial repository.");
+      
       return await Bin.Execute("git",
                                $"clone --mirror {repository.Remote} {repository.LocalPath}",
                                token: token);
@@ -66,9 +67,28 @@ public class Git {
 
     // Fetch updates to the mirror repository
     logger_.LogDebug($"{repository.Remote}: Fetching updates.");
-    return await Bin.Execute("git", "remote update --prune", 
-                             repository.LocalPath,
-                             token: token);
+    StringBuilder std_out = new();
+    StringBuilder std_err = new();
+    Command cmd = Cli.Wrap("git")
+                     .WithArguments(args => {
+                       args.Add("remote");
+                       args.Add("update");
+                       args.Add($"--prune");
+                     })
+                     .WithWorkingDirectory(repository.LocalPath)
+                     .WithStandardOutputPipe(
+                       PipeTarget.ToStringBuilder(std_out))
+                     .WithStandardErrorPipe(
+                       PipeTarget.ToStringBuilder(std_err));
+    CommandResult result = null;
+    try {
+      result = await cmd.ExecuteAsync();
+    } catch (Exception e) {
+      logger_.LogError(e.ToString());
+    }
+    logger_.LogDebug(std_out.ToString());
+    logger_.LogDebug(std_err.ToString());
+    return result?.ExitCode == 0;
   }
 
   private async Task CreateIncrementalGitBundle(Repository repository) {
