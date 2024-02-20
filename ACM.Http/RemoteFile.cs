@@ -3,7 +3,7 @@ using ACM.Kernel;
 namespace ACM.Http;
 
 public class RemoteFile {
-  private static readonly HttpClient CLIENT_ = new();
+  private static readonly HttpClient S_CLIENT_ = new();
   private readonly FileSystem fs_;
   private readonly string url_;
 
@@ -14,7 +14,7 @@ public class RemoteFile {
 
   public async Task<bool> Get(string path) {
     HttpResponseMessage response =
-      await CLIENT_.GetAsync(url_, HttpCompletionOption.ResponseHeadersRead);
+      await S_CLIENT_.GetAsync(url_, HttpCompletionOption.ResponseHeadersRead);
     if (!response.IsSuccessStatusCode ||
         response.Content.Headers.ContentLength == null) {
       return false;

@@ -2,10 +2,10 @@ namespace APC.Skopeo;
 
 public class SkopeoManifest {
   private string working_dir_;
-  public string Digest { get; set; }
-  public string Created { get; set; }
-  public string Os { get; set; }
-  public string Architecture { get; set; }
+  public required string Digest { get; set; }
+  public required string Created { get; set; }
+  public required string Os { get; set; }
+  public required string Architecture { get; set; }
   public List<string> Layers { get; set; } = new();
 
   public string WorkingDirectory {

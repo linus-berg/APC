@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-
 namespace APC.Kernel.Models;
 
 public class ArtifactDependency {
-  public string id { get; set; }
-  public string processor { get; set; }
+  public required string id { get; init; }
+  public required string processor { get; init; }
 
   public Dictionary<string, string> config { get; set; } = new();
 

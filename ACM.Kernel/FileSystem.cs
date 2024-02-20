@@ -7,7 +7,7 @@ using Polly.Registry;
 namespace ACM.Kernel;
 
 public class FileSystem {
-  private readonly string? BASE_DIR_ =
+  private readonly string? base_dir_ =
     Configuration.GetApcVar(ApcVariable.APC_ACM_DIR);
 
   private readonly IFileStorage storage_backend_;
@@ -43,7 +43,7 @@ public class FileSystem {
   }
 
   public async Task<Stream> GetStream(string path) {
-    return await storage_backend_.GetFileStreamAsync(path);
+    return await storage_backend_.GetFileStreamAsync(path, StreamMode.Read);
   }
 
   public async Task<string> GetString(string path) {
@@ -108,7 +108,7 @@ public class FileSystem {
   }
 
   public string GetModuleDir(string module, bool create = false) {
-    string dir = Path.Join(BASE_DIR_, module);
+    string dir = Path.Join(base_dir_, module);
     if (create) {
       Directory.CreateDirectory(dir);
     }

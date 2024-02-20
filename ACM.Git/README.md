@@ -1,4 +1,5 @@
 # About
+
 The git ACM processor produces git bundle files to incrementally update repositories.
 
 # How to use git bundles
@@ -9,6 +10,7 @@ and the next increment of the bundle will be named as
 `<repository>@<xxx>-<yyy (utc.now)>`
 
 The approach I use is as following
+
 ```console
 # Rename the initial bundle to the repository name
 mv <repository>@00010101000000-<xxx>.bundle <repository>
@@ -20,13 +22,13 @@ git clone --mirror <repository>
 mv <repository> /storage/applied/<repository>@00010101000000-<xxx>.bundle
 ```
 
-
 ```console
 # If serving over http
 git update-server-info
 ```
 
 ## To apply the next incremental updates updates do the following:
+
 ```console
 # Before applying the next update, always verify if it can be applied first!
 cd <repository>

@@ -4,8 +4,6 @@ using APC.Kernel;
 using APC.Kernel.Constants;
 using APC.Kernel.Registrations;
 using Foundatio.Storage;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 ModuleRegistration registration = new(ModuleType.ACM, typeof(Collector));
 registration.AddEndpoint("wget");

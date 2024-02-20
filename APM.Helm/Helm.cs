@@ -6,8 +6,8 @@ using RestSharp;
 namespace APM.Helm;
 
 public class Helm {
-  private const string API_ = "https://artifacthub.io/api/v1/packages/helm";
-  private readonly RestClient client_ = new(API_);
+  private const string C_API_ = "https://artifacthub.io/api/v1/packages/helm";
+  private readonly RestClient client_ = new(C_API_);
   private readonly ILogger<Helm> logger_;
 
   public Helm(ILogger<Helm> logger) {

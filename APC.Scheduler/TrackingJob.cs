@@ -4,7 +4,7 @@ using Quartz;
 namespace APC.Scheduler;
 
 public class TrackingJob : IJob {
-  public static readonly JobKey Key = new("track-all", "apc");
+  public static readonly JobKey S_KEY = new("track-all", "apc");
   private readonly IArtifactService aps_;
   private readonly ILogger<TrackingJob> logger_;
 

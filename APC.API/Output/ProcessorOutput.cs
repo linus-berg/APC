@@ -1,8 +1,8 @@
 namespace APC.API.Output;
 
 public class ProcessorOutput {
-  public string Id { get; set; }
-  public string Config { get; set; }
+  public required string id { get; set; }
+  public required string config { get; set; }
 
-  public string Description { get; set; }
+  public required string description { get; set; }
 }

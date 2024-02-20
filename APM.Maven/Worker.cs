@@ -1,16 +1,16 @@
 namespace APM.Maven;
 
 public class Worker : BackgroundService {
-  private readonly ILogger<Worker> _logger;
+  private readonly ILogger<Worker> logger_;
 
   public Worker(ILogger<Worker> logger) {
-    _logger = logger;
+    logger_ = logger;
   }
 
-  protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
-    while (!stoppingToken.IsCancellationRequested) {
-      _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-      await Task.Delay(1000, stoppingToken);
+  protected override async Task ExecuteAsync(CancellationToken stopping_token) {
+    while (!stopping_token.IsCancellationRequested) {
+      logger_.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+      await Task.Delay(1000, stopping_token);
     }
   }
 }

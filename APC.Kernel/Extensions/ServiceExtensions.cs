@@ -1,4 +1,3 @@
-using System;
 using APC.Kernel.Registrations;
 using MassTransit.Logging;
 using MassTransit.Monitoring;

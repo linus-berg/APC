@@ -11,35 +11,35 @@ public class Repository {
       Scheme = Uri.UriSchemeHttps,
       Port = -1
     };
-    Owner = GetOwner();
-    Remote = uri_.Uri.ToString();
+    owner = GetOwner();
+    remote = uri_.Uri.ToString();
 
-    Name = GetName();
-    Directory = GetDirectory();
-    LocalPath = Path.Join(local_directory, Directory);
+    name = GetName();
+    directory = GetDirectory();
+    local_path = Path.Join(local_directory, directory);
   }
 
-  public string Name { get; }
+  public string name { get; }
 
-  public string Owner { get; }
+  public string owner { get; }
 
-  public string Remote { get; }
+  public string remote { get; }
 
-  public string Directory { get; }
+  public string directory { get; }
 
-  public string LocalPath { get; }
+  public string local_path { get; }
 
   private string GetName() {
-    string name = Path.GetFileName(original_uri_);
+    string filename = Path.GetFileName(original_uri_);
     if (original_uri_.EndsWith(".git")) {
-      return name.Substring(0, name.Length - 4);
+      return filename.Substring(0, filename.Length - 4);
     }
 
-    return name;
+    return filename;
   }
 
   private string GetDirectory() {
-    return Path.Join(Owner, Name);
+    return Path.Join(owner, name);
   }
 
   private string GetOwner() {

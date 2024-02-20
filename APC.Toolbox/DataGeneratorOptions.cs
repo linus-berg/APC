@@ -5,7 +5,7 @@ namespace APC.Toolbox;
 [Verb("create-data")]
 public class DataGeneratorOptions {
   [Option("processor", Required = true)]
-  public string Processor { get; set; } = null!;
+  public string processor { get; set; } = null!;
 
-  [Option("files", Required = true)] public int Files { get; set; }
+  [Option("files", Required = true)] public int files { get; set; }
 }

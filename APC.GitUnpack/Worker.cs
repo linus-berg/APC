@@ -16,8 +16,9 @@ public class Worker : BackgroundService {
       try {
         await unpacker_.ProcessBundles(token);
       } catch (Exception e) {
-        logger_.LogError($"Failed to process bundles: {e.ToString()}");
+        logger_.LogError($"Failed to process bundles: {e}");
       }
+
       await Task.Delay(2000, token);
     }
   }

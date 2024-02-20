@@ -1,6 +1,6 @@
 namespace APM.Npm.Models;
 
 public class Distribution {
-  public string shasum { get; set; }
-  public string tarball { get; set; }
+  public required string shasum { get; set; }
+  public required string tarball { get; set; }
 }

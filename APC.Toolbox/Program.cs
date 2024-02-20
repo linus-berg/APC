@@ -21,9 +21,9 @@ internal class Program {
                                            DataGeneratorOptions>(args);
     await result
       .MapResult(
-        async (CreateIndexOptions opts) => await tb.CreateIndex(opts.Processor),
+        async (CreateIndexOptions opts) => await tb.CreateIndex(opts.processor),
         async (DataGeneratorOptions opts) =>
-          await tb.CreateFakeData(opts.Processor, opts.Files),
+          await tb.CreateFakeData(opts.processor, opts.files),
         _ => MakeError());
   }
 

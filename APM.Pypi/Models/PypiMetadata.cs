@@ -1,8 +1,8 @@
 namespace APM.Pypi.Models;
 
 public class PypiMetadata {
-  public PypiInfo info { get; set; }
-  public Dictionary<string, List<PypiRelease>> releases { get; set; }
+  public required PypiInfo info { get; set; }
+  public required Dictionary<string, List<PypiRelease>> releases { get; set; }
 
   public Dictionary<string, List<PypiRelease>> GetAllValidReleases() {
     Dictionary<string, List<PypiRelease>> valid = new();
