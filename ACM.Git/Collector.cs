@@ -17,7 +17,7 @@ public class Collector : ICollector {
     string location = context.Message.location;
     string module = context.Message.module;
     try {
-      await git_.Mirror(location);
+      await git_.Mirror(location, context.CancellationToken);
     } catch (Exception e) {
       logger_.LogError("{Location} failed with error {Error}", location,
                        e.ToString());

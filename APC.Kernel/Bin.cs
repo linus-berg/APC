@@ -1,34 +1,38 @@
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CliWrap;
+using CliWrap.Builders;
 using Microsoft.Extensions.Logging;
 
 namespace APC.Kernel;
 
 public static class Bin {
-  public static async Task<bool> Execute(string binary, string args,
+  public static async Task<bool> Execute(string binary,
+                                         Action<ArgumentsBuilder> builder,
+                                         ILogger logger,
                                          string wd = "",
                                          int success_code = 0,
-                                         bool use_shell_execute = false,
                                          CancellationToken token =
                                            default) {
-    ProcessStartInfo psi = new() {
-      FileName = binary,
-      Arguments = args,
-      WorkingDirectory = wd,
-      RedirectStandardOutput = true,
-      RedirectStandardError = true,
-      UseShellExecute = use_shell_execute,
-      CreateNoWindow = true
-    };
-
-    Process process = new() {
-      StartInfo = psi
-    };
-    process.Start();
-    await process.WaitForExitAsync(token);
-    Console.WriteLine(await process.StandardOutput.ReadToEndAsync(token)); 
-    Console.WriteLine(await process.StandardError.ReadToEndAsync(token)); 
-    return process.ExitCode == success_code;
+    StringBuilder std_out = new();
+    StringBuilder std_err = new();
+    Command cmd = Cli.Wrap(binary)
+                     .WithArguments(builder)
+                     .WithWorkingDirectory(wd)
+                     .WithStandardOutputPipe(
+                       PipeTarget.ToStringBuilder(std_out))
+                     .WithStandardErrorPipe(
+                       PipeTarget.ToStringBuilder(std_err));
+    CommandResult result = null;
+    try {
+      result = await cmd.ExecuteAsync(token);
+    } catch (Exception e) {
+      logger.LogError(e.ToString());
+    }
+    logger.LogDebug(std_out.ToString());
+    logger.LogDebug(std_err.ToString());
+    return result?.ExitCode == success_code;
   }
 }

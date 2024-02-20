@@ -74,11 +74,21 @@ public class Unpacker {
     if (bundle.IsFirstBundle) {
       string dir = Path.Join(repo_dir_, bundle.Owner);
       Directory.CreateDirectory(dir);
-      success = await Bin.Execute("git",
-                        $"clone --mirror {tmp_file} {bundle.Repository}",
-                        dir, 0, false, token);
+      success = await Bin.Execute("git", args => {
+        args.Add("clone");
+        args.Add("--mirror");
+        args.Add(tmp_file);
+        args.Add(bundle.Repository);
+      }, logger_, dir, token: token);
     } else {
-      success = await Bin.Execute("git", "remote update --prune", bundle.RepositoryDir, 0, false, token);
+      success = await Bin.Execute("git",
+                                  args => {
+                                    args.Add("remote");
+                                    args.Add("update");
+                                    args.Add("--prune");
+                                  },
+                                  logger_,
+                                  bundle.RepositoryDir, 0, token);
     }
     if (success) {
       await Cleanup(tmp_file, bundle);
@@ -98,8 +108,11 @@ public class Unpacker {
 
     /* If incremental bundle validate bundle */
     bool is_valid =
-      await Bin.Execute("git", $"bundle verify {bundle.Filepath}",
-                        bundle.RepositoryDir, 0, false, token);
+      await Bin.Execute("git", args => {
+        args.Add("bundle");
+        args.Add("verify");
+        args.Add(bundle.Filepath);
+      }, logger_, bundle.RepositoryDir, 0, token);
     return is_valid;
   }
 
@@ -127,7 +140,11 @@ public class Unpacker {
 
   private async Task UpdateServerInfo(GitBundle bundle,
                                       CancellationToken token = default) {
-    await Bin.Execute("git", "update-server-info", bundle.RepositoryDir, 0, false,
+    await Bin.Execute("git",
+                      args => {
+                        args.Add("update-server-info");
+                      },
+                      logger_, bundle.RepositoryDir, 0,
                       token);
   }
 

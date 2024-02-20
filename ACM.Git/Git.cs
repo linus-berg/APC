@@ -33,11 +33,15 @@ public class Git {
     Bin
       .Execute(
         "git",
-        $"config --global http.proxy {Environment.GetEnvironmentVariable("HTTPS_PROXY")}")
-      .Wait();
+        args => {
+          args.Add("config");
+          args.Add("--global");
+          args.Add("http.proxy");
+          args.Add(Environment.GetEnvironmentVariable("HTTPS_PROXY"));
+        }, logger_).Wait();
   }
 
-  public async Task<bool> Mirror(string remote) {
+  public async Task<bool> Mirror(string remote, CancellationToken token) {
     Repository repository = new(remote, dir_);
     logger_.LogDebug($"{remote}: Starting");
     bool success =
@@ -47,7 +51,7 @@ public class Git {
     logger_.LogDebug($"{remote}: {success}");
     if (success) {
       logger_.LogDebug($"{remote}: Creating bundle");
-      await CreateIncrementalGitBundle(repository);
+      await CreateIncrementalGitBundle(repository, token);
     }
 
     return true;
@@ -59,39 +63,26 @@ public class Git {
       Directory.CreateDirectory(Path.Join(dir_, repository.Owner));
       // Clone the mirror repository
       logger_.LogInformation($"{repository.Remote}: Cloning initial repository.");
-      
+
       return await Bin.Execute("git",
-                               $"clone --mirror {repository.Remote} {repository.LocalPath}",
-                               token: token);
+                               args => {
+                                 args.Add("clone");
+                                 args.Add("--mirror");
+                                 args.Add(repository.Remote);
+                                 args.Add(repository.LocalPath);
+                               }, logger_, token: token);
     }
 
     // Fetch updates to the mirror repository
     logger_.LogDebug($"{repository.Remote}: Fetching updates.");
-    StringBuilder std_out = new();
-    StringBuilder std_err = new();
-    Command cmd = Cli.Wrap("git")
-                     .WithArguments(args => {
-                       args.Add("remote");
-                       args.Add("update");
-                       args.Add($"--prune");
-                     })
-                     .WithWorkingDirectory(repository.LocalPath)
-                     .WithStandardOutputPipe(
-                       PipeTarget.ToStringBuilder(std_out))
-                     .WithStandardErrorPipe(
-                       PipeTarget.ToStringBuilder(std_err));
-    CommandResult result = null;
-    try {
-      result = await cmd.ExecuteAsync();
-    } catch (Exception e) {
-      logger_.LogError(e.ToString());
-    }
-    logger_.LogDebug(std_out.ToString());
-    logger_.LogDebug(std_err.ToString());
-    return result?.ExitCode == 0;
+    return await Bin.Execute("git", args => {
+      args.Add("remote");
+      args.Add("update");
+      args.Add("--prune");
+    }, logger_, repository.LocalPath, token: token);
   }
 
-  private async Task CreateIncrementalGitBundle(Repository repository) {
+  private async Task CreateIncrementalGitBundle(Repository repository, CancellationToken token) {
     string bundle_dir = Path.Join(bundle_dir_, repository.Owner);
     if (!Directory.Exists(bundle_dir)) {
       Directory.CreateDirectory(bundle_dir);
@@ -113,38 +104,16 @@ public class Git {
     // Create an incremental bundle
     logger_.LogInformation($"{repository.Remote}: Bundling {since_date} ({since_date}) - {until_date}");
     logger_.LogDebug($"{repository.Remote}: Dirs {repository.LocalPath} - {repository.Directory}");
-    StringBuilder std_out = new();
-    StringBuilder std_err = new();
-    Command cmd = Cli.Wrap("git")
-                     .WithArguments(args => {
-                       args.Add("bundle");
-                       args.Add("create");
-                       args.Add(bundle_file_path);
-                       args.Add($"--since=\"{since_date}\"");
-                       //args.Add($"--until=\"{until_date}\"");
-                       args.Add($"--all");
-                     })
-                     .WithWorkingDirectory(repository.LocalPath)
-                     .WithStandardOutputPipe(
-                       PipeTarget.ToStringBuilder(std_out))
-                     .WithStandardErrorPipe(
-                       PipeTarget.ToStringBuilder(std_err));
-    CommandResult result = null;
-    try {
-      result = await cmd.ExecuteAsync();
-    } catch (Exception e) {
-      logger_.LogError(e.ToString());
-    }
-    /*bool success = await Bin.Execute("git",
-                                     $"bundle create {bundle_file_path} --since=\"{since_date}\" --until=\"{until_date}\" --all",
-                                     repository.LocalPath);*/
-    logger_.LogDebug(std_out.ToString());
-    logger_.LogDebug(std_err.ToString());
-    if (result == null) {
-      return;
-    }
-    bool success = result.ExitCode == 0;
-    logger_.LogDebug($"{repository.Remote}: Bundle result {result.ExitCode}");
+
+    bool success = await Bin.Execute("git", args => {
+      args.Add("bundle");
+      args.Add("create");
+      args.Add(bundle_file_path);
+      args.Add($"--since=\"{since_date}\"");
+      //args.Add($"--until=\"{until_date}\"");
+      args.Add($"--all");
+    }, logger_, repository.LocalPath, 0, token);
+    logger_.LogDebug($"{repository.Remote}: Bundle result {success}");
     if (success) {
       logger_.LogInformation($"{repository.Remote}: Pushing {bundle_file_path} to S3.");
       bool uploaded = await PushToStorage(bundle_file_path);
