@@ -85,7 +85,6 @@ public class Unpacker {
                                   args => {
                                     args.Add("remote");
                                     args.Add("update");
-                                    args.Add("--prune");
                                   },
                                   logger_,
                                   bundle.RepositoryDir, 0, token);
