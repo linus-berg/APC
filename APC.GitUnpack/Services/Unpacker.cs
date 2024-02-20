@@ -78,7 +78,7 @@ public class Unpacker {
                         $"clone --mirror {tmp_file} {bundle.Repository}",
                         dir, 0, false, token);
     } else {
-      success = await Bin.Execute("git", "remote update", bundle.RepositoryDir, 0, false, token);
+      success = await Bin.Execute("git", "remote update --prune", bundle.RepositoryDir, 0, false, token);
     }
     if (success) {
       await Cleanup(tmp_file, bundle);
