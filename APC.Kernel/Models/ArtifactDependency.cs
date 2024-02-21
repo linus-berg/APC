@@ -1,8 +1,8 @@
 namespace APC.Kernel.Models;
 
 public class ArtifactDependency {
-  public required string id { get; init; }
-  public required string processor { get; init; }
+  public string id { get; init; }
+  public string processor { get; init; }
 
   public Dictionary<string, string> config { get; set; } = new();
 

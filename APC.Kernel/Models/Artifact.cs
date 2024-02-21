@@ -11,6 +11,9 @@ public class Artifact {
   public string processor { get; set; }
   public string filter { get; set; }
 
+  public ArtifactFilterType filter_type { get; set; } =
+    ArtifactFilterType.REGEX;
+
   public ArtifactStatus status { get; set; } = ArtifactStatus.PROCESSING;
   public bool root { get; set; } = false;
 

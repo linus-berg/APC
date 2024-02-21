@@ -10,7 +10,8 @@ public class IngestConsumer : IConsumer<ArtifactIngestRequest> {
   private readonly IApcCache cache_;
   private readonly ILogger<IngestConsumer> logger_;
 
-  public IngestConsumer(ILogger<IngestConsumer> logger, IBus bus, IApcCache cache,
+  public IngestConsumer(ILogger<IngestConsumer> logger, IBus bus,
+                        IApcCache cache,
                         IArtifactService aps) {
     logger_ = logger;
     bus_ = bus;
