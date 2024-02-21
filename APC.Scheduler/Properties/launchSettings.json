@@ -11,7 +11,8 @@
         "APC_REDIS_HOST": "localhost",
         "APC_PGSQL_STR": "Host=localhost;Username=postgres;Password=mysecret;Database=postgres",
         "APC_MONGO_STR": "mongodb://root:example@localhost:27017",
-        "APC_LOGS": "./logs"
+        "APC_LOGS": "./logs",
+        "SCHEDULE_FILE": "schedule.json"
       }
     }
   }

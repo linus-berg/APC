@@ -1,3 +1,5 @@
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace APC.Kernel.Models;
 
 public class Processor {

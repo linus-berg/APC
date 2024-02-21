@@ -15,11 +15,11 @@ public class TrackingJob : IJob {
   }
 
   public async Task Execute(IJobExecutionContext context) {
-    logger_.LogInformation("Tracking artifacts");
-    string? processor = context.JobDetail.JobDataMap.GetString("processor");
+    string? processor = context.MergedJobDataMap.GetString("processor");
     if (string.IsNullOrEmpty(processor)) {
       throw new InvalidConfigurationException("Processor not defined");
     }
+    logger_.LogInformation("Tracking {Processor}", processor);
     await aps_.ReTrack(processor);
   }
 }

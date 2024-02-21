@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using APC.Kernel;
 using APC.Kernel.Models;
 using APC.Services;
@@ -47,8 +48,9 @@ public class MongoDatabase : IApcDatabase {
   public async Task<Processor> GetProcessor(string processor) {
     IMongoCollection<Processor> collection =
       GetCollection<Processor>(C_PROCESSOR_COLLECTION_);
-    return await (await collection.FindAsync(a => a.id == processor))
-             .FirstOrDefaultAsync();
+    IAsyncCursor<Processor> cursor =
+      await collection.FindAsync(a => a.id == processor);
+    return await cursor.FirstOrDefaultAsync();
   }
 
   public async Task<IEnumerable<Processor>> GetProcessors() {
