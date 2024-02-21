@@ -30,7 +30,6 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddScoped<IArtifactService, ArtifactService>();
 
                    services.AddQuartz(q => {
-                     q.UseMicrosoftDependencyInjectionJobFactory();
                      q.AddJob<TrackingJob>(
                        j => j.WithIdentity(TrackingJob.S_KEY));
                      q.AddTrigger(t => {

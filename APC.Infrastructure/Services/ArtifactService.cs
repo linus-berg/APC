@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using APC.Kernel;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;
@@ -96,23 +97,27 @@ public class ArtifactService : IArtifactService {
     return true;
   }
 
+
   public async Task ReTrack() {
     IEnumerable<Processor> processors = await db_.GetProcessors();
-    int proc_count = 0;
-    int artifact_count = 0;
     foreach (Processor processor in processors) {
-      IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.id);
-      foreach (Artifact artifact in artifacts) {
-        if (processor.direct_collect) {
-          await Collect(artifact.id, artifact.processor);
-        } else {
-          await Ingest(artifact);
-        }
+      await ReTrack(processor);
+    }
+  }
 
-        artifact_count++;
+  public async Task ReTrack(string processor_str) {
+    Processor processor = await db_.GetProcessor(processor_str);
+    await ReTrack(processor);
+  }
+
+  public async Task ReTrack(Processor processor) {
+    IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.id);
+    foreach (Artifact artifact in artifacts) {
+      if (processor.direct_collect) {
+        await Collect(artifact.id, artifact.processor);
+      } else {
+        await Ingest(artifact);
       }
-
-      proc_count++;
     }
   }
 
@@ -122,7 +127,7 @@ public class ArtifactService : IArtifactService {
       try {
         await Validate(processor);
       } catch (Exception e) {
-        logger_.LogError(e.ToString());
+        logger_.LogError("{Error}", e.ToString());
       }
     }
   }
