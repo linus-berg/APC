@@ -10,7 +10,7 @@ public class Artifact {
   public string id { get; set; }
   public string processor { get; set; }
   public string filter { get; set; }
-
+  public ArtifactFilterType filterType { get; set; }
   public ArtifactStatus status { get; set; } = ArtifactStatus.PROCESSING;
   public bool root { get; set; } = false;
 
