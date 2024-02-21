@@ -1,10 +1,11 @@
 using APC.Services;
 using Quartz;
+using Quartz.Impl.AdoJobStore;
 
 namespace APC.Scheduler;
 
 public class TrackingJob : IJob {
-  public static readonly JobKey S_KEY = new("track-all", "apc");
+  public static readonly JobKey S_KEY = new("track-job", "apc");
   private readonly IArtifactService aps_;
   private readonly ILogger<TrackingJob> logger_;
 
@@ -14,7 +15,11 @@ public class TrackingJob : IJob {
   }
 
   public async Task Execute(IJobExecutionContext context) {
-    logger_.LogInformation("Tracking artifacts.");
-    await aps_.ReTrack();
+    string? processor = context.MergedJobDataMap.GetString("processor");
+    if (string.IsNullOrEmpty(processor)) {
+      throw new InvalidConfigurationException("Processor not defined");
+    }
+    logger_.LogInformation("Tracking {Processor}", processor);
+    await aps_.ReTrack(processor);
   }
 }

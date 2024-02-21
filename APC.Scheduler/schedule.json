@@ -1,0 +1,10 @@
+[
+  {
+    "schedule": "0 * * * * ?",
+    "processor": "nuget"
+  },
+  {
+    "schedule": "0 * * * * ?",
+    "processor": "npm"
+  }
+]

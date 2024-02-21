@@ -2,6 +2,7 @@
   <configuration default="false" name="API-APM" type="CompoundRunConfigurationType">
     <toRun name="ACM.Git" type="LaunchSettings" />
     <toRun name="ACM.Http" type="LaunchSettings" />
+    <toRun name="ACM.Router" type="LaunchSettings" />
     <toRun name="APC.API" type="LaunchSettings" />
     <toRun name="APC.Ingestion" type="LaunchSettings" />
     <toRun name="APM.Npm" type="LaunchSettings" />
