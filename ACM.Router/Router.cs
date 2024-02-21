@@ -8,13 +8,15 @@ using Semver;
 namespace ACM.Router;
 
 public class Router : IConsumer<ArtifactRouteRequest> {
+  private static readonly Predicate<string> S_NO_FILTER_ = s => true;
+
   public async Task Consume(ConsumeContext<ArtifactRouteRequest> context) {
     Artifact artifact = context.Message.artifact;
 
-    Predicate<string> artifactFilter = CreateFilterFunction(artifact);
+    Predicate<string> artifact_filter = CreateFilterFunction(artifact);
 
     foreach (KeyValuePair<string, ArtifactVersion> kv in artifact.versions) {
-      bool collect = artifactFilter(kv.Key);
+      bool collect = artifact_filter(kv.Key);
 
       if (!collect) {
         continue;
@@ -29,26 +31,24 @@ public class Router : IConsumer<ArtifactRouteRequest> {
     }
   }
 
-  private static Predicate<string> NO_FILTER = s => true;
-
   private static Predicate<string> CreateFilterFunction(Artifact artifact) {
     if (string.IsNullOrEmpty(artifact.filter)) {
-        return NO_FILTER;
+      return S_NO_FILTER_;
     }
 
-    switch (artifact.filterType) {
-      case ArtifactFilterType.SemverRange:
-        SemVersionRange versionRange = SemVersionRange.Parse(artifact.filter);
-        return (s) => {
+    switch (artifact.filter_type) {
+      case ArtifactFilterType.SEMVER_RANGE:
+        SemVersionRange version_range = SemVersionRange.Parse(artifact.filter);
+        return s => {
           SemVersion version = SemVersion.Parse(s, SemVersionStyles.Any);
-          return versionRange.Contains(version);
+          return version_range.Contains(version);
         };
-      case ArtifactFilterType.Regex:
+      case ArtifactFilterType.REGEX:
         goto default;
       default:
         // fallback to regex, for backwards compatibility
-        Regex regex = new Regex(artifact.filter);
-        return (s) => regex.IsMatch(s);
+        Regex regex = new(artifact.filter);
+        return s => regex.IsMatch(s);
     }
   }
 }

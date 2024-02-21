@@ -1,13 +1,10 @@
 namespace APC.Kernel.Models;
 
 public class Processor {
-  public required string id { get; set; }
+  public string id { get; set; }
   public bool direct_collect { get; set; } = false;
 
-  public required string description { get; set; }
+  public string description { get; set; }
 
-  public required Dictionary<string, ProcessorAuxiliaryField> config {
-    get;
-    set;
-  }
+  public Dictionary<string, ProcessorAuxiliaryField> config { get; set; }
 }

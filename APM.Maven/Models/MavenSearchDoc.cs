@@ -1,8 +1,8 @@
 namespace APM.Maven.Models;
 
 public class MavenSearchDoc {
-  public required string id { get; set; }
-  public required string g { get; set; }
-  public required string v { get; set; }
-  public required List<string> ec { get; set; }
+  public string id { get; set; }
+  public string g { get; set; }
+  public string v { get; set; }
+  public List<string> ec { get; set; }
 }
