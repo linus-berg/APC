@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using APC.Kernel;
 using APC.Kernel.Models;
 using APC.Services;

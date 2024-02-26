@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using APC.Kernel;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;
@@ -137,6 +136,20 @@ public class ArtifactService : IArtifactService {
       artifacts = await db_.GetArtifacts(processor.id, false);
     logger_.LogInformation($"Validating> {processor}={artifacts.Count()}");
     foreach (Artifact artifact in artifacts) {
+      await Validate(artifact, processor);
+    }
+  }
+
+  public async Task Validate(string id, string processor_id) {
+    Processor processor = await db_.GetProcessor(processor_id);
+    Artifact artifact = await db_.GetArtifact(id, processor_id);
+    await Validate(artifact, processor);
+  }
+
+  public async Task Validate(Artifact artifact, Processor processor) {
+    if (processor.direct_collect) {
+      await Collect(artifact.id, processor.id);
+    } else {
       await Route(artifact);
     }
   }

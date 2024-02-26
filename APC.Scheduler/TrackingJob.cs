@@ -19,6 +19,7 @@ public class TrackingJob : IJob {
     if (string.IsNullOrEmpty(processor)) {
       throw new InvalidConfigurationException("Processor not defined");
     }
+
     logger_.LogInformation("Tracking {Processor}", processor);
     await aps_.ReTrack(processor);
   }

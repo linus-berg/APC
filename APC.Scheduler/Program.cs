@@ -25,7 +25,8 @@ if (!File.Exists(file)) {
 }
 
 string schedule_str = await File.ReadAllTextAsync(file);
-List<ScheduleOptions>? schedule_opts = JsonSerializer.Deserialize<List<ScheduleOptions>>(schedule_str);
+List<ScheduleOptions>? schedule_opts =
+  JsonSerializer.Deserialize<List<ScheduleOptions>>(schedule_str);
 
 if (schedule_opts == null) {
   throw new ArgumentNullException("Schedule could not be parsed");
@@ -51,14 +52,14 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddQuartz(q => {
                      q.AddJob<TrackingJob>(
                        j => j.WithIdentity(TrackingJob.S_KEY));
-                       foreach (ScheduleOptions opts in schedule_opts) {
-                         q.AddTrigger(t => {
-                             t.WithIdentity($"tracking-{opts.processor}", "apc");
-                             t.ForJob(TrackingJob.S_KEY);
-                             t.UsingJobData("processor", opts.processor);
-                             t.WithCronSchedule(opts.schedule);
-                         });
-                       }
+                     foreach (ScheduleOptions opts in schedule_opts) {
+                       q.AddTrigger(t => {
+                         t.WithIdentity($"tracking-{opts.processor}", "apc");
+                         t.ForJob(TrackingJob.S_KEY);
+                         t.UsingJobData("processor", opts.processor);
+                         t.WithCronSchedule(opts.schedule);
+                       });
+                     }
                    });
 
                    services.AddQuartzHostedService(q => {

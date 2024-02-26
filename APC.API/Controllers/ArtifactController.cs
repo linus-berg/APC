@@ -72,9 +72,9 @@ public class ArtifactController : ControllerBase {
   // POST: api/Artifact/track
   [HttpPost("track")]
   public async Task<ActionResult>
-    Track([FromBody] ArtifactTrackerInput request) {
-    if (await aps_.Track(request.artifact, request.processor)) {
-      return Ok("Artifact being reprocessed");
+    Track([FromBody] ArtifactTrackInput request) {
+    if (await aps_.Track(request.id, request.processor)) {
+      return Ok($"{request.processor}->{request.id} being reprocessed");
     }
 
     return BadRequest("Something went wrong");
@@ -94,12 +94,18 @@ public class ArtifactController : ControllerBase {
     return Ok("Validating all artifacts!");
   }
 
-  // DELETE: api/Artifact/npm/react
-  [HttpDelete("{processor}/")]
+  [HttpPost("validate")]
+  public async Task<ActionResult> ValidateArtifact(
+    [FromBody] ArtifactValidationInput input) {
+    await aps_.Validate(input.id, input.processor);
+    return Ok($"Validating {input.id} artifacts!");
+  }
+
+  // DELETE: api/Artifact/
+  [HttpDelete]
   [Authorize(Roles = "Administrator")]
-  public async Task<ActionResult> Delete([FromRoute] string processor,
-                                         [FromBody] DeleteArtifactInput input) {
-    Artifact artifact = await database_.GetArtifact(input.id, processor);
+  public async Task<ActionResult> Delete([FromBody] DeleteArtifactInput input) {
+    Artifact artifact = await database_.GetArtifact(input.id, input.processor);
     if (artifact == null) {
       return NotFound();
     }

@@ -1,7 +1,5 @@
-using System.Globalization;
 using ACM.Kernel;
 using APC.Kernel;
-using Foundatio.Storage;
 using Minio.Exceptions;
 using Polly;
 using Polly.Registry;
@@ -31,6 +29,7 @@ public class Git {
     if (string.IsNullOrEmpty(proxy)) {
       return;
     }
+
     Bin
       .Execute(
         "git",
@@ -91,10 +90,11 @@ public class Git {
     if (!Directory.Exists(bundle_dir)) {
       Directory.CreateDirectory(bundle_dir);
     }
+
     /* Get latest update from storage */
     logger_.LogDebug("{RepositoryRemote}: Getting timestamp",
                      repository.remote);
-    
+
     string bundle_file_name = repository.name;
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 

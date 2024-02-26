@@ -19,4 +19,6 @@ public interface IArtifactService {
   public Task ReTrack(Processor processor);
   public Task Validate();
   public Task Validate(Processor processor);
+  public Task Validate(string id, string processor_id);
+  public Task Validate(Artifact artifact, Processor processor);
 }
