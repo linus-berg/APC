@@ -18,10 +18,6 @@ services:
     command: [ "--config=/etc/otel-collector.yaml" ]
     volumes:
       - "./otel.yml:/etc/otel-collector.yaml"
-    networks:
-      apc-infra-network:
-        aliases:
-          - apc-telemetry-otel
     extra_hosts: ["host.docker.internal:host-gateway"]
 
   apc-minio:

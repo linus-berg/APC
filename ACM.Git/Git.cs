@@ -9,7 +9,6 @@ using Polly.Registry;
 namespace ACM.Git;
 
 public class Git {
-  private const string C_INCREMENT_FORMAT_ = "yyyy-MM-ddTHH:mm:ssZ";
   private readonly string bundle_dir_;
   private readonly string dir_;
   private readonly FileSystem fs_;
@@ -27,6 +26,11 @@ public class Git {
   }
 
   private void ConfigureProxy() {
+    string? proxy = Environment.GetEnvironmentVariable("HTTPS_PROXY");
+
+    if (string.IsNullOrEmpty(proxy)) {
+      return;
+    }
     Bin
       .Execute(
         "git",
@@ -34,7 +38,7 @@ public class Git {
           args.Add("config");
           args.Add("--global");
           args.Add("http.proxy");
-          args.Add(Environment.GetEnvironmentVariable("HTTPS_PROXY"));
+          args.Add(proxy);
         }, logger_).Wait();
   }
 
@@ -52,7 +56,7 @@ public class Git {
       await CreateIncrementalGitBundle(repository, token);
     }
 
-    return true;
+    return success;
   }
 
   private async Task<bool> CloneOrUpdateLocalMirror(
@@ -87,25 +91,17 @@ public class Git {
     if (!Directory.Exists(bundle_dir)) {
       Directory.CreateDirectory(bundle_dir);
     }
-
-    DateTime now = DateTime.UtcNow;
     /* Get latest update from storage */
     logger_.LogDebug("{RepositoryRemote}: Getting timestamp",
                      repository.remote);
-    DateTime reference_date = await GetLastTimestamp(repository);
-
-    // Calculate the range of commits based on the reference date
-    string since_date = reference_date.ToString(C_INCREMENT_FORMAT_);
-    string until_date = now.ToString(C_INCREMENT_FORMAT_);
-
-    string bundle_file_name =
-      $"{repository.name}@{reference_date:yyyyMMddHHmmss}-{now:yyyyMMddHHmmss}.bundle";
+    
+    string bundle_file_name = repository.name;
     string bundle_file_path = Path.Combine(bundle_dir, bundle_file_name);
 
     // Create an incremental bundle
     logger_.LogInformation(
-      "{RepositoryRemote}: Bundling {SinceDate} - {UntilDate}",
-      repository.remote, since_date, until_date);
+      "{RepositoryRemote}: Bundling ",
+      repository.remote);
     logger_.LogDebug(
       "{RepositoryRemote}: Dirs {RepositoryLocalPath} - {RepositoryDirectory}",
       repository.remote, repository.local_path, repository.directory);
@@ -114,8 +110,6 @@ public class Git {
       args.Add("bundle");
       args.Add("create");
       args.Add(bundle_file_path);
-      args.Add($"--since=\"{since_date}\"");
-      //args.Add($"--until=\"{until_date}\"");
       args.Add("--all");
     }, logger_, repository.local_path, 0, token);
     logger_.LogDebug("{RepositoryRemote}: Bundle result {Success}",
@@ -135,23 +129,6 @@ public class Git {
       }
     }
   }
-
-  private async Task<DateTime> GetLastTimestamp(Repository repository) {
-    string path = Path.Join("git", repository.owner, $"{repository.name}@*-*");
-    IReadOnlyCollection<FileSpec> files = await fs_.GetFileList(path);
-    if (files.Count == 0) {
-      return DateTime.UnixEpoch;
-    }
-
-    string timestamp = Path.GetFileNameWithoutExtension(files.Last().Path)
-                           .Split("@").Last().Split("-").Last();
-    return DateTime.TryParseExact(timestamp, "yyyyMMddHHmmss", null,
-                                  DateTimeStyles.None,
-                                  out DateTime reference_date)
-             ? reference_date
-             : DateTime.UnixEpoch;
-  }
-
 
   private async Task<bool> PushToStorage(string bundle_file_path) {
     if (!File.Exists(bundle_file_path)) {
