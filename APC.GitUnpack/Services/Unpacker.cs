@@ -36,26 +36,19 @@ public class Unpacker {
                  return new GitBundle(f, directory);
                });
 
-    IEnumerable<IGrouping<string, GitBundle>> bundle_groups =
-      bundles.GroupBy(b => b.repository);
-
-    foreach (IGrouping<string, GitBundle> bg in bundle_groups) {
+    foreach (GitBundle git_bundle in bundles) {
       /* Order by To date */
-      IOrderedEnumerable<GitBundle> ordered = bg.OrderBy(gb => gb.to);
-      foreach (GitBundle git_bundle in ordered) {
-        if (Path.GetFileNameWithoutExtension(git_bundle.filepath)
-                .StartsWith(".")) {
-          continue;
-        }
+      if (Path.GetFileNameWithoutExtension(git_bundle.filepath)
+              .StartsWith(".")) {
+        continue;
+      }
 
-        try {
-          if (!await TryApplyBundle(git_bundle, token)) {
-            ResetToInput(git_bundle);
-          }
-        } catch (Exception e) {
-          logger_.LogError($"Failed to apply {git_bundle.filepath}: {e}");
-          ResetToInput(git_bundle);
+      try {
+        if (!await TryApplyBundle(git_bundle, token)) {
+          logger_.LogError($"Failed to apply {git_bundle.filepath}");
         }
+      } catch (Exception e) {
+        logger_.LogError($"Failed to apply {git_bundle.filepath}: {e}");
       }
     }
 
@@ -70,15 +63,14 @@ public class Unpacker {
       return false;
     }
 
-    string tmp_file = bundle.MoveToApply();
     bool success = false;
-    if (bundle.is_first_bundle) {
+    if (!Directory.Exists(bundle.repository_dir)) {
       string dir = Path.Join(repo_dir_, bundle.owner);
       Directory.CreateDirectory(dir);
       success = await Bin.Execute("git", args => {
         args.Add("clone");
         args.Add("--mirror");
-        args.Add(tmp_file);
+        args.Add(bundle.filepath);
         args.Add(bundle.repository);
       }, logger_, dir, token: token);
     } else {
@@ -92,7 +84,7 @@ public class Unpacker {
     }
 
     if (success) {
-      await Cleanup(tmp_file, bundle);
+      await Cleanup(bundle);
     }
 
     return success;
@@ -100,10 +92,6 @@ public class Unpacker {
 
   private async Task<bool> CheckIfValid(GitBundle bundle,
                                         CancellationToken token = default) {
-    if (bundle.is_first_bundle) {
-      return true;
-    }
-
     if (!Directory.Exists(bundle.repository_dir)) {
       return false;
     }
@@ -118,27 +106,12 @@ public class Unpacker {
     return is_valid;
   }
 
-  private async Task Cleanup(string file, GitBundle bundle) {
-    /* Add the necessary configurations */
-    if (bundle.is_first_bundle) {
-      /* Not needed anymore ? */
-      //await ModifyConfigFile(bundle);
-    }
-
+  private async Task Cleanup(GitBundle bundle) {
     if (!Directory.Exists(bundle.repository_dir)) {
       return;
     }
-
     await UpdateServerInfo(bundle);
-    MoveToArchive(file, bundle);
-  }
-
-  private async Task ModifyConfigFile(GitBundle bundle) {
-    /* Modify config, ensure this only happens ONCE */
-    string config_file = Path.Join(bundle.repository_dir, "config");
-    await File.AppendAllLinesAsync(config_file, new[] {
-      "\tfetch = +refs/*:refs/*"
-    });
+    MoveToArchive(bundle);
   }
 
   private async Task UpdateServerInfo(GitBundle bundle,
@@ -149,23 +122,12 @@ public class Unpacker {
                       token);
   }
 
-  private void MoveToArchive(string file, GitBundle bundle) {
+  private void MoveToArchive(GitBundle bundle) {
     string dir = Path.Join(archive_dir_, bundle.owner);
     Directory.CreateDirectory(dir);
-    File.Move(file,
+    File.Move(bundle.filepath,
               Path.Join(archive_dir_, bundle.owner,
                         Path.GetFileName(bundle.filepath)), true);
   }
 
-  private void ResetToInput(GitBundle bundle) {
-    try {
-      string tmp_file = Path.Join(Path.GetDirectoryName(bundle.filepath),
-                                  bundle.repository);
-      if (File.Exists(tmp_file)) {
-        File.Move(tmp_file, bundle.filepath);
-      }
-    } catch (Exception e) {
-      logger_.LogError(e.ToString());
-    }
-  }
 }
