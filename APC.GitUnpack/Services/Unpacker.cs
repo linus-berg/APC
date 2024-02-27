@@ -24,7 +24,7 @@ public class Unpacker {
 
   public async Task<int> ProcessBundles(CancellationToken token) {
     IEnumerable<GitBundle> bundles =
-      Directory.GetFiles(in_dir_, "*.bundle", SearchOption.AllDirectories)
+      Directory.GetFiles(in_dir_, "*", SearchOption.AllDirectories)
                .Select(f => {
                  string relative_path = Path.GetRelativePath(in_dir_, f);
                  string? directory = Path.GetDirectoryName(relative_path);
