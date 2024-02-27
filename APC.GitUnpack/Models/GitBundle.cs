@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace APC.GitUnpack.Models;
 
 public class GitBundle {

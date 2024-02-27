@@ -14,9 +14,8 @@ public interface IArtifactService {
   public Task Ingest(Artifact artifact);
   public Task Process(Artifact artifact, Guid? existing_ctx = null);
   public Task<bool> Track(string id, string processor);
-  public Task ReTrack();
-  public Task ReTrack(string processor_str);
-  public Task ReTrack(Processor processor);
+  public Task Track();
+  public Task Track(string processor_str);
   public Task Validate();
   public Task Validate(Processor processor);
   public Task Validate(string id, string processor_id);

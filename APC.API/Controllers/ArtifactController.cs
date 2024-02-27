@@ -83,7 +83,7 @@ public class ArtifactController : ControllerBase {
   [HttpPost("track/all")]
   [Authorize(Roles = "Administrator")]
   public async Task<ActionResult> TrackAll() {
-    await aps_.ReTrack();
+    await aps_.Track();
     return Ok("Triggered re-tracking");
   }
 
