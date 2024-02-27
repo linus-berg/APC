@@ -92,8 +92,9 @@ public class Unpacker {
 
   private async Task<bool> CheckIfValid(GitBundle bundle,
                                         CancellationToken token = default) {
+    /* If initial dir does not exist, it must be valid. */
     if (!Directory.Exists(bundle.repository_dir)) {
-      return false;
+      return true;
     }
 
     /* If incremental bundle validate bundle */
