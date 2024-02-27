@@ -36,21 +36,24 @@ public class Unpacker {
                  return new GitBundle(f, directory);
                });
 
-    foreach (GitBundle git_bundle in bundles) {
-      /* Order by To date */
-      if (Path.GetFileNameWithoutExtension(git_bundle.filepath)
-              .StartsWith(".")) {
-        continue;
-      }
 
-      try {
-        if (!await TryApplyBundle(git_bundle, token)) {
-          logger_.LogError($"Failed to apply {git_bundle.filepath}");
-        }
-      } catch (Exception e) {
-        logger_.LogError($"Failed to apply {git_bundle.filepath}: {e}");
-      }
-    }
+    await Parallel.ForEachAsync(bundles, token,
+                                async (git_bundle, cancellation_token) => {
+                                  /* Order by To date */
+                                  if (!Path.GetFileName(git_bundle.filepath)
+                                           .StartsWith(".")) {
+                                    try {
+                                      if (!await TryApplyBundle(
+                                             git_bundle, cancellation_token)) {
+                                        logger_.LogError(
+                                          $"Failed to apply {git_bundle.filepath}");
+                                      }
+                                    } catch (Exception e) {
+                                      logger_.LogError(
+                                        $"Failed to apply {git_bundle.filepath}: {e}");
+                                    }
+                                  }
+                                });
 
     return 0;
   }
@@ -111,6 +114,7 @@ public class Unpacker {
     if (!Directory.Exists(bundle.repository_dir)) {
       return;
     }
+
     await UpdateServerInfo(bundle);
     MoveToArchive(bundle);
   }
@@ -130,5 +134,4 @@ public class Unpacker {
               Path.Join(archive_dir_, bundle.owner,
                         Path.GetFileName(bundle.filepath)), true);
   }
-
 }
