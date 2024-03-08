@@ -81,43 +81,28 @@ public class ArtifactService : IArtifactService {
                       });
   }
 
-  public async Task<bool> Track(string id, string processor) {
+  public async Task<bool> Track(string id, string processor_id) {
     Artifact artifact =
-      await db_.GetArtifact(id, processor);
+      await db_.GetArtifact(id, processor_id);
     if (artifact == null) {
       return false;
     }
 
-    if (!artifact.root) {
-      return false;
-    }
-
-    await Ingest(artifact);
-    return true;
+    Processor processor = await db_.GetProcessor(processor_id);
+    return await Track(artifact, processor);
   }
 
 
-  public async Task ReTrack() {
+  public async Task Track() {
     IEnumerable<Processor> processors = await db_.GetProcessors();
     foreach (Processor processor in processors) {
-      await ReTrack(processor);
+      await Track(processor);
     }
   }
 
-  public async Task ReTrack(string processor_str) {
+  public async Task Track(string processor_str) {
     Processor processor = await db_.GetProcessor(processor_str);
-    await ReTrack(processor);
-  }
-
-  public async Task ReTrack(Processor processor) {
-    IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.id);
-    foreach (Artifact artifact in artifacts) {
-      if (processor.direct_collect) {
-        await Collect(artifact.id, artifact.processor);
-      } else {
-        await Ingest(artifact);
-      }
-    }
+    await Track(processor);
   }
 
   public async Task Validate() {
@@ -151,6 +136,23 @@ public class ArtifactService : IArtifactService {
       await Collect(artifact.id, processor.id);
     } else {
       await Route(artifact);
+    }
+  }
+
+  private async Task<bool> Track(Artifact artifact, Processor processor) {
+    if (processor.direct_collect) {
+      await Collect(artifact.id, artifact.processor);
+    } else {
+      await Ingest(artifact);
+    }
+
+    return true;
+  }
+
+  public async Task Track(Processor processor) {
+    IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.id);
+    foreach (Artifact artifact in artifacts) {
+      await Track(artifact, processor);
     }
   }
 

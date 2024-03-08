@@ -21,6 +21,6 @@ public class TrackingJob : IJob {
     }
 
     logger_.LogInformation("Tracking {Processor}", processor);
-    await aps_.ReTrack(processor);
+    await aps_.Track(processor);
   }
 }
