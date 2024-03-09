@@ -1,4 +1,5 @@
 using APC.Kernel;
+using APC.Kernel.Extensions;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;
 using MassTransit;
@@ -15,10 +16,6 @@ public class Processor : IProcessor {
   public async Task Consume(ConsumeContext<ArtifactProcessRequest> context) {
     Artifact artifact = context.Message.artifact;
     await helm_.ProcessArtifact(artifact);
-    ArtifactProcessedRequest request = new() {
-      artifact = artifact,
-      context = context.Message.ctx
-    };
-    await context.Send(Endpoints.S_APC_INGEST_PROCESSED, request);
+    await context.ProcessorReply(artifact);
   }
 }
