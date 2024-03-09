@@ -14,21 +14,21 @@ public class GithubReleases : IGithubReleases {
 
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     List<GithubRelease> releases = await gh_.GetReleases(artifact.id);
-    string[] files = artifact.config["files"].Split(";");
+    List<Regex> files_regexp =
+      artifact.config["files"].Split(";").Select(r => new Regex(r)).ToList();
 
     foreach (GithubRelease release in releases) {
       ArtifactVersion version = new() {
         version = release.tag_name
       };
-      foreach (string file in files) {
-        string? url = release.GetReleaseFileRegexp(new Regex(file));
-        if (string.IsNullOrEmpty(url)) {
-          continue;
-        }
-
-        version.AddFile(Path.GetFileName(url), url);
+      foreach (GithubReleaseAsset asset in release.assets) {
+        foreach (Regex file_regexp in files_regexp) {
+          if (file_regexp.IsMatch(asset.name)) {
+            string url = asset.browser_download_url;
+            version.AddFile(Path.GetFileName(url), url);
+          }
+        }  
       }
-
       artifact.AddVersion(version);
     }
 
