@@ -2,6 +2,7 @@
 
 using ACM.Git;
 using ACM.Kernel;
+using APC.Github;
 using APC.Kernel.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
@@ -23,12 +24,14 @@ services.AddResiliencePipeline<string, bool>("git-timeout",
 
 services.AddLogging();
 services.AddSingleton<FileSystem>();
+services.AddSingleton<IGithubClient, GithubClient>();
 services.AddSingleton<Git>();
 // Build the service provider
 IServiceProvider sp = services.BuildServiceProvider();
 
 // Execute the pipeline
 Git git = sp.GetRequiredService<Git>();
+IGithubClient gh = sp.GetRequiredService<IGithubClient>();
 Artifact artifact = new() {
   id = "helm/helm"
 };
@@ -40,7 +43,7 @@ string ind = "/storage/artifacts/mirrors/git/input";
 string path =
   $"{ind}/github.com/linus-berg/test@101001-201023.bundle";
 
-
+var res = await gh.GetReleases("linus-berg/SKYCORE");
 Console.WriteLine(Path.GetDirectoryName(path));
 
 Console.WriteLine(Path.GetDirectoryName(Path.GetRelativePath(ind, path)));
