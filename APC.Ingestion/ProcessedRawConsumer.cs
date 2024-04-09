@@ -9,12 +9,14 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
   private readonly IArtifactService aps_;
   private readonly IApcCache cache_;
   private readonly IApcDatabase db_;
-
+  private readonly ILogger<ProcessedRawConsumer> logger_;
   public ProcessedRawConsumer(IArtifactService aps, IApcDatabase db,
-                              IApcCache cache) {
+                              IApcCache cache, 
+                              ILogger<ProcessedRawConsumer> logger) {
     db_ = db;
     cache_ = cache;
     aps_ = aps;
+    logger_ = logger;
   }
 
   /* On APM returning processed artifact */
@@ -24,10 +26,13 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
     Artifact stored = await db_.GetArtifact(artifact.id, artifact.processor);
 
     if (await db_.UpdateArtifact(artifact)) {
+      /* Collecting artifact files due to artifact being updated */
       await Collect(context);
+      logger_.LogInformation("ARTIFACT:UPDATED:{ArtifactId}", artifact.id);
     }
 
-    if (stored.versions.Count == artifact.versions.Count) {
+    if (stored.versions.Count == artifact.versions.Count && 
+        stored.dependencies.Count == artifact.versions.Count) {
       /* If version count is the same, end */
       return;
     }

@@ -3,6 +3,8 @@
 using ACM.Git;
 using ACM.Kernel;
 using APC.Kernel.Models;
+using APM.OperatorHub;
+using APM.Php;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Timeout;
@@ -24,14 +26,21 @@ services.AddResiliencePipeline<string, bool>("git-timeout",
 services.AddLogging();
 services.AddSingleton<FileSystem>();
 services.AddSingleton<Git>();
+services.AddSingleton<IOperatorHub, OperatorHub>();
+services.AddSingleton<IPhp, Php>();
 // Build the service provider
 IServiceProvider sp = services.BuildServiceProvider();
 
 // Execute the pipeline
-Git git = sp.GetRequiredService<Git>();
+//Git git = sp.GetRequiredService<Git>();
+IPhp hub = sp.GetRequiredService<IPhp>();
+
 Artifact artifact = new() {
-  id = "helm/helm"
+  id = "shardj/zf1-future"
 };
+
+var art = await hub.ProcessArtifact(artifact);
+
 artifact.config["files"] =
   @"^helm-v\d+.\d+.\d+-darwin-arm64.tar.gz.sha256sum.asc$";
 //await ghr.ProcessArtifact(artifact);

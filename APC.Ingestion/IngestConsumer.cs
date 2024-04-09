@@ -1,4 +1,5 @@
 using APC.Kernel.Messages;
+using APC.Kernel.Models;
 using APC.Services;
 using MassTransit;
 
@@ -23,5 +24,8 @@ public class IngestConsumer : IConsumer<ArtifactIngestRequest> {
     /* Run as init */
     ArtifactIngestRequest request = context.Message;
     await aps_.Process(request.artifact);
+    logger_.LogInformation("INGESTED:{ArtifactProcessor}:{ArtifactId}",
+                           request.artifact.processor,
+                           request.artifact.id);
   }
 }

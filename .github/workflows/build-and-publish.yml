@@ -39,6 +39,9 @@ jobs:
           - name: apm/npm
             directory: APM.Npm
           
+          - name: apm/php
+            directory: APM.Php
+          
           - name: apm/github/releases
             directory: APM.Github.Releases
 
