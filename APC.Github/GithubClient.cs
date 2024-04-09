@@ -1,3 +1,4 @@
+using System.Net;
 using APC.Github.Models;
 using RestSharp;
 
@@ -12,13 +13,19 @@ public class GithubClient : IGithubClient {
     return releases.Where(release => !release.prerelease && !release.draft)
                    .ToList();
   }
+  
 
   private async Task<List<GithubRelease>>
     GetReleasePage(string repo, int page) {
-    return await client_.GetJsonAsync<List<GithubRelease>>(
-             $"/repos/{repo}/releases?page={page}&per_page=100",
-             new {
-               page
-             });
+    try {
+      return await client_.GetJsonAsync<List<GithubRelease>>(
+               $"/repos/{repo}/releases?page={page}&per_page=100",
+               new {
+                 page
+               });
+    } catch (Exception e) {
+      Console.WriteLine(e);
+      throw;
+    }
   }
 }
