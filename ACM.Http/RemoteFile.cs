@@ -3,7 +3,9 @@ using ACM.Kernel;
 namespace ACM.Http;
 
 public class RemoteFile {
-  private static readonly HttpClient S_CLIENT_ = new();
+  private static readonly HttpClient S_CLIENT_ = new(new HttpClientHandler() {
+    AllowAutoRedirect = true
+  });
   private readonly FileSystem fs_;
   private readonly string url_;
 
