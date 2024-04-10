@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Net;
 using ACM.Git;
 using ACM.Kernel;
 using APC.Kernel.Models;
@@ -8,6 +9,18 @@ using APM.Php;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Timeout;
+
+
+HttpClient hc = new HttpClient(new HttpClientHandler() {
+  Proxy = new WebProxy() {
+    Address = new Uri(Environment.GetEnvironmentVariable("HTTP_PROXY"))
+  },
+  AllowAutoRedirect = true,
+  
+});
+hc.DefaultRequestHeaders.Add("User-Agent", "APC/Http");
+var res = await hc.GetAsync(
+  "https://api.github.com/repos/Shardj/zf1-future/zipball/b87c1507cd10c01d9b3b1bc4a0cae32f6a9c6d6c");
 
 ServiceCollection services = new();
 services.AddStorage();
