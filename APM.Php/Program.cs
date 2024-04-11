@@ -5,7 +5,7 @@ using APC.Kernel.Registrations;
 using APM.Php;
 
 ModuleRegistration registration = new(ModuleType.APM, typeof(Processor));
-registration.AddEndpoint("php");
+registration.AddEndpoint("php", 4);
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(services => {

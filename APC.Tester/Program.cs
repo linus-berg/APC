@@ -12,15 +12,19 @@ using Polly.Timeout;
 
 
 HttpClient hc = new HttpClient(new HttpClientHandler() {
-  Proxy = new WebProxy() {
+  /*Proxy = new WebProxy() {
     Address = new Uri(Environment.GetEnvironmentVariable("HTTP_PROXY"))
-  },
+  },*/
   AllowAutoRedirect = true,
   
 });
-hc.DefaultRequestHeaders.Add("User-Agent", "APC/Http");
+hc.DefaultRequestHeaders.Add("User-Agent", "APC/1.0");
 var res = await hc.GetAsync(
   "https://api.github.com/repos/Shardj/zf1-future/zipball/b87c1507cd10c01d9b3b1bc4a0cae32f6a9c6d6c");
+
+var res2 =
+  await hc.GetAsync(
+    "https://registry.npmjs.org/@geoext/geoext/-/geoext-3.1.1.tgz");
 
 ServiceCollection services = new();
 services.AddStorage();
