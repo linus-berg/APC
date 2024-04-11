@@ -3,16 +3,14 @@ using ACM.Kernel;
 namespace ACM.Http;
 
 public class RemoteFile {
-  private static readonly HttpClient S_CLIENT_ = new(new HttpClientHandler() {
-    AllowAutoRedirect = true
-  });
+  private static readonly HttpClient S_CLIENT_ = new();
   private readonly FileSystem fs_;
   private readonly string url_;
 
   public RemoteFile(string url, FileSystem fs) {
     url_ = url;
     fs_ = fs;
-    S_CLIENT_.DefaultRequestHeaders.Add("User-Agent", "APC/Http");
+    //S_CLIENT_.DefaultRequestHeaders.Add("User-Agent", "APC/Http");
   }
 
   public async Task<bool> Get(string path) {
