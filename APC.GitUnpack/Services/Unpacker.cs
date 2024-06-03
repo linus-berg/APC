@@ -41,7 +41,7 @@ public class Unpacker {
                                 async (git_bundle, cancellation_token) => {
                                   /* Order by To date */
                                   if (!Path.GetFileName(git_bundle.filepath)
-                                           .StartsWith(".")) {
+                                           .StartsWith("__IGNORE__")) {
                                     try {
                                       if (!await TryApplyBundle(
                                              git_bundle, cancellation_token)) {
