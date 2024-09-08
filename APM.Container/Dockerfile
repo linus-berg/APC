@@ -10,10 +10,10 @@ COPY ["APC.Skopeo/APC.Skopeo.csproj", "APC.Skopeo/"]
 RUN dotnet restore "APM.Container/APM.Container.csproj"
 COPY . .
 WORKDIR "/src/APM.Container"
-RUN dotnet build "APM.Container.csproj" -c Release -o /app/build
+RUN dotnet build "APM.Container.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "APM.Container.csproj" -c Release -o /app/publish
+RUN dotnet publish "APM.Container.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 RUN apt-get -y update && apt-get install -y skopeo

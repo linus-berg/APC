@@ -9,10 +9,10 @@ COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
 RUN dotnet restore "APC.Scheduler/APC.Scheduler.csproj"
 COPY . .
 WORKDIR "/src/APC.Scheduler"
-RUN dotnet build "APC.Scheduler.csproj" -c Release -o /app/build
+RUN dotnet build "APC.Scheduler.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "APC.Scheduler.csproj" -c Release -o /app/publish
+RUN dotnet publish "APC.Scheduler.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

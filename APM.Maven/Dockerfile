@@ -9,10 +9,10 @@ COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
 RUN dotnet restore "APM.Maven/APM.Maven.csproj"
 COPY . .
 WORKDIR "/src/APM.Maven"
-RUN dotnet build "APM.Maven.csproj" -c Release -o /app/build
+RUN dotnet build "APM.Maven.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "APM.Maven.csproj" -c Release -o /app/publish
+RUN dotnet publish "APM.Maven.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

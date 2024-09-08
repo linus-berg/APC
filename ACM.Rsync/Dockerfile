@@ -7,10 +7,10 @@ COPY ["ACM.Rsync/ACM.Rsync.csproj", "ACM.Rsync/"]
 RUN dotnet restore "ACM.Rsync/ACM.Rsync.csproj"
 COPY . .
 WORKDIR "/src/ACM.Rsync"
-RUN dotnet build "ACM.Rsync.csproj" -c Release -o /app/build
+RUN dotnet build "ACM.Rsync.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ACM.Rsync.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ACM.Rsync.csproj" -a $TARGETARCH -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

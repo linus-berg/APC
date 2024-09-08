@@ -7,10 +7,10 @@ COPY ["APC.Tester/APC.Tester.csproj", "APC.Tester/"]
 RUN dotnet restore "APC.Tester/APC.Tester.csproj"
 COPY . .
 WORKDIR "/src/APC.Tester"
-RUN dotnet build "APC.Tester.csproj" -c Release -o /app/build
+RUN dotnet build "APC.Tester.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "APC.Tester.csproj" -c Release -o /app/publish
+RUN dotnet publish "APC.Tester.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

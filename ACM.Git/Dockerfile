@@ -9,10 +9,10 @@ COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 RUN dotnet restore "ACM.Git/ACM.Git.csproj"
 COPY . .
 WORKDIR "/src/ACM.Git"
-RUN dotnet build "ACM.Git.csproj" -c Release -o /app/build
+RUN dotnet build "ACM.Git.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ACM.Git.csproj" -c Release -o /app/publish
+RUN dotnet publish "ACM.Git.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 RUN apt-get -y update && apt-get install -y git

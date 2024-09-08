@@ -8,10 +8,10 @@ COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 RUN dotnet restore "ACM.Router/ACM.Router.csproj"
 COPY . .
 WORKDIR "/src/ACM.Router"
-RUN dotnet build "ACM.Router.csproj" -c Release -o /app/build
+RUN dotnet build "ACM.Router.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ACM.Router.csproj" -c Release -o /app/publish
+RUN dotnet publish "ACM.Router.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

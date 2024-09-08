@@ -8,10 +8,10 @@ COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 RUN dotnet restore "APM.Jetbrains.IDE/APM.Jetbrains.IDE.csproj"
 COPY . .
 WORKDIR "/src/APM.Jetbrains.IDE"
-RUN dotnet build "APM.Jetbrains.IDE.csproj" -c Release -o /app/build
+RUN dotnet build "APM.Jetbrains.IDE.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "APM.Jetbrains.IDE.csproj" -c Release -o /app/publish
+RUN dotnet publish "APM.Jetbrains.IDE.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

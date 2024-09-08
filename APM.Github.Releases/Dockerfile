@@ -9,10 +9,10 @@ COPY ["APC.Github/APC.Github.csproj", "APC.Github/"]
 RUN dotnet restore "APM.Github.Releases/APM.Github.Releases.csproj"
 COPY . .
 WORKDIR "/src/APM.Github.Releases"
-RUN dotnet build "APM.Github.Releases.csproj" -c Release -o /app/build
+RUN dotnet build "APM.Github.Releases.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "APM.Github.Releases.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "APM.Github.Releases.csproj" -a $TARGETARCH -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
