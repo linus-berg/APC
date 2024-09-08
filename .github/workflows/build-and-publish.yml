@@ -100,9 +100,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Build image and push to Docker Hub and GitHub Container Registry
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           # relative path to the place where source code with Dockerfile is located
+          platforms: linux/amd64,linux/arm64
           context: .
           file: ./${{ matrix.services.directory }}/Dockerfile
           # Note: tags has to be all lower-case
