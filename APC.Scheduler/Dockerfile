@@ -1,7 +1,7 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
+﻿FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/runtime:8.0 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["APC.Scheduler/APC.Scheduler.csproj", "APC.Scheduler/"]
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
