@@ -7,3 +7,4 @@ riderModule.iml
 keycloak.json
 *.log
 data/
+.DS_Store

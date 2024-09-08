@@ -16,6 +16,14 @@ The design is microservice oriented and intended to minimize the amount of work 
 
 Processors can safely rely on the core infrastructure of the APC, the core infrastructure handles the memorization of metadata, 
 and the collection via standard protocols, for example http, git, or docker.
+## Deploy
+An early stage helm chart is available at
+https://github.com/linus-berg/helm-charts/tree/main/charts/apc
+
+https://linus-berg.github.io/helm-charts/
+
+See the `values.examples.yaml` file for configuration.
+The auxiliary services such as mongodb still needs to be provided by the administrator.
 
 ## Recommended minimum requirements (single node)
 | Resource | Req                              |
