@@ -2,16 +2,18 @@
 WORKDIR /app
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG TARGETARCH
 WORKDIR /src
 COPY ["APM.Npm/APM.Npm.csproj", "APM.Npm/"]
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
-RUN dotnet restore "APM.Npm/APM.Npm.csproj"
+RUN dotnet restore "APM.Npm/APM.Npm.csproj" -a $TARGETARCH
 COPY . .
 WORKDIR "/src/APM.Npm"
 RUN dotnet build "APM.Npm.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
+ARG TARGETARCH
 RUN dotnet publish "APM.Npm.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final

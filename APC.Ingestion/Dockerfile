@@ -2,6 +2,7 @@
 WORKDIR /app
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG TARGETARCH
 WORKDIR /src
 COPY ["APC.Ingestion/APC.Ingestion.csproj", "APC.Ingestion/"]
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
@@ -12,6 +13,7 @@ WORKDIR "/src/APC.Ingestion"
 RUN dotnet build "APC.Ingestion.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
+ARG TARGETARCH
 RUN dotnet publish "APC.Ingestion.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final

@@ -3,6 +3,7 @@ WORKDIR /app
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG TARGETARCH
 WORKDIR /src
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
 COPY ["APC.GitUnpack/APC.GitUnpack.csproj", "APC.GitUnpack/"]
@@ -12,6 +13,7 @@ WORKDIR "/src/APC.GitUnpack"
 RUN dotnet build "APC.GitUnpack.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
+ARG TARGETARCH
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "APC.GitUnpack.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 

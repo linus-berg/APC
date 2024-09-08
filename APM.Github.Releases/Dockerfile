@@ -2,6 +2,7 @@
 WORKDIR /app
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG TARGETARCH
 WORKDIR /src
 COPY ["APM.Github.Releases/APM.Github.Releases.csproj", "APM.Github.Releases/"]
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
@@ -12,6 +13,7 @@ WORKDIR "/src/APM.Github.Releases"
 RUN dotnet build "APM.Github.Releases.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
+ARG TARGETARCH
 RUN dotnet publish "APM.Github.Releases.csproj" -a $TARGETARCH -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

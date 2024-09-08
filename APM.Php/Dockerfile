@@ -4,6 +4,7 @@ WORKDIR /app
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG TARGETARCH
 WORKDIR /src
 COPY ["APM.Php/APM.Php.csproj", "APM.Php/"]
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
@@ -14,6 +15,7 @@ WORKDIR "/src/APM.Php"
 RUN dotnet build "APM.Php.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
+ARG TARGETARCH
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "APM.Php.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
