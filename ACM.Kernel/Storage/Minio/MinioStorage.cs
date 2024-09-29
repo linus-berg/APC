@@ -184,13 +184,13 @@ public class MinioStorage: IDisposable {
     }
 
     try {
+      /* Todo: fix this ugly hack */
       if (seekable_stream.Length == 0) {
         string filename = Path.GetTempFileName();
         await client.PutObjectAsync(
           new PutObjectArgs().WithBucket(bucket_).WithObject(normalized_path)
                              .WithFileName(filename), cancellation_token);
         File.Delete(filename);
-        return true;
       } else {
         await client.PutObjectAsync(
           new PutObjectArgs().WithBucket(bucket_).WithObject(normalized_path)
@@ -199,12 +199,13 @@ public class MinioStorage: IDisposable {
                                seekable_stream.Length -
                                seekable_stream.Position),
           cancellation_token);
-        return true;
       }
+
+      return true;
     } catch (Exception ex) {
       logger_.LogError(ex, "Error saving {Path}: {Message}", normalized_path,
                        ex.Message);
-      return false;
+            throw;
     } finally {
       if (!stream.CanSeek) {
         seekable_stream.Dispose();

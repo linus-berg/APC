@@ -84,18 +84,6 @@ connection.secret_key =
 connection.end_point = Configuration.GetApcVar(ApcVariable.ACM_S3_ENDPOINT);
 connection.bucket = Configuration.GetApcVar(ApcVariable.ACM_S3_BUCKET);
 
-
-MinioStorageOptions minio_options = new() {
-  auto_create_bucket = true,
-  connection_string = connection.ToString()
-};
-MinioStorage st = new(minio_options, NullLogger<MinioStorage>.Instance);
-HttpClient http_client = new();
-HttpResponseMessage response =
-  await http_client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
-await using Stream remote_stream =
-  await response.Content.ReadAsStreamAsync();
-
 //await st.SaveFileAsync("debug/empty-file", remote_stream);
 await file.Get("list");
 Console.WriteLine(Path.GetDirectoryName(path));

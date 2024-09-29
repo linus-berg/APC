@@ -92,7 +92,7 @@ public class FileSystem {
   }
 
   public async Task<long> GetFileSize(string filepath) {
-    FileSpec spec = await storage_backend_.GetFileInfoAsync(filepath);
+    FileSpec spec = await storage_backend_.GetFileInfoAsync(filepath) ?? throw new InvalidOperationException();
     return spec.size;
   }
 
