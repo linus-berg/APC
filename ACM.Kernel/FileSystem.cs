@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
+using ACM.Kernel.Storage.Common;
+using ACM.Kernel.Storage.Minio;
 using APC.Kernel;
-using Foundatio.Storage;
 using Polly;
 using Polly.Registry;
 
@@ -10,10 +11,10 @@ public class FileSystem {
   private readonly string? base_dir_ =
     Configuration.GetApcVar(ApcVariable.APC_ACM_DIR);
 
-  private readonly IFileStorage storage_backend_;
+  private readonly MinioStorage storage_backend_;
   private readonly ResiliencePipeline<bool> storage_pipeline_;
 
-  public FileSystem(IFileStorage storage_backend,
+  public FileSystem(MinioStorage storage_backend,
                     ResiliencePipelineProvider<string> polly) {
     storage_backend_ = storage_backend;
     storage_pipeline_ = polly.GetPipeline<bool>("storage-pipeline");
@@ -43,7 +44,7 @@ public class FileSystem {
   }
 
   public async Task<Stream> GetStream(string path) {
-    return await storage_backend_.GetFileStreamAsync(path, StreamMode.Read);
+    return await storage_backend_.GetFileStreamAsync(path, StreamMode.READ);
   }
 
   public async Task<string> GetString(string path) {
@@ -92,7 +93,7 @@ public class FileSystem {
 
   public async Task<long> GetFileSize(string filepath) {
     FileSpec spec = await storage_backend_.GetFileInfoAsync(filepath);
-    return spec.Size;
+    return spec.size;
   }
 
   private string GetDiskLocation(Uri uri) {

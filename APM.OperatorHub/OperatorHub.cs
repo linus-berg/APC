@@ -10,13 +10,14 @@ public class OperatorHub : IOperatorHub {
   private const string C_OP_HUB_ = "https://operatorhub.io/api/operator";
   private readonly RestClient client_ = new(C_OP_HUB_);
   private readonly ILogger<OperatorHub> logger_;
-  
+
   public OperatorHub(ILogger<OperatorHub> logger) {
     logger_ = logger;
   }
+
   public async Task<Artifact> ProcessArtifact(Artifact artifact) {
     OperatorMetadata metadata = await GetOperatorMetadata(artifact.id);
-    
+
     AddVersion(artifact, metadata);
 
     foreach (OperatorChannel channel in metadata.op.channels) {
@@ -24,6 +25,7 @@ public class OperatorHub : IOperatorHub {
         if (artifact.HasVersion($"{channel.name}-{version.version}")) {
           continue;
         }
+
         OperatorMetadata mv =
           await GetOperatorVersion(artifact.id, channel.name, version.name);
         AddVersion(artifact, mv);
@@ -36,7 +38,7 @@ public class OperatorHub : IOperatorHub {
   private void AddVersion(Artifact artifact, OperatorMetadata metadata) {
     Operator op = metadata.op;
     string version_str = $"{op.channel}-{op.version}";
-    ArtifactVersion version = new ArtifactVersion() {
+    ArtifactVersion version = new() {
       version = version_str
     };
     version.AddFile("containerImage",
@@ -45,7 +47,7 @@ public class OperatorHub : IOperatorHub {
                     $"https://operatorhub.io/install/{op.packageName}.yaml");
     artifact.AddVersion(version);
   }
-  
+
   private static string FixNaming(string name) {
     return !HasHostname(name)
              ? $"docker://docker.io/{name}"
@@ -58,15 +60,16 @@ public class OperatorHub : IOperatorHub {
   }
 
   private async Task<OperatorMetadata> GetOperatorMetadata(string id) {
-    RestRequest request = new RestRequest();
+    RestRequest request = new();
     request.AddQueryParameter("packageName", id);
     return await ExecuteRequest<OperatorMetadata>(request);
     //return await client_.GetJsonAsync<OperatorMetadata>($"?packageName={id}");
   }
-  
-  
-  private async Task<OperatorMetadata> GetOperatorVersion(string id, string channel, string name) {
-    RestRequest request = new RestRequest();
+
+
+  private async Task<OperatorMetadata> GetOperatorVersion(
+    string id, string channel, string name) {
+    RestRequest request = new();
     request.AddQueryParameter("name", name);
     request.AddQueryParameter("channel", channel);
     request.AddQueryParameter("packageName", id);
@@ -84,7 +87,5 @@ public class OperatorHub : IOperatorHub {
       logger_.LogError("Metadata error: {Exception}", ex.ToString());
       throw new ArtifactMetadataException("Metadata error!");
     }
-    
-  }  
-  
+  }
 }

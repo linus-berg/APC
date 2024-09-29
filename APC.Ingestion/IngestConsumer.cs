@@ -1,5 +1,4 @@
 using APC.Kernel.Messages;
-using APC.Kernel.Models;
 using APC.Services;
 using MassTransit;
 

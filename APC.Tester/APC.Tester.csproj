@@ -18,8 +18,8 @@
         <ProjectReference Include="..\APM.Jetbrains.IDE\APM.Jetbrains.IDE.csproj"/>
         <ProjectReference Include="..\APM.Jetbrains\APM.Jetbrains.csproj"/>
         <ProjectReference Include="..\APM.Maven\APM.Maven.csproj"/>
-        <ProjectReference Include="..\APM.OperatorHub\APM.OperatorHub.csproj" />
-        <ProjectReference Include="..\APM.Php\APM.Php.csproj" />
+        <ProjectReference Include="..\APM.OperatorHub\APM.OperatorHub.csproj"/>
+        <ProjectReference Include="..\APM.Php\APM.Php.csproj"/>
         <ProjectReference Include="..\APM.Pypi\APM.Pypi.csproj"/>
     </ItemGroup>
 

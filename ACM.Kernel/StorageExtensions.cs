@@ -1,5 +1,5 @@
+using ACM.Kernel.Storage.Minio;
 using APC.Kernel;
-using Foundatio.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Retry;
@@ -17,22 +17,22 @@ public static class StorageExtensions {
         });
       });
     /* SETUP STORAGE */
-    MinioFileStorageConnectionStringBuilder connection = new();
+    MinioConnectionBuilder connection = new();
 
-    connection.Region = Configuration.GetApcVar(ApcVariable.ACM_S3_REGION);
-    connection.AccessKey =
+    connection.region = Configuration.GetApcVar(ApcVariable.ACM_S3_REGION);
+    connection.access_key =
       Configuration.GetApcVar(ApcVariable.ACM_S3_ACCESS_KEY);
-    connection.SecretKey =
+    connection.secret_key =
       Configuration.GetApcVar(ApcVariable.ACM_S3_SECRET_KEY);
-    connection.EndPoint = Configuration.GetApcVar(ApcVariable.ACM_S3_ENDPOINT);
-    connection.Bucket = Configuration.GetApcVar(ApcVariable.ACM_S3_BUCKET);
+    connection.end_point = Configuration.GetApcVar(ApcVariable.ACM_S3_ENDPOINT);
+    connection.bucket = Configuration.GetApcVar(ApcVariable.ACM_S3_BUCKET);
 
-    MinioFileStorageOptions minio_options = new() {
-      AutoCreateBucket = true,
-      ConnectionString = connection.ToString()
+    MinioStorageOptions minio_options = new() {
+      auto_create_bucket = true,
+      connection_string = connection.ToString()
     };
-    MinioFileStorage storage = new(minio_options);
-    services.AddSingleton<IFileStorage>(storage);
+    services.AddSingleton(minio_options);
+    services.AddSingleton<MinioStorage>();
     return services;
   }
 }

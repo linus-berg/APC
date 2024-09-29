@@ -1,5 +1,5 @@
 using ACM.Kernel;
-using Foundatio.Storage;
+using ACM.Kernel.Storage.Common;
 
 namespace APC.Toolbox;
 
@@ -25,16 +25,16 @@ public class Toolbox {
     PagedFileListResult paged_file_list =
       await fs_.GetPagedFileList(processor, page_size);
     do {
-      foreach (FileSpec file in paged_file_list.Files) {
-        Console.WriteLine(file.Path);
+      foreach (FileSpec file in paged_file_list.files) {
+        Console.WriteLine(file.path);
       }
 
-      if (!paged_file_list.HasMore) {
+      if (!paged_file_list.has_more) {
         break;
       }
 
       await paged_file_list.NextPageAsync();
-    } while (paged_file_list.HasMore);
+    } while (paged_file_list.has_more);
 
     return 0;
   }

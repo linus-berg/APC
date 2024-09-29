@@ -26,11 +26,13 @@ public class Php : IPhp {
       return;
     }
 
-    foreach (KeyValuePair<string, List<PackageVersion>> kv in metadata.packages) {
+    foreach (KeyValuePair<string, List<PackageVersion>> kv in
+             metadata.packages) {
       foreach (PackageVersion package in kv.Value) {
         if (artifact.HasVersion(kv.Key)) {
           continue;
         }
+
         ArtifactVersion version = new() {
           version = package.version
         };
@@ -38,7 +40,6 @@ public class Php : IPhp {
         AddDependencies(artifact, package.GetRequired());
         AddDependencies(artifact, package.GetRequiredDev());
         artifact.AddVersion(version);
-        
       }
     }
   }
@@ -53,6 +54,7 @@ public class Php : IPhp {
       if (package.Key == "php") {
         continue;
       }
+
       artifact.AddDependency(package.Key, artifact.processor);
     }
   }

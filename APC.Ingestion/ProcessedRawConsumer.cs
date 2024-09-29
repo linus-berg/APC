@@ -10,8 +10,9 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
   private readonly IApcCache cache_;
   private readonly IApcDatabase db_;
   private readonly ILogger<ProcessedRawConsumer> logger_;
+
   public ProcessedRawConsumer(IArtifactService aps, IApcDatabase db,
-                              IApcCache cache, 
+                              IApcCache cache,
                               ILogger<ProcessedRawConsumer> logger) {
     db_ = db;
     cache_ = cache;
@@ -31,7 +32,7 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
       logger_.LogInformation("ARTIFACT:UPDATED:{ArtifactId}", artifact.id);
     }
 
-    if (stored.versions.Count == artifact.versions.Count && 
+    if (stored.versions.Count == artifact.versions.Count &&
         stored.dependencies.Count == artifact.versions.Count) {
       /* If version count is the same, end */
       return;

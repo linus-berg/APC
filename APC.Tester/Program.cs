@@ -1,28 +1,29 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.Net;
 using ACM.Git;
+using ACM.Http;
 using ACM.Kernel;
+using ACM.Kernel.Storage.Minio;
+using APC.Kernel;
 using APC.Kernel.Models;
 using APM.OperatorHub;
 using APM.Php;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
 using Polly.Timeout;
 
-
-HttpClient hc = new HttpClient(new HttpClientHandler() {
+HttpClient hc = new(new HttpClientHandler {
   /*Proxy = new WebProxy() {
     Address = new Uri(Environment.GetEnvironmentVariable("HTTP_PROXY"))
   },*/
-  AllowAutoRedirect = true,
-  
+  AllowAutoRedirect = true
 });
 hc.DefaultRequestHeaders.Add("User-Agent", "APC/1.0");
-var res = await hc.GetAsync(
-  "https://api.github.com/repos/Shardj/zf1-future/zipball/b87c1507cd10c01d9b3b1bc4a0cae32f6a9c6d6c");
+HttpResponseMessage res = await hc.GetAsync(
+                            "https://api.github.com/repos/Shardj/zf1-future/zipball/b87c1507cd10c01d9b3b1bc4a0cae32f6a9c6d6c");
 
-var res2 =
+HttpResponseMessage res2 =
   await hc.GetAsync(
     "https://registry.npmjs.org/@geoext/geoext/-/geoext-3.1.1.tgz");
 
@@ -50,13 +51,15 @@ IServiceProvider sp = services.BuildServiceProvider();
 
 // Execute the pipeline
 //Git git = sp.GetRequiredService<Git>();
+
+FileSystem fs = sp.GetRequiredService<FileSystem>();
 IPhp hub = sp.GetRequiredService<IPhp>();
 
 Artifact artifact = new() {
   id = "shardj/zf1-future"
 };
 
-var art = await hub.ProcessArtifact(artifact);
+//var art = await hub.ProcessArtifact(artifact);
 
 artifact.config["files"] =
   @"^helm-v\d+.\d+.\d+-darwin-arm64.tar.gz.sha256sum.asc$";
@@ -66,7 +69,35 @@ string ind = "/storage/artifacts/mirrors/git/input";
 string path =
   $"{ind}/github.com/linus-berg/test@101001-201023.bundle";
 
+string url = "https://proxy.golang.org/golang.org/x/exp/@v/list";
+RemoteFile file = new(url, fs);
+//await fs.PutString("debug", "");
+//await file.Get("debug");
+// DEBUG MINIO
+MinioConnectionBuilder connection = new();
 
+connection.region = Configuration.GetApcVar(ApcVariable.ACM_S3_REGION);
+connection.access_key =
+  Configuration.GetApcVar(ApcVariable.ACM_S3_ACCESS_KEY);
+connection.secret_key =
+  Configuration.GetApcVar(ApcVariable.ACM_S3_SECRET_KEY);
+connection.end_point = Configuration.GetApcVar(ApcVariable.ACM_S3_ENDPOINT);
+connection.bucket = Configuration.GetApcVar(ApcVariable.ACM_S3_BUCKET);
+
+
+MinioStorageOptions minio_options = new() {
+  auto_create_bucket = true,
+  connection_string = connection.ToString()
+};
+MinioStorage st = new(minio_options, NullLogger<MinioStorage>.Instance);
+HttpClient http_client = new();
+HttpResponseMessage response =
+  await http_client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+await using Stream remote_stream =
+  await response.Content.ReadAsStreamAsync();
+
+//await st.SaveFileAsync("debug/empty-file", remote_stream);
+await file.Get("list");
 Console.WriteLine(Path.GetDirectoryName(path));
 
 Console.WriteLine(Path.GetDirectoryName(Path.GetRelativePath(ind, path)));

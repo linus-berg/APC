@@ -31,7 +31,7 @@ public class ProcessedConsumer : IConsumer<ArtifactProcessedRequest> {
       logger_.LogInformation("ARTIFACT:UPDATED:{ArtifactId}", artifact.id);
     }
 
-    if (stored.versions.Count == artifact.versions.Count && 
+    if (stored.versions.Count == artifact.versions.Count &&
         stored.dependencies.Count == artifact.dependencies.Count) {
       /* If version count is the same and no new dependencies, end */
       return;

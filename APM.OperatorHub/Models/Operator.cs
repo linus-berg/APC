@@ -6,6 +6,6 @@ public class Operator {
   public string containerImage { get; set; }
   public string channel { get; set; }
   public string packageName { get; set; }
-  
+
   public List<OperatorChannel> channels { get; set; }
 }

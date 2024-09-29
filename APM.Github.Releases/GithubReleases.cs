@@ -27,8 +27,9 @@ public class GithubReleases : IGithubReleases {
             string url = asset.browser_download_url;
             version.AddFile(Path.GetFileName(url), url);
           }
-        }  
+        }
       }
+
       artifact.AddVersion(version);
     }
 

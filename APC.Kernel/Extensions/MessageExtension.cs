@@ -15,8 +15,9 @@ public static class MessageExtension {
                    request);
   }
 
-  public static async Task ProcessorReply(this ConsumeContext<ArtifactProcessRequest> context,
-                                          Artifact artifact) {
+  public static async Task ProcessorReply(
+    this ConsumeContext<ArtifactProcessRequest> context,
+    Artifact artifact) {
     await context.Send(Endpoints.S_APC_INGEST_PROCESSED,
                        new ArtifactProcessedRequest {
                          context = context.Message.ctx,

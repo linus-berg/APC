@@ -22,6 +22,7 @@ public class RemoteFile {
     }
 
     long remote_size = (long)response.Content.Headers.ContentLength;
+    bool is_empty = remote_size == 0;
     await using Stream remote_stream =
       await response.Content.ReadAsStreamAsync();
     bool result;
@@ -31,6 +32,10 @@ public class RemoteFile {
       remote_stream.Close();
       await ClearFile(path);
       throw;
+    }
+
+    if (is_empty && !result) {
+      result = await fs_.PutString(path, "-");
     }
 
     if (result) {
