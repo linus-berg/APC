@@ -9,7 +9,7 @@ using Minio.Exceptions;
 
 namespace ACM.Kernel.Storage.Minio;
 
-public class MinioStorage {
+public class MinioStorage: IDisposable {
   private readonly string bucket_;
   private readonly ILogger logger_;
   private readonly bool should_auto_create_bucket_;
