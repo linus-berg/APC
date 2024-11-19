@@ -12,7 +12,9 @@ public class SkopeoArchive {
     tar_path_ = Path.Join(target_dir, $"{tar_name_}.tar");
   }
 
+  public Uri Uri => uri_;
   public string Target => target_;
   public string TarPath => tar_path_;
   public string TarName => tar_name_;
+  public string TarWithHost => $"{Path.Join(uri_.Host, tar_name_)}.tar";
 }

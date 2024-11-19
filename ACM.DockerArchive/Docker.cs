@@ -20,29 +20,28 @@ public class Docker {
 
   public async Task GetTarArchive(string remote_image) {
     SkopeoArchive archive = await skopeo_.CopyToTar(remote_image, dir_);
-    bool success = await PushToStorage(archive.TarPath);
+    bool success = await PushToStorage(archive);
     if (!success) {
       throw new ApplicationException($"Failed to fetch {remote_image}");
     }
     
     await fs_.CreateDeltaLink("docker-archive",
-                              $"docker-archive://{archive.TarName}.tar");
+                              $"docker-archive://{archive.TarWithHost}");
   }
 
-  private async Task<bool> PushToStorage(string tar_path) {
-    if (!File.Exists(tar_path)) {
+  private async Task<bool> PushToStorage(SkopeoArchive archive) {
+    if (!File.Exists(archive.TarPath)) {
       throw new FileNotFoundException(
-        $"{tar_path} not found on disk.");
+        $"{archive.TarPath} not found on disk.");
     }
-    logger_.LogDebug("Opening: {BundleFilePath}", tar_path);
-    await using Stream stream = File.OpenRead(tar_path);
-    string storage_path =
-      Path.Join("docker-archive", Path.GetFileName(tar_path));
+    logger_.LogDebug("Opening: {BundleFilePath}", archive.TarPath);
+    await using Stream stream = File.OpenRead(archive.TarPath);
+    string storage_path = Path.Join("docker-archive", archive.TarWithHost);
     bool success = await fs_.PutFile(storage_path, stream);
     stream.Close();
     /* If S3 upload failed */
     if (!success) {
-      throw new MinioException($"Failed to upload {tar_path}");
+      throw new MinioException($"Failed to upload {archive.TarPath}");
     }
     return success;
   }

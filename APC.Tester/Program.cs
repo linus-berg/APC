@@ -57,7 +57,8 @@ IServiceProvider sp = services.BuildServiceProvider();
 FileSystem fs = sp.GetRequiredService<FileSystem>();
 IPhp hub = sp.GetRequiredService<IPhp>();
 SkopeoClient sk = sp.GetRequiredService<SkopeoClient>();
-
+await fs.CreateDeltaLink("docker-archive",
+                   "docker-archive://docker.io/docker_archive_test_1-2-3-4.tar");
 //await sk.CopyToTar("docker://docker.io/nginx:latest");
 
 Artifact artifact = new() {
