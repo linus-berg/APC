@@ -1,5 +1,6 @@
 using ACM.Kernel;
 using APC.Skopeo;
+using APC.Skopeo.Models;
 using Minio.Exceptions;
 
 namespace ACM.DockerArchive;
@@ -18,11 +19,14 @@ public class Docker {
   }
 
   public async Task GetTarArchive(string remote_image) {
-    string tar_bundle = await skopeo_.CopyToTar(remote_image, dir_);
-    bool success = await PushToStorage(tar_bundle);
+    SkopeoArchive archive = await skopeo_.CopyToTar(remote_image, dir_);
+    bool success = await PushToStorage(archive.TarPath);
     if (!success) {
       throw new ApplicationException($"Failed to fetch {remote_image}");
     }
+    
+    await fs_.CreateDeltaLink("docker-archive",
+                              $"docker-archive://{archive.TarName}.tar");
   }
 
   private async Task<bool> PushToStorage(string tar_path) {
