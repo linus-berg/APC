@@ -66,6 +66,9 @@ jobs:
           - name: acm/http
             directory: ACM.Http
             
+          - name: acm/docker-archive
+            directory: ACM.DockerArchive
+            
           - name: acm/git
             directory: ACM.Git
             

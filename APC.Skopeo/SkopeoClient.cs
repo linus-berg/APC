@@ -44,7 +44,34 @@ public class SkopeoClient {
 
     return true;
   }
-
+  public async Task<string> CopyToTar(string remote_image, string target_dir) {
+    Uri uri = new Uri(remote_image);
+    string target = $"{uri.Host}{uri.PathAndQuery}";
+    string tar_name = target.Replace("/", "_").Replace(":", "_").Replace(".", "_");
+    string tar_path = Path.Join(target_dir, $"{tar_name}.tar");
+    string internal_image = $"docker-archive:{tar_path}:{target}";
+    StringBuilder std_out = new();
+    StringBuilder std_err = new();
+    Command cmd = Cli.Wrap("skopeo")
+                     .WithArguments(args => {
+                       args.Add("copy");
+                       args.Add($"docker://{target}");
+                       args.Add(internal_image);
+                     })
+                     .WithStandardOutputPipe(
+                       PipeTarget.ToStringBuilder(std_out))
+                     .WithStandardErrorPipe(
+                       PipeTarget.ToStringBuilder(std_err));
+    logger_.LogInformation($"Pull> {remote_image}=>{internal_image}");
+    try {
+      CommandResult result =
+        await cmd.ExecuteAsync();
+    } catch (Exception e) {
+      logger_.LogError(std_err.ToString());
+      throw;
+    }
+    return tar_path;
+  }
 
   public async Task<SkopeoListTagsOutput?> GetTags(string image) {
     Command cmd = Cli.Wrap("skopeo").WithArguments(args => {

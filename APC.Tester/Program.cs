@@ -6,6 +6,7 @@ using ACM.Kernel;
 using ACM.Kernel.Storage.Minio;
 using APC.Kernel;
 using APC.Kernel.Models;
+using APC.Skopeo;
 using APM.OperatorHub;
 using APM.Php;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,13 +21,13 @@ HttpClient hc = new(new HttpClientHandler {
   AllowAutoRedirect = true
 });
 hc.DefaultRequestHeaders.Add("User-Agent", "APC/1.0");
-HttpResponseMessage res = await hc.GetAsync(
+/*HttpResponseMessage res = await hc.GetAsync(
                             "https://api.github.com/repos/Shardj/zf1-future/zipball/b87c1507cd10c01d9b3b1bc4a0cae32f6a9c6d6c");
 
 HttpResponseMessage res2 =
   await hc.GetAsync(
     "https://registry.npmjs.org/@geoext/geoext/-/geoext-3.1.1.tgz");
-
+*/
 ServiceCollection services = new();
 services.AddStorage();
 // Define a resilience pipeline with the name "my-pipeline"
@@ -46,6 +47,7 @@ services.AddSingleton<FileSystem>();
 services.AddSingleton<Git>();
 services.AddSingleton<IOperatorHub, OperatorHub>();
 services.AddSingleton<IPhp, Php>();
+services.AddSingleton<SkopeoClient>();
 // Build the service provider
 IServiceProvider sp = services.BuildServiceProvider();
 
@@ -54,6 +56,9 @@ IServiceProvider sp = services.BuildServiceProvider();
 
 FileSystem fs = sp.GetRequiredService<FileSystem>();
 IPhp hub = sp.GetRequiredService<IPhp>();
+SkopeoClient sk = sp.GetRequiredService<SkopeoClient>();
+
+//await sk.CopyToTar("docker://docker.io/nginx:latest");
 
 Artifact artifact = new() {
   id = "shardj/zf1-future"
@@ -85,7 +90,7 @@ connection.end_point = Configuration.GetApcVar(ApcVariable.ACM_S3_ENDPOINT);
 connection.bucket = Configuration.GetApcVar(ApcVariable.ACM_S3_BUCKET);
 
 //await st.SaveFileAsync("debug/empty-file", remote_stream);
-await file.Get("list");
+//await file.Get("list");
 Console.WriteLine("test");
 Console.WriteLine(Path.GetDirectoryName(path));
 
