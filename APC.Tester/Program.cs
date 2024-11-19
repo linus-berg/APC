@@ -86,6 +86,7 @@ connection.bucket = Configuration.GetApcVar(ApcVariable.ACM_S3_BUCKET);
 
 //await st.SaveFileAsync("debug/empty-file", remote_stream);
 await file.Get("list");
+Console.WriteLine("test");
 Console.WriteLine(Path.GetDirectoryName(path));
 
 Console.WriteLine(Path.GetDirectoryName(Path.GetRelativePath(ind, path)));
