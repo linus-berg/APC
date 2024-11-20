@@ -18,15 +18,16 @@ public class Docker {
     logger_ = logger;
   }
 
-  public async Task GetTarArchive(string remote_image) {
+  public async Task<bool> GetTarArchive(string remote_image) {
     SkopeoArchive archive = await skopeo_.CopyToTar(remote_image, dir_);
     bool success = await PushToStorage(archive);
     if (!success) {
       throw new ApplicationException($"Failed to fetch {remote_image}");
     }
-    
-    await fs_.CreateDeltaLink("docker-archive",
-                              $"docker-archive://{archive.TarWithHost}");
+
+    success = await fs_.CreateDeltaLink("docker-archive",
+                                        $"docker-archive://{archive.TarWithHost}");
+    return success;
   }
 
   private async Task<bool> PushToStorage(SkopeoArchive archive) {
