@@ -1,5 +1,6 @@
 using ACM.Kernel;
 using APC.Skopeo;
+using APC.Skopeo.Exceptions;
 using APC.Skopeo.Models;
 using Minio.Exceptions;
 
@@ -19,7 +20,13 @@ public class Docker {
   }
 
   public async Task<bool> GetTarArchive(string remote_image) {
-    SkopeoArchive archive = await skopeo_.CopyToTar(remote_image, dir_);
+    SkopeoArchive archive;
+    try {
+      archive = await skopeo_.CopyToTar(remote_image, dir_);
+    } catch (SkopeoArchiveExistsException ex) {
+      /* Ignore if file exists */
+      return true;
+    }
     bool success = await PushToStorage(archive);
     if (!success) {
       throw new ApplicationException($"Failed to fetch {remote_image}");

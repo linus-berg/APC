@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using APC.Kernel;
 using APC.Kernel.Extensions;
+using APC.Skopeo.Exceptions;
 using APC.Skopeo.Models;
 using CliWrap;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ public class SkopeoClient {
     Image image = new(remote_image);
     string? registry =
       Configuration.GetApcVar(ApcVariable.ACM_CONTAINER_REGISTRY);
-
+    
     string internal_image = $"docker://{registry}/{image.Repository}";
     StringBuilder std_out = new();
     StringBuilder std_err = new();
@@ -46,7 +47,11 @@ public class SkopeoClient {
   }
   public async Task<SkopeoArchive> CopyToTar(string remote_image, string target_dir) {
     SkopeoArchive archive = new SkopeoArchive(remote_image, target_dir);
+    if (File.Exists(archive.TarPath)) {
+      throw new SkopeoArchiveExistsException($"File {archive.TarPath} already exists");
+    }
     string internal_image = $"docker-archive:{archive.TarPath}:{archive.Target}";
+    
     StringBuilder std_out = new();
     StringBuilder std_err = new();
     Command cmd = Cli.Wrap("skopeo")
