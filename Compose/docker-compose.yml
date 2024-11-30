@@ -11,13 +11,13 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - "./prometheus.yml:/etc/prometheus.yaml"
+      - "./prometheus.yml:/etc/prometheus.yaml:Z"
   
   apc-telemetry-otel:
     image: otel/opentelemetry-collector-contrib:0.79.0
     command: [ "--config=/etc/otel-collector.yaml" ]
     volumes:
-      - "./otel.yml:/etc/otel-collector.yaml"
+      - "./otel.yml:/etc/otel-collector.yaml:Z"
     extra_hosts: ["host.docker.internal:host-gateway"]
 
   apc-minio:
@@ -27,7 +27,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - "./volumes/minio:/data"
+      - "./volumes/minio:/data:Z"
     environment:
       MINIO_ROOT_USER: minio-dev
       MINIO_ROOT_PASSWORD: minio-dev
@@ -57,8 +57,8 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - "./volumes/mongo_data:/data/db"
-      - "./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro"
+      - "./volumes/mongo_data:/data/db:Z"
+      - "./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro,Z"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -66,7 +66,7 @@ services:
   apc-keycloak-db:
     image: postgres:13
     volumes:
-      - "./volumes/kc_db:/var/lib/postgresql/data"
+      - "./volumes/kc_db:/var/lib/postgresql/data:Z"
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: pg
@@ -103,7 +103,7 @@ services:
     image: redis/redis-stack:6.2.6-v9
     container_name: apc-ingest-redis
     volumes:
-      - "./volumes/redis_data:/data"
+      - "./volumes/redis_data:/data:Z"
     ports:
       - 6379:6379
       - 8001:8001
