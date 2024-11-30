@@ -45,7 +45,7 @@ export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
 ```
 
 > [!NOTE]
-> The export of `DOCKE_HOST` need to be set in the terminal before you run
+> The export of `DOCKER_HOST` need to be set in the terminal before you run
 > `docker-compose`. The `podman` service is persistent though, and will survive
 > reboots.
 
