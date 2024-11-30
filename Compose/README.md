@@ -45,8 +45,8 @@ export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
 ```
 
 > [!NOTE]
-> The export of `DOCKE_HOST` need to be set in the terminal before you start
-> `docker-compose`. The `podman` service is persistant though, and will survive
+> The export of `DOCKE_HOST` need to be set in the terminal before you run
+> `docker-compose`. The `podman` service is persistent though, and will survive
 > reboots.
 
 > [!TIP]
@@ -62,6 +62,7 @@ docker-compose up
 ```
 
 > [!NOTE]
-> Since you now are running in rootless mode, you should not use `sudo`.
+> Since you are now running in rootless mode, you should not use `sudo` before
+> `docker-compose`.
 
-Stop it with `Ctrl-C`.
+Stop the development environment with `Ctrl-C`.
