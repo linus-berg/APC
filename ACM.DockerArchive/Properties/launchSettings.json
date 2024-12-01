@@ -9,7 +9,7 @@
         "APC_OTEL_HOST": "http://localhost:4017",
         "ACM_S3_ACCESS_KEY": "minio-apc",
         "ACM_S3_SECRET_KEY": "minio-apc",
-        "ACM_S3_REGION": "",
+        "ACM_S3_REGION": "not-used-for-dev",
         "ACM_S3_ENDPOINT": "localhost:9000",
         "ACM_S3_BUCKET": "apc",
         "APC_ACM_DIR": "./data"

@@ -12,7 +12,6 @@
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.5"/>
         <PackageReference Include="MongoDB.Driver" Version="2.23.1"/>
         <PackageReference Include="MongoDB.Driver.Core" Version="2.23.1"/>
-        <PackageReference Include="Npgsql" Version="8.0.3"/>
         <PackageReference Include="StackExchange.Redis" Version="2.7.17"/>
     </ItemGroup>
 

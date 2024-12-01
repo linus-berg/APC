@@ -158,6 +158,8 @@ public class ArtifactService : IArtifactService {
 
   private async Task SendRequest<T>(Uri uri, T request) {
     ISendEndpoint endpoint = await bus_.GetSendEndpoint(uri);
-    await endpoint.Send(request);
+    if (request != null) {
+      await endpoint.Send(request);
+    }
   }
 }
