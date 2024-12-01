@@ -25,7 +25,7 @@ public class RemoteFile {
     bool result;
     try {
       result = await ProcessStream(path, remote_stream);
-    } catch (Exception e) {
+    } catch (Exception) {
       remote_stream.Close();
       await ClearFile(path);
       throw;
@@ -44,7 +44,7 @@ public class RemoteFile {
     bool result;
     try {
       result = await fs_.PutFile(path, remote_stream);
-    } catch (Exception e) {
+    } catch (Exception) {
       await ClearFile(path);
       throw;
     }
