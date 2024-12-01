@@ -6,8 +6,12 @@ Run the external services in the Compose folder with
 This will setup the required external services required to run the APC framework.
 
 ### Keycloak (required for GUI & API)
-Create a client in keycloak named `apc`.
-
+Create a client in keycloak named `apc` with the following config.
+```
+Valid redirect URIs = *
+Valid post logout redirect URIs = *
+Web origins = *
+```
 Create a role for the client called `Administrator`.
 
 Export the configuration and place it in the root of `APC.Api`.
