@@ -12,10 +12,11 @@ public class ArtifactProcessedRequest {
   public Guid context { get; set; }
   public Artifact artifact { get; set; }
 
-  public void AddCollectRequest(string location, string module) {
+  public void AddCollectRequest(string location, string module, bool force = false) {
     collect_requests.Add(new ArtifactCollectRequest {
       module = module,
-      location = location
+      location = location,
+      force = force
     });
   }
 }
