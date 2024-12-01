@@ -16,13 +16,10 @@ public class RemoteFile {
   public async Task<bool> Get(string path) {
     HttpResponseMessage response =
       await S_CLIENT_.GetAsync(url_, HttpCompletionOption.ResponseHeadersRead);
-    if (!response.IsSuccessStatusCode ||
-        response.Content.Headers.ContentLength == null) {
+    if (!response.IsSuccessStatusCode) {
       return false;
     }
-
-    long remote_size = (long)response.Content.Headers.ContentLength;
-    bool is_empty = remote_size == 0;
+    
     await using Stream remote_stream =
       await response.Content.ReadAsStreamAsync();
     bool result;
@@ -34,22 +31,12 @@ public class RemoteFile {
       throw;
     }
 
-    if (is_empty && !result) {
-      result = await fs_.PutString(path, "-");
-    }
-
-    if (result) {
-      /* If downloaded file size matches remote, its complete */
-      long size = await fs_.GetFileSize(path);
-      if (size == remote_size) {
-        return true;
-      }
-    } else {
+    if (!result) {
       await ClearFile(path);
       throw new HttpRequestException($"{url_} failed to collect.");
     }
 
-    return false;
+    return result;
   }
 
   private async Task<bool>
