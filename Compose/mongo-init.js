@@ -16,6 +16,18 @@ db["apc-processors"].insertMany([
     description: ''
   },
   {
+    _id: 'git',
+    config: {},
+    direct_collect: true,
+    description: ''
+  },
+  {
+    _id: 'direct',
+    config: {},
+    direct_collect: true,
+    description: ''
+  },
+  {
     _id: 'container',
     config: {},
     direct_collect: false,
