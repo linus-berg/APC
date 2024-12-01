@@ -24,3 +24,6 @@ The configuration should look something like this:
 }
 ```
 
+### Minio (required for ACM development)
+Create a bucket named `apc`.
+Create an access key and secret key with the credentials `minio-apc` in both fields.
