@@ -33,7 +33,7 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
     }
 
     if (stored.versions.Count == artifact.versions.Count &&
-        stored.dependencies.Count == artifact.versions.Count) {
+        stored.dependencies.Count == artifact.dependencies.Count) {
       /* If version count is the same, end */
       return;
     }
