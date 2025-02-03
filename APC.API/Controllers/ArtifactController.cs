@@ -1,6 +1,7 @@
 using System.Security.Authentication;
 using System.Security.Claims;
 using APC.API.Input;
+using APC.API.Output;
 using APC.Kernel.Messages;
 using APC.Kernel.Models;
 using APC.Services;
@@ -26,12 +27,34 @@ public class ArtifactController : ControllerBase {
   }
 
   // GET: api/Artifact
-  [HttpGet]
-  public async Task<IEnumerable<Artifact>> Get([FromQuery] string processor,
+  [HttpGet("all")]
+  public async Task<IEnumerable<ArtifactOutput>> Get([FromQuery] string processor,
                                                [FromQuery] bool only_roots) {
     IEnumerable<Artifact> artifacts =
       await database_.GetArtifacts(processor, only_roots);
-    return artifacts;
+    List<ArtifactOutput> artifact_outputs = new List<ArtifactOutput>();
+    foreach (Artifact artifact in artifacts) {
+      artifact_outputs.Add(new ArtifactOutput() {
+        id = artifact.id,
+        processor = artifact.processor,
+        filter = artifact.filter,
+        root = artifact.root,
+        dependencies = artifact.dependencies.Count,
+        versions = artifact.versions.Count
+      });
+    }
+    return artifact_outputs;
+  }
+  
+  // GET: api/Artifact
+  [HttpGet]
+  public async Task<ActionResult<Artifact>> GetById([FromQuery] string processor,
+                                                    [FromQuery] string id) {
+    Artifact? artifact = await database_.GetArtifact(id, processor);
+    if (artifact == null) {
+      return NotFound("Artifact not found");
+    }
+    return Ok(artifact);
   }
 
   // POST: api/Artifact
