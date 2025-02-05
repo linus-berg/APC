@@ -177,40 +177,49 @@ public class MinioStorage: IDisposable {
     string normalized_path = NormalizePath(path);
     logger_.LogTrace("Saving {Path}", normalized_path);
 
-    Stream seekable_stream = stream.CanSeek ? stream : new MemoryStream();
-    if (!stream.CanSeek) {
-      await stream.CopyToAsync(seekable_stream, cancellation_token);
-      seekable_stream.Seek(0, SeekOrigin.Begin);
-    }
+    string? tempfile = null;
 
     try {
-      /* Todo: fix this ugly hack */
-      if (seekable_stream.Length == 0) {
-        string filename = Path.GetTempFileName();
-        await client.PutObjectAsync(
-          new PutObjectArgs().WithBucket(bucket_).WithObject(normalized_path)
-                             .WithFileName(filename), cancellation_token);
-        File.Delete(filename);
+      using var seekable_stream = await GetSeekableStream(stream);
+
+      var args = new PutObjectArgs()
+        .WithBucket(bucket_)
+        .WithObject(normalized_path)
+        .WithObjectSize(seekable_stream.Length);
+
+      // Minio does not allow uploading empty streams: https://github.com/minio/minio-dotnet/issues/801
+      if (seekable_stream.Length > 0) {
+        args.WithStreamData(seekable_stream);
       } else {
-        await client.PutObjectAsync(
-          new PutObjectArgs().WithBucket(bucket_).WithObject(normalized_path)
-                             .WithStreamData(seekable_stream)
-                             .WithObjectSize(
-                               seekable_stream.Length -
-                               seekable_stream.Position),
-          cancellation_token);
+        // Work around bug by putting an empty file instead
+        tempfile = Path.GetTempFileName();
+        args.WithFileName(tempfile);
       }
+
+      await client.PutObjectAsync(args, cancellation_token);
 
       return true;
     } catch (Exception ex) {
       logger_.LogError(ex, "Error saving {Path}: {Message}", normalized_path,
                        ex.Message);
-            throw;
+      throw;
     } finally {
-      if (!stream.CanSeek) {
-        seekable_stream.Dispose();
+      if (tempfile != null) {
+        File.Delete(tempfile);
       }
     }
+  }
+
+  private async Task<Stream> GetSeekableStream(Stream stream) {
+    if (stream.CanSeek) {
+      return stream;
+    }
+
+    var temp_file_stream = File.Create(Path.GetTempFileName(), 8192, FileOptions.DeleteOnClose);
+    await stream.CopyToAsync(temp_file_stream);
+    temp_file_stream.Seek(0, SeekOrigin.Begin);
+
+    return temp_file_stream;
   }
 
   public async Task<bool> RenameFileAsync(string path, string new_path,

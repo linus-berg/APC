@@ -20,36 +20,21 @@ public class RemoteFile {
       return false;
     }
     
-    await using Stream remote_stream =
-      await response.Content.ReadAsStreamAsync();
-    bool result;
     try {
-      result = await ProcessStream(path, remote_stream);
-    } catch (Exception) {
-      remote_stream.Close();
-      await ClearFile(path);
-      throw;
-    }
+      var body = await response.Content.ReadAsStreamAsync();
+      var result = await fs_.PutFile(path, body);
 
-    if (!result) {
-      await ClearFile(path);
-      throw new HttpRequestException($"{url_} failed to collect.");
-    }
+      if (!result) {
+        await ClearFile(path);
+        throw new HttpRequestException($"{url_} failed to collect.");
+      }
 
-    return result;
-  }
-
-  private async Task<bool>
-    ProcessStream(string path, Stream remote_stream) {
-    bool result;
-    try {
-      result = await fs_.PutFile(path, remote_stream);
+      return result;
     } catch (Exception) {
       await ClearFile(path);
       throw;
     }
-
-    return result;
+    
   }
 
   private async Task<bool> ClearFile(string file) {
