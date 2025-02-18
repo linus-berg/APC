@@ -1,3 +1,4 @@
+using System.Text.Json;
 using APC.Kernel.Exceptions;
 using APC.Kernel.Models;
 using APM.Npm.Models;
@@ -43,19 +44,19 @@ public class Npm : INpm {
   }
 
   private void AddDependencies(Artifact artifact,
-                               Dictionary<string, string>? dependencies) {
+                               Dictionary<string, JsonElement>? dependencies) {
     if (dependencies == null) {
       return;
     }
 
-    foreach (KeyValuePair<string, string> package in dependencies) {
+    foreach (KeyValuePair<string, JsonElement> package in dependencies) {
       artifact.AddDependency(package.Key, artifact.processor);
     }
   }
 
   private async Task<Metadata?> GetMetadata(string id) {
     try {
-      return await client_.GetJsonAsync<Metadata>($"{id}/");
+      return await client_.GetAsync<Metadata>($"{id}/");
     } catch (TimeoutException ex) {
       logger_.LogError("Timeout error: {Exception}", ex.ToString());
       throw new ArtifactTimeoutException($"{id} timed out!");
