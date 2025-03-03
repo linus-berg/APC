@@ -7,4 +7,5 @@ public class ArtifactOutput {
   public bool root { get; set; }
   public int versions { get; set; }
   public int dependencies { get; set; }
+  public Dictionary<string, string> config { get; set; }
 }

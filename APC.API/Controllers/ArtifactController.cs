@@ -40,7 +40,8 @@ public class ArtifactController : ControllerBase {
         filter = artifact.filter,
         root = artifact.root,
         dependencies = artifact.dependencies.Count,
-        versions = artifact.versions.Count
+        versions = artifact.versions.Count,
+        config = artifact.config
       });
     }
     return artifact_outputs;
