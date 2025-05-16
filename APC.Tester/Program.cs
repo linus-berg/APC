@@ -9,6 +9,7 @@ using APC.Kernel.Models;
 using APC.Skopeo;
 using APM.OperatorHub;
 using APM.Php;
+using APM.Terraform;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
@@ -47,12 +48,20 @@ services.AddSingleton<FileSystem>();
 services.AddSingleton<Git>();
 services.AddSingleton<IOperatorHub, OperatorHub>();
 services.AddSingleton<IPhp, Php>();
+services.AddSingleton<ITerraform, Terraform>();
 services.AddSingleton<SkopeoClient>();
 // Build the service provider
 IServiceProvider sp = services.BuildServiceProvider();
 
 // Execute the pipeline
 //Git git = sp.GetRequiredService<Git>();
+
+ITerraform tf = sp.GetRequiredService<ITerraform>();
+
+
+var res = await tf.ProcessArtifact(new Artifact() {
+  id = "vmware/vsphere"
+});
 
 FileSystem fs = sp.GetRequiredService<FileSystem>();
 IPhp hub = sp.GetRequiredService<IPhp>();

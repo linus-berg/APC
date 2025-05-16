@@ -38,6 +38,9 @@ jobs:
 
           - name: apm/npm
             directory: APM.Npm
+            
+          - name: apm/terraform
+            directory: APM.Terraform
           
           - name: apm/php
             directory: APM.Php
