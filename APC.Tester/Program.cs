@@ -4,6 +4,7 @@ using ACM.Git;
 using ACM.Http;
 using ACM.Kernel;
 using ACM.Kernel.Storage.Minio;
+using APC.Github;
 using APC.Kernel;
 using APC.Kernel.Models;
 using APC.Skopeo;
@@ -49,6 +50,7 @@ services.AddSingleton<Git>();
 services.AddSingleton<IOperatorHub, OperatorHub>();
 services.AddSingleton<IPhp, Php>();
 services.AddSingleton<ITerraform, Terraform>();
+services.AddSingleton<IGithubClient, GithubClient>();
 services.AddSingleton<SkopeoClient>();
 // Build the service provider
 IServiceProvider sp = services.BuildServiceProvider();
@@ -56,6 +58,7 @@ IServiceProvider sp = services.BuildServiceProvider();
 // Execute the pipeline
 //Git git = sp.GetRequiredService<Git>();
 
+IGithubClient gh = sp.GetRequiredService<IGithubClient>();
 ITerraform tf = sp.GetRequiredService<ITerraform>();
 
 
