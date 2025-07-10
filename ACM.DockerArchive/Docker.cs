@@ -9,9 +9,9 @@ namespace ACM.DockerArchive;
 public class Docker {
   private readonly string dir_;
   private readonly FileSystem fs_;
-  private readonly SkopeoClient skopeo_;
   private readonly ILogger<Docker> logger_;
-  
+  private readonly SkopeoClient skopeo_;
+
   public Docker(FileSystem fs, SkopeoClient skopeo, ILogger<Docker> logger) {
     fs_ = fs;
     skopeo_ = skopeo;
@@ -27,6 +27,7 @@ public class Docker {
       /* Ignore if file exists */
       return true;
     }
+
     bool success = await PushToStorage(archive);
     if (!success) {
       throw new ApplicationException($"Failed to fetch {remote_image}");
@@ -42,6 +43,7 @@ public class Docker {
       throw new FileNotFoundException(
         $"{archive.TarPath} not found on disk.");
     }
+
     logger_.LogDebug("Opening: {BundleFilePath}", archive.TarPath);
     await using Stream stream = File.OpenRead(archive.TarPath);
     string storage_path = Path.Join("docker-archive", archive.TarWithHost);
@@ -51,6 +53,7 @@ public class Docker {
     if (!success) {
       throw new MinioException($"Failed to upload {archive.TarPath}");
     }
+
     return success;
   }
 }

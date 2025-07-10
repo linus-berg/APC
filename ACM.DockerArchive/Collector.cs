@@ -1,6 +1,5 @@
 using APC.Kernel;
 using APC.Kernel.Messages;
-using APC.Skopeo;
 using MassTransit;
 using Polly;
 using Polly.Registry;
@@ -10,6 +9,7 @@ namespace ACM.DockerArchive;
 public class Collector : ICollector {
   private readonly Docker docker_;
   private readonly ResiliencePipeline<bool> pipeline_;
+
   public Collector(Docker docker, ResiliencePipelineProvider<string> polly) {
     pipeline_ = polly.GetPipeline<bool>("skopeo-retry");
     docker_ = docker;

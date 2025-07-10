@@ -50,8 +50,8 @@ IHost host = Host.CreateDefaultBuilder(args)
                    services.AddScoped<IArtifactService, ArtifactService>();
 
                    services.AddQuartz(q => {
-                     q.AddJob<TrackingJob>(
-                       j => j.WithIdentity(TrackingJob.S_KEY));
+                     q.AddJob<TrackingJob>(j => j.WithIdentity(
+                                             TrackingJob.S_KEY));
                      foreach (ScheduleOptions opts in schedule_opts) {
                        q.AddTrigger(t => {
                          t.WithIdentity($"tracking-{opts.processor}", "apc");

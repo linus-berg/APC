@@ -73,16 +73,17 @@ services:
       POSTGRES_PASSWORD: pg123
 
   apc-keycloak:
-    image: quay.io/keycloak/keycloak:20.0.3
+    image: quay.io/keycloak/keycloak:26.3
     restart: always
     depends_on:
      - apc-keycloak-db
     command:
-      - start --proxy edge --hostname-strict=false --hostname-url=http://localhost:8090 --db postgres --db-url-host apc-keycloak-db --db-username pg --db-password pg123
+      - start-dev
+      #      - start --hostname-strict=false --hostname-url=http://localhost:8090 --db=postgres --db-url-host=apc-keycloak-db --db-username=pg --db-password=pg123
     ports:
       - 8090:8080
-    volumes:
-      - "./volumes/kc_data:/opt/keycloak/data/h2:Z"
+        #volumes:
+      #      - "./volumes/kc_data:/opt/keycloak/data/h2:Z"
     environment:
       PROXY_ADDRESS_FORWARDING: "true"
       KEYCLOAK_ADMIN: admin

@@ -1,6 +1,15 @@
 namespace APC.Kernel;
 
 public enum ApcVariable {
+  // API
+  APC_API_HOST,
+  APC_API_CORS,
+
+  // OIDC Config
+  APC_OIDC_HOST,
+  APC_OIDC_CLIENT_ID,
+  APC_OIDC_CLIENT_SECRET,
+
   // RabbitMQ message bus
   APC_RABBIT_MQ_HOST,
   APC_RABBIT_MQ_USER,
@@ -13,8 +22,6 @@ public enum ApcVariable {
 
   // OTEL collector telemetry
   APC_OTEL_HOST,
-
-  APC_API_HOST,
 
   // LEGACY: Place on disk to store artifacts, only required for ACM.Git
   APC_ACM_DIR,
