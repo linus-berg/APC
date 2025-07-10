@@ -14,7 +14,7 @@ public static class ConfigureAuthentication {
         OpenIdConnectDefaults.AuthenticationScheme;
     }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => {
       options.Cookie.Name = "APC_TOKEN";
-      options.Cookie.SameSite = SameSiteMode.None;
+      options.Cookie.SameSite = SameSiteMode.Lax;
       options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     }).AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options => {
       options.Authority = Configuration.GetApcVar(ApcVariable.APC_OIDC_HOST);
