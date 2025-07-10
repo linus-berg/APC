@@ -1,3 +1,4 @@
+using APC.API;
 using APC.Infrastructure;
 using APC.Infrastructure.Services;
 using APC.Kernel;
@@ -5,8 +6,6 @@ using APC.Kernel.Constants;
 using APC.Kernel.Extensions;
 using APC.Kernel.Registrations;
 using APC.Services;
-using Keycloak.AuthServices.Authentication;
-using Keycloak.AuthServices.Authorization;
 using MassTransit;
 using Serilog;
 using Serilog.Events;
@@ -50,21 +49,28 @@ builder.Services.AddScoped<IApcDatabase, MongoDatabase>();
 builder.Services.AddSingleton<IApcCache, ApcCache>();
 builder.Services.AddScoped<IArtifactService, ArtifactService>();
 
-/* keycloak */
-builder.Host.ConfigureKeycloakConfigurationSource();
-
-builder.Services.AddKeycloakAuthentication(builder.Configuration,
-                                           o => {
-                                             o.RequireHttpsMetadata = false;
-                                           });
-builder.Services.AddKeycloakAuthorization(builder.Configuration);
+/* OIDC */
+builder.Services.AddOidcAuthentication();
+/*******/
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddCors(options => {
+  options.AddDefaultPolicy(policy => {
+    policy.WithOrigins(
+            Configuration
+              .GetApcVar(
+                ApcVariable
+                  .APC_API_CORS))
+          .AllowAnyHeader()
+          .AllowAnyMethod()
+          .AllowCredentials();
+  });
+});
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,11 +79,7 @@ if (app.Environment.IsDevelopment()) {
   app.UseSwaggerUI();
 }
 
-app.UseCors(b => {
-  b.AllowAnyOrigin();
-  b.AllowAnyHeader();
-  b.AllowAnyMethod();
-});
+app.UseCors();
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();

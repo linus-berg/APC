@@ -15,7 +15,7 @@ builder.Services.AddTelemetry(registration);
 builder.Services.AddStorage();
 builder.Services.AddResiliencePipeline<string, bool>("skopeo-retry",
   pipeline_builder => {
-    pipeline_builder.AddRetry(new RetryStrategyOptions<bool>() {
+    pipeline_builder.AddRetry(new RetryStrategyOptions<bool> {
       MaxRetryAttempts = 20
     });
   });

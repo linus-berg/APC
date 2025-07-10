@@ -9,7 +9,7 @@ using Minio.Exceptions;
 
 namespace ACM.Kernel.Storage.Minio;
 
-public class MinioStorage: IDisposable {
+public class MinioStorage : IDisposable {
   private readonly string bucket_;
   private readonly ILogger logger_;
   private readonly bool should_auto_create_bucket_;
@@ -30,6 +30,9 @@ public class MinioStorage: IDisposable {
   }
 
   public IMinioClient client { get; }
+
+  public void Dispose() {
+  }
 
   private async Task EnsureBucketExists() {
     if (!should_auto_create_bucket_ || bucket_exists_checked_) {
@@ -180,12 +183,12 @@ public class MinioStorage: IDisposable {
     string? tempfile = null;
 
     try {
-      using var seekable_stream = await GetSeekableStream(stream);
+      using Stream seekable_stream = await GetSeekableStream(stream);
 
-      var args = new PutObjectArgs()
-        .WithBucket(bucket_)
-        .WithObject(normalized_path)
-        .WithObjectSize(seekable_stream.Length);
+      PutObjectArgs? args = new PutObjectArgs()
+                            .WithBucket(bucket_)
+                            .WithObject(normalized_path)
+                            .WithObjectSize(seekable_stream.Length);
 
       // Minio does not allow uploading empty streams: https://github.com/minio/minio-dotnet/issues/801
       if (seekable_stream.Length > 0) {
@@ -215,7 +218,8 @@ public class MinioStorage: IDisposable {
       return stream;
     }
 
-    var temp_file_stream = File.Create(Path.GetTempFileName(), 8192, FileOptions.DeleteOnClose);
+    FileStream temp_file_stream =
+      File.Create(Path.GetTempFileName(), 8192, FileOptions.DeleteOnClose);
     await stream.CopyToAsync(temp_file_stream);
     temp_file_stream.Seek(0, SeekOrigin.Begin);
 
@@ -351,9 +355,8 @@ public class MinioStorage: IDisposable {
       RemoveObjectsArgs? args = new RemoveObjectsArgs().WithBucket(bucket_)
         .WithObjects(
           result.files
-                .Select(
-                  spec => NormalizePath(
-                    spec.path)).ToList());
+                .Select(spec => NormalizePath(
+                          spec.path)).ToList());
 
       IList<DeleteError>? response =
         await client.RemoveObjectsAsync(args, cancellation);
@@ -397,8 +400,7 @@ public class MinioStorage: IDisposable {
     await EnsureBucketExists();
 
     PagedFileListResult result =
-      new(
-        _ => GetFiles(search_pattern, 1, page_size, cancellation_token));
+      new(_ => GetFiles(search_pattern, 1, page_size, cancellation_token));
     await result.NextPageAsync();
     return result;
   }
@@ -524,15 +526,15 @@ public class MinioStorage: IDisposable {
     string endpoint;
     bool secure;
     if (connection.end_point.StartsWith("https://",
-                                               StringComparison
-                                                 .OrdinalIgnoreCase)) {
+                                        StringComparison
+                                          .OrdinalIgnoreCase)) {
       endpoint = connection.end_point.Substring(8);
       secure = true;
     } else {
       endpoint =
         connection.end_point.StartsWith("http://",
-                                               StringComparison
-                                                 .OrdinalIgnoreCase)
+                                        StringComparison
+                                          .OrdinalIgnoreCase)
           ? connection.end_point.Substring(7)
           : connection.end_point;
       secure = false;
@@ -554,8 +556,5 @@ public class MinioStorage: IDisposable {
     }
 
     return (client, connection.bucket);
-  }
-
-  public void Dispose() {
   }
 }
