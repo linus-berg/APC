@@ -7,6 +7,7 @@ using APC.Kernel.Extensions;
 using APC.Kernel.Registrations;
 using APC.Services;
 using MassTransit;
+using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 using Serilog.Events;
 using StackExchange.Redis;
@@ -56,6 +57,11 @@ builder.Services.AddOidcAuthentication();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+  options.ForwardedHeaders =
+    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -74,10 +80,12 @@ builder.Services.AddCors(options => {
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseForwardedHeaders();
 if (app.Environment.IsDevelopment()) {
   app.UseSwagger();
   app.UseSwaggerUI();
 }
+
 
 app.UseCors();
 app.UseSerilogRequestLogging();
