@@ -11,8 +11,10 @@ public class PypiInfo {
 
     foreach (string dist in requires_dist) {
       string dependency = dist.Split(' ')[0];
-      if (dependency.Contains("=") || dependency.Contains("<") ||
-          dependency.Contains(">") || dependency.Contains(";")) {
+      if (dependency.Contains("=") ||
+          dependency.Contains("<") ||
+          dependency.Contains(">") ||
+          dependency.Contains(";")) {
         continue;
       }
 

@@ -26,11 +26,13 @@ public class ProcessorController : ControllerBase {
     List<ProcessorOutput> proc_out = new();
 
     foreach (Processor processor in processors) {
-      proc_out.Add(new ProcessorOutput {
-        id = processor.id,
-        config = processor.config.ToJson(),
-        description = processor.description
-      });
+      proc_out.Add(
+        new ProcessorOutput {
+          id = processor.id,
+          config = processor.config.ToJson(),
+          description = processor.description
+        }
+      );
     }
 
     return proc_out;
@@ -50,13 +52,17 @@ public class ProcessorController : ControllerBase {
   [HttpPost]
   [Authorize(Roles = "Administrator")]
   public async Task<ActionResult> Post([FromBody] AddProcessorInput input) {
-    await database_.AddProcessor(new Processor {
-      id = input.processor_id,
-      description = "",
-      config = new Dictionary<string, ProcessorAuxiliaryField>()
-    });
-    return Ok(new {
-      Message = $"Added {input.processor_id}!"
-    });
+    await database_.AddProcessor(
+      new Processor {
+        id = input.processor_id,
+        description = "",
+        config = new Dictionary<string, ProcessorAuxiliaryField>()
+      }
+    );
+    return Ok(
+      new {
+        Message = $"Added {input.processor_id}!"
+      }
+    );
   }
 }

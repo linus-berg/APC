@@ -20,7 +20,9 @@ public class Collector : ICollector {
     /* Collect if missing manifest or layers */
     await pipeline_.ExecuteAsync(
       async (state, token) =>
-        await docker_.GetTarArchive(state.location), request,
-      context.CancellationToken);
+        await docker_.GetTarArchive(state.location),
+      request,
+      context.CancellationToken
+    );
   }
 }

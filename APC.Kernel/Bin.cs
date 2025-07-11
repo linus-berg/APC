@@ -19,9 +19,11 @@ public static class Bin {
                      .WithArguments(builder)
                      .WithWorkingDirectory(wd)
                      .WithStandardOutputPipe(
-                       PipeTarget.ToStringBuilder(std_out))
+                       PipeTarget.ToStringBuilder(std_out)
+                     )
                      .WithStandardErrorPipe(
-                       PipeTarget.ToStringBuilder(std_err));
+                       PipeTarget.ToStringBuilder(std_err)
+                     );
     CommandResult? result = null;
     try {
       result = await cmd.ExecuteAsync(token);

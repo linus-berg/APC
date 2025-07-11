@@ -21,8 +21,10 @@ public class Jetbrains : IJetbrains {
     foreach (JetbrainsProductRelease release in product.releases) {
       Dictionary<string, JetbrainsProductDownload>
         downloads = release.downloads;
-      if (downloads.TryGetValue("linux",
-                                out JetbrainsProductDownload? download)) {
+      if (downloads.TryGetValue(
+            "linux",
+            out JetbrainsProductDownload? download
+          )) {
         ArtifactVersion version = new() {
           version = release.version
         };
@@ -36,7 +38,8 @@ public class Jetbrains : IJetbrains {
     try {
       List<JetbrainsProduct>? products =
         await client_.GetJsonAsync<List<JetbrainsProduct>>(
-          $"/products?code={id}&release.type=release");
+          $"/products?code={id}&release.type=release"
+        );
 
       if (products == null || products.Count == 0) {
         throw new ArtifactMetadataException($"{id} had no products in list");

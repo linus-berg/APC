@@ -9,12 +9,14 @@ ModuleRegistration registration =
 registration.AddEndpoint("nuget");
 
 IHost host = Host.CreateDefaultBuilder(args)
-                 .ConfigureServices(services => {
-                   services.AddTelemetry(registration);
-                   services.AddSingleton<INuget, Nuget>();
-                   services.Register(registration);
-                   services.AddHostedService<Worker>();
-                 })
+                 .ConfigureServices(
+                   services => {
+                     services.AddTelemetry(registration);
+                     services.AddSingleton<INuget, Nuget>();
+                     services.Register(registration);
+                     services.AddHostedService<Worker>();
+                   }
+                 )
                  .Build();
 
 await host.RunAsync();

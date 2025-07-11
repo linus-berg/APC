@@ -33,15 +33,16 @@ public class Docker {
       throw new ApplicationException($"Failed to fetch {remote_image}");
     }
 
-    success = await fs_.CreateDeltaLink("docker-archive",
-                                        $"docker-archive://{archive.TarWithHost}");
+    success = await fs_.CreateDeltaLink(
+                "docker-archive",
+                $"docker-archive://{archive.TarWithHost}"
+              );
     return success;
   }
 
   private async Task<bool> PushToStorage(SkopeoArchive archive) {
     if (!File.Exists(archive.TarPath)) {
-      throw new FileNotFoundException(
-        $"{archive.TarPath} not found on disk.");
+      throw new FileNotFoundException($"{archive.TarPath} not found on disk.");
     }
 
     logger_.LogDebug("Opening: {BundleFilePath}", archive.TarPath);

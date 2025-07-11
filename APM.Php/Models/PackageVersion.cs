@@ -8,7 +8,8 @@ public class PackageVersion {
   public string version { get; set; }
   public JsonElement require { get; set; }
 
-  [JsonPropertyName("require-dev")] public JsonElement require_dev { get; set; }
+  [JsonPropertyName("require-dev")]
+  public JsonElement require_dev { get; set; }
   //public Dictionary<string, string> require_dev { get; set; }
 
   public Dictionary<string, string> GetRequired() {

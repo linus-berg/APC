@@ -8,12 +8,14 @@ ModuleRegistration registration = new(ModuleType.APM, typeof(Processor));
 registration.AddEndpoint("terraform");
 
 IHost host = Host.CreateDefaultBuilder(args)
-                 .ConfigureServices(services => {
-                   services.AddTelemetry(registration);
-                   services.AddSingleton<ITerraform, Terraform>();
-                   services.Register(registration);
-                   services.AddHostedService<Worker>();
-                 })
+                 .ConfigureServices(
+                   services => {
+                     services.AddTelemetry(registration);
+                     services.AddSingleton<ITerraform, Terraform>();
+                     services.Register(registration);
+                     services.AddHostedService<Worker>();
+                   }
+                 )
                  .Build();
 
 await host.RunAsync();

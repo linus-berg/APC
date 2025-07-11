@@ -42,11 +42,11 @@ public class MinioStorage : IDisposable {
     logger_.LogTrace("Checking if bucket {Bucket} exists", bucket_);
     bool found =
       await client.BucketExistsAsync(
-        new BucketExistsArgs().WithBucket(bucket_));
+        new BucketExistsArgs().WithBucket(bucket_)
+      );
     if (!found) {
       logger_.LogInformation("Creating {Bucket}", bucket_);
-      await client.MakeBucketAsync(
-        new MakeBucketArgs().WithBucket(bucket_));
+      await client.MakeBucketAsync(new MakeBucketArgs().WithBucket(bucket_));
       logger_.LogInformation("Created {Bucket}", bucket_);
     }
 
@@ -54,7 +54,8 @@ public class MinioStorage : IDisposable {
   }
 
   [Obsolete(
-    $"Use {nameof(GetFileStreamAsync)} with {nameof(FileAccess)} instead to define read or write behaviour of stream")]
+    $"Use {nameof(GetFileStreamAsync)} with {nameof(FileAccess)} instead to define read or write behaviour of stream"
+  )]
   public Task<Stream> GetFileStreamAsync(string path,
                                          CancellationToken cancellation_token =
                                            default) {
@@ -71,7 +72,8 @@ public class MinioStorage : IDisposable {
 
     if (stream_mode is StreamMode.WRITE) {
       throw new NotSupportedException(
-        $"Stream mode {stream_mode} is not supported.");
+        $"Stream mode {stream_mode} is not supported."
+      );
     }
 
     await EnsureBucketExists();
@@ -82,18 +84,27 @@ public class MinioStorage : IDisposable {
     try {
       Stream result = new MemoryStream();
       await client.GetObjectAsync(
-        new GetObjectArgs().WithBucket(bucket_).WithObject(normalized_path)
-                           .WithCallbackStream(async (stream, _) =>
-                                                 await stream
-                                                   .CopyToAsync(
-                                                     result,
-                                                     cancellation_token)),
-        cancellation_token);
+        new GetObjectArgs().WithBucket(bucket_)
+                           .WithObject(normalized_path)
+                           .WithCallbackStream(
+                             async (stream, _) =>
+                               await stream
+                                 .CopyToAsync(
+                                   result,
+                                   cancellation_token
+                                 )
+                           ),
+        cancellation_token
+      );
       result.Seek(0, SeekOrigin.Begin);
       return result;
     } catch (Exception ex) {
-      logger_.LogError(ex, "Unable to get file stream for {Path}: {Message}",
-                       normalized_path, ex.Message);
+      logger_.LogError(
+        ex,
+        "Unable to get file stream for {Path}: {Message}",
+        normalized_path,
+        ex.Message
+      );
       return null;
     }
   }
@@ -112,9 +123,12 @@ public class MinioStorage : IDisposable {
       ObjectStat? metadata = await client
                                .StatObjectAsync(
                                  new StatObjectArgs().WithBucket(bucket_)
-                                   .WithObject(normalized_path));
-      if (metadata.ExtraHeaders.TryGetValue("X-Minio-Error-Code",
-                                            out string error_code) &&
+                                   .WithObject(normalized_path)
+                               );
+      if (metadata.ExtraHeaders.TryGetValue(
+            "X-Minio-Error-Code",
+            out string error_code
+          ) &&
           (string.Equals(error_code, "NoSuchBucket") ||
            string.Equals(error_code, "NoSuchKey"))) {
         return null;
@@ -127,8 +141,12 @@ public class MinioStorage : IDisposable {
         modified = metadata.LastModified.ToUniversalTime()
       };
     } catch (Exception ex) {
-      logger_.LogError(ex, "Unable to get file info for {Path}: {Message}",
-                       normalized_path, ex.Message);
+      logger_.LogError(
+        ex,
+        "Unable to get file info for {Path}: {Message}",
+        normalized_path,
+        ex.Message
+      );
       return null;
     }
   }
@@ -147,9 +165,12 @@ public class MinioStorage : IDisposable {
       ObjectStat? metadata = await client
                                .StatObjectAsync(
                                  new StatObjectArgs().WithBucket(bucket_)
-                                   .WithObject(normalized_path));
-      if (metadata.ExtraHeaders.TryGetValue("X-Minio-Error-Code",
-                                            out string? error_code) &&
+                                   .WithObject(normalized_path)
+                               );
+      if (metadata.ExtraHeaders.TryGetValue(
+            "X-Minio-Error-Code",
+            out string? error_code
+          ) &&
           (string.Equals(error_code, "NoSuchBucket") ||
            string.Equals(error_code, "NoSuchKey"))) {
         return false;
@@ -158,8 +179,12 @@ public class MinioStorage : IDisposable {
       return true;
     } catch (Exception ex) when (ex is ObjectNotFoundException
                                    or BucketNotFoundException) {
-      logger_.LogDebug(ex, "Unable to check if {Path} exists: {Message}",
-                       normalized_path, ex.Message);
+      logger_.LogDebug(
+        ex,
+        "Unable to check if {Path} exists: {Message}",
+        normalized_path,
+        ex.Message
+      );
       return false;
     }
   }
@@ -203,8 +228,12 @@ public class MinioStorage : IDisposable {
 
       return true;
     } catch (Exception ex) {
-      logger_.LogError(ex, "Error saving {Path}: {Message}", normalized_path,
-                       ex.Message);
+      logger_.LogError(
+        ex,
+        "Error saving {Path}: {Message}",
+        normalized_path,
+        ex.Message
+      );
       throw;
     } finally {
       if (tempfile != null) {
@@ -241,11 +270,17 @@ public class MinioStorage : IDisposable {
 
     string normalized_path = NormalizePath(path);
     string normalized_new_path = NormalizePath(new_path);
-    logger_.LogInformation("Renaming {Path} to {NewPath}", normalized_path,
-                           normalized_new_path);
+    logger_.LogInformation(
+      "Renaming {Path} to {NewPath}",
+      normalized_path,
+      normalized_new_path
+    );
 
-    return await CopyFileAsync(normalized_path, normalized_new_path,
-                               cancellation_token) &&
+    return await CopyFileAsync(
+             normalized_path,
+             normalized_new_path,
+             cancellation_token
+           ) &&
            await DeleteFileAsync(normalized_path, cancellation_token);
   }
 
@@ -270,7 +305,9 @@ public class MinioStorage : IDisposable {
     }
 
     return SaveFileAsync(
-      path, new MemoryStream(Encoding.UTF8.GetBytes(contents ?? string.Empty)));
+      path,
+      new MemoryStream(Encoding.UTF8.GetBytes(contents ?? string.Empty))
+    );
   }
 
   public async Task<bool> CopyFileAsync(string path, string target_path,
@@ -288,24 +325,33 @@ public class MinioStorage : IDisposable {
 
     string normalized_path = NormalizePath(path);
     string normalized_target_path = NormalizePath(target_path);
-    logger_.LogInformation("Copying {Path} to {TargetPath}", normalized_path,
-                           normalized_target_path);
+    logger_.LogInformation(
+      "Copying {Path} to {TargetPath}",
+      normalized_path,
+      normalized_target_path
+    );
 
     try {
       CopySourceObjectArgs? copy_source_args = new CopySourceObjectArgs()
                                                .WithBucket(bucket_)
                                                .WithObject(normalized_path);
 
-      await client.CopyObjectAsync(new CopyObjectArgs()
-                                   .WithBucket(bucket_)
-                                   .WithObject(normalized_target_path)
-                                   .WithCopyObjectSource(
-                                     copy_source_args),
-                                   cancellation_token);
+      await client.CopyObjectAsync(
+        new CopyObjectArgs()
+          .WithBucket(bucket_)
+          .WithObject(normalized_target_path)
+          .WithCopyObjectSource(copy_source_args),
+        cancellation_token
+      );
       return true;
     } catch (Exception ex) {
-      logger_.LogError(ex, "Error copying {Path} to {TargetPath}: {Message}",
-                       normalized_path, normalized_target_path, ex.Message);
+      logger_.LogError(
+        ex,
+        "Error copying {Path} to {TargetPath}: {Message}",
+        normalized_path,
+        normalized_target_path,
+        ex.Message
+      );
       return false;
     }
   }
@@ -327,11 +373,16 @@ public class MinioStorage : IDisposable {
         .RemoveObjectAsync(
           new RemoveObjectArgs().WithBucket(bucket_)
                                 .WithObject(normalized_path),
-          cancellation_token);
+          cancellation_token
+        );
       return true;
     } catch (Exception ex) {
-      logger_.LogError(ex, "Unable to delete {Path}: {Message}",
-                       normalized_path, ex.Message);
+      logger_.LogError(
+        ex,
+        "Unable to delete {Path}: {Message}",
+        normalized_path,
+        ex.Message
+      );
       return false;
     }
   }
@@ -341,8 +392,10 @@ public class MinioStorage : IDisposable {
                                             default) {
     await EnsureBucketExists();
 
-    logger_.LogInformation("Deleting files matching {SearchPattern}",
-                           search_pattern);
+    logger_.LogInformation(
+      "Deleting files matching {SearchPattern}",
+      search_pattern
+    );
 
     int count = 0;
     PagedFileListResult result =
@@ -355,22 +408,28 @@ public class MinioStorage : IDisposable {
       RemoveObjectsArgs? args = new RemoveObjectsArgs().WithBucket(bucket_)
         .WithObjects(
           result.files
-                .Select(spec => NormalizePath(
-                          spec.path)).ToList());
+                .Select(spec => NormalizePath(spec.path))
+                .ToList()
+        );
 
       IList<DeleteError>? response =
         await client.RemoveObjectsAsync(args, cancellation);
       count += result.files.Count;
       foreach (DeleteError? error in response) {
         count--;
-        logger_.LogError("Error deleting {Path}: {Message}", error.Key,
-                         error.Message);
+        logger_.LogError(
+          "Error deleting {Path}: {Message}",
+          error.Key,
+          error.Message
+        );
       }
     } while (await result.NextPageAsync());
 
     logger_.LogTrace(
-      "Finished deleting {FileCount} files matching {SearchPattern}", count,
-      search_pattern);
+      "Finished deleting {FileCount} files matching {SearchPattern}",
+      count,
+      search_pattern
+    );
     return count;
   }
 
@@ -380,11 +439,15 @@ public class MinioStorage : IDisposable {
     List<FileSpec> files = new();
     limit ??= int.MaxValue;
     PagedFileListResult result =
-      await GetPagedFileListAsync(limit.Value, search_pattern,
-                                  cancellation_token);
+      await GetPagedFileListAsync(
+        limit.Value,
+        search_pattern,
+        cancellation_token
+      );
     do {
       files.AddRange(result.files);
-    } while (result.has_more && files.Count < limit.Value &&
+    } while (result.has_more &&
+             files.Count < limit.Value &&
              await result.NextPageAsync());
 
     return files;
@@ -416,8 +479,12 @@ public class MinioStorage : IDisposable {
     }
 
     List<FileSpec> list =
-      (await GetFileListAsync(search_pattern, paging_limit, skip,
-                              cancellation_token)).ToList();
+      (await GetFileListAsync(
+         search_pattern,
+         paging_limit,
+         skip,
+         cancellation_token
+       )).ToList();
     bool has_more = false;
     if (list.Count == paging_limit) {
       has_more = true;
@@ -429,8 +496,12 @@ public class MinioStorage : IDisposable {
       has_more = has_more,
       files = list,
       next_page_func = has_more
-                         ? _ => GetFiles(search_pattern, page + 1, page_size,
-                                         cancellation_token)
+                         ? _ => GetFiles(
+                           search_pattern,
+                           page + 1,
+                           page_size,
+                           cancellation_token
+                         )
                          : null
     };
   }
@@ -446,16 +517,19 @@ public class MinioStorage : IDisposable {
     SearchCriteria criteria = GetRequestCriteria(search_pattern);
 
     logger_.LogTrace(
-      s => s.Property("SearchPattern", search_pattern).Property("Limit", limit)
+      s => s.Property("SearchPattern", search_pattern)
+            .Property("Limit", limit)
             .Property("Skip", skip),
       "Getting file list recursively matching {Prefix} and {Pattern}...",
-      criteria.prefix, criteria.pattern
+      criteria.prefix,
+      criteria.pattern
     );
     await foreach (Item? item in client.ListObjectsEnumAsync(
                      new ListObjectsArgs().WithBucket(bucket_)
                                           .WithPrefix(criteria.prefix)
                                           .WithRecursive(true),
-                     cancellation_token)) {
+                     cancellation_token
+                   )) {
       if (item.IsDir) {
         continue;
       }
@@ -476,12 +550,15 @@ public class MinioStorage : IDisposable {
       list = list.Take(limit.Value).ToList();
     }
 
-    return list.Select(blob => new FileSpec {
-      path = blob.Key,
-      size = (long)blob.Size,
-      modified = DateTime.Parse(blob.LastModified),
-      created = DateTime.Parse(blob.LastModified)
-    }).ToList();
+    return list.Select(
+                 blob => new FileSpec {
+                   path = blob.Key,
+                   size = (long)blob.Size,
+                   modified = DateTime.Parse(blob.LastModified),
+                   created = DateTime.Parse(blob.LastModified)
+                 }
+               )
+               .ToList();
   }
 
   private string NormalizePath(string path) {
@@ -505,7 +582,8 @@ public class MinioStorage : IDisposable {
     if (has_wildcard) {
       pattern_regex =
         new Regex(
-          $"^{Regex.Escape(normalized_search_pattern).Replace("\\*", ".*?")}$");
+          $"^{Regex.Escape(normalized_search_pattern).Replace("\\*", ".*?")}$"
+        );
       int slash_pos = normalized_search_pattern.LastIndexOf('/');
       prefix = slash_pos >= 0
                  ? normalized_search_pattern.Substring(0, slash_pos)
@@ -525,16 +603,20 @@ public class MinioStorage : IDisposable {
 
     string endpoint;
     bool secure;
-    if (connection.end_point.StartsWith("https://",
-                                        StringComparison
-                                          .OrdinalIgnoreCase)) {
+    if (connection.end_point.StartsWith(
+          "https://",
+          StringComparison
+            .OrdinalIgnoreCase
+        )) {
       endpoint = connection.end_point.Substring(8);
       secure = true;
     } else {
       endpoint =
-        connection.end_point.StartsWith("http://",
-                                        StringComparison
-                                          .OrdinalIgnoreCase)
+        connection.end_point.StartsWith(
+          "http://",
+          StringComparison
+            .OrdinalIgnoreCase
+        )
           ? connection.end_point.Substring(7)
           : connection.end_point;
       secure = false;
@@ -542,8 +624,10 @@ public class MinioStorage : IDisposable {
 
     IMinioClient? client = new MinioClient()
                            .WithEndpoint(endpoint)
-                           .WithCredentials(connection.access_key,
-                                            connection.secret_key);
+                           .WithCredentials(
+                             connection.access_key,
+                             connection.secret_key
+                           );
 
     if (!string.IsNullOrEmpty(connection.region)) {
       client.WithRegion(connection.region ?? string.Empty);

@@ -33,38 +33,54 @@ if (schedule_opts == null) {
 }
 
 IHost host = Host.CreateDefaultBuilder(args)
-                 .ConfigureServices(services => {
-                   services.AddTelemetry(registration);
-                   services.AddHostedService<Worker>();
-                   services.AddMassTransit(mt => {
-                     mt.UsingRabbitMq((ctx, cfg) => {
-                       cfg.SetupRabbitMq();
-                       cfg.ConfigureEndpoints(ctx);
-                     });
-                   });
-                   services.AddSingleton<IConnectionMultiplexer>(
-                     ConnectionMultiplexer.Connect(
-                       Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)));
-                   services.AddScoped<IApcDatabase, MongoDatabase>();
-                   services.AddSingleton<IApcCache, ApcCache>();
-                   services.AddScoped<IArtifactService, ArtifactService>();
+                 .ConfigureServices(
+                   services => {
+                     services.AddTelemetry(registration);
+                     services.AddHostedService<Worker>();
+                     services.AddMassTransit(
+                       mt => {
+                         mt.UsingRabbitMq(
+                           (ctx, cfg) => {
+                             cfg.SetupRabbitMq();
+                             cfg.ConfigureEndpoints(ctx);
+                           }
+                         );
+                       }
+                     );
+                     services.AddSingleton<IConnectionMultiplexer>(
+                       ConnectionMultiplexer.Connect(
+                         Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)
+                       )
+                     );
+                     services.AddScoped<IApcDatabase, MongoDatabase>();
+                     services.AddSingleton<IApcCache, ApcCache>();
+                     services.AddScoped<IArtifactService, ArtifactService>();
 
-                   services.AddQuartz(q => {
-                     q.AddJob<TrackingJob>(j => j.WithIdentity(
-                                             TrackingJob.S_KEY));
-                     foreach (ScheduleOptions opts in schedule_opts) {
-                       q.AddTrigger(t => {
-                         t.WithIdentity($"tracking-{opts.processor}", "apc");
-                         t.ForJob(TrackingJob.S_KEY);
-                         t.UsingJobData("processor", opts.processor);
-                         t.WithCronSchedule(opts.schedule);
-                       });
-                     }
-                   });
+                     services.AddQuartz(
+                       q => {
+                         q.AddJob<TrackingJob>(
+                           j => j.WithIdentity(TrackingJob.S_KEY)
+                         );
+                         foreach (ScheduleOptions opts in schedule_opts) {
+                           q.AddTrigger(
+                             t => {
+                               t.WithIdentity(
+                                 $"tracking-{opts.processor}",
+                                 "apc"
+                               );
+                               t.ForJob(TrackingJob.S_KEY);
+                               t.UsingJobData("processor", opts.processor);
+                               t.WithCronSchedule(opts.schedule);
+                             }
+                           );
+                         }
+                       }
+                     );
 
-                   services.AddQuartzHostedService(q => {
-                     q.WaitForJobsToComplete = true;
-                   });
-                 })
+                     services.AddQuartzHostedService(
+                       q => { q.WaitForJobsToComplete = true; }
+                     );
+                   }
+                 )
                  .Build();
 await host.RunAsync();

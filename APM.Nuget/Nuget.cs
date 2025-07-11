@@ -39,7 +39,8 @@ public class Nuget : INuget {
 
     if (versions == null) {
       throw new ArtifactTimeoutException(
-        $"Metadata fetch failed for {artifact.id}");
+        $"Metadata fetch failed for {artifact.id}"
+      );
     }
 
     foreach (IPackageSearchMetadata version in versions) {
