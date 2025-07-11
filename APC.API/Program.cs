@@ -49,6 +49,11 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(
 builder.Services.AddScoped<IApcDatabase, MongoDatabase>();
 builder.Services.AddSingleton<IApcCache, ApcCache>();
 builder.Services.AddScoped<IArtifactService, ArtifactService>();
+builder.Services.Configure<ForwardedHeadersOptions>(options => {
+  options.ForwardedHeaders =
+    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto |
+    ForwardedHeaders.XForwardedHost;
+});
 
 /* OIDC */
 builder.Services.AddOidcAuthentication();
@@ -57,11 +62,6 @@ builder.Services.AddOidcAuthentication();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-  options.ForwardedHeaders =
-    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -85,7 +85,6 @@ if (app.Environment.IsDevelopment()) {
   app.UseSwagger();
   app.UseSwaggerUI();
 }
-
 
 app.UseCors();
 app.UseSerilogRequestLogging();
