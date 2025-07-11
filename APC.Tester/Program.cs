@@ -12,6 +12,7 @@ using APM.OperatorHub;
 using APM.Php;
 using APM.Terraform;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
 using Polly.Timeout;
 
@@ -61,7 +62,7 @@ IGithubClient gh = sp.GetRequiredService<IGithubClient>();
 ITerraform tf = sp.GetRequiredService<ITerraform>();
 
 
-Artifact res = await tf.ProcessArtifact(new Artifact {
+var res = await tf.ProcessArtifact(new Artifact() {
   id = "vmware/vsphere"
 });
 
@@ -69,7 +70,7 @@ FileSystem fs = sp.GetRequiredService<FileSystem>();
 IPhp hub = sp.GetRequiredService<IPhp>();
 SkopeoClient sk = sp.GetRequiredService<SkopeoClient>();
 await fs.CreateDeltaLink("docker-archive",
-                         "docker-archive://docker.io/docker_archive_test_1-2-3-4.tar");
+                   "docker-archive://docker.io/docker_archive_test_1-2-3-4.tar");
 //await sk.CopyToTar("docker://docker.io/nginx:latest");
 
 Artifact artifact = new() {

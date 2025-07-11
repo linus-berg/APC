@@ -21,7 +21,7 @@
         <ProjectReference Include="..\APM.OperatorHub\APM.OperatorHub.csproj"/>
         <ProjectReference Include="..\APM.Php\APM.Php.csproj"/>
         <ProjectReference Include="..\APM.Pypi\APM.Pypi.csproj"/>
-        <ProjectReference Include="..\APM.Terraform\APM.Terraform.csproj"/>
+        <ProjectReference Include="..\APM.Terraform\APM.Terraform.csproj" />
     </ItemGroup>
 
     <ItemGroup>

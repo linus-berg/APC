@@ -7,12 +7,6 @@ public static class Configuration {
     {
       ApcVariable.APC_API_HOST, "http://localhost:4001"
     }, {
-      ApcVariable.APC_API_CORS, "http://localhost:3000"
-    }, {
-      ApcVariable.APC_OIDC_HOST, "http://localhost:8090/realms/master"
-    }, {
-      ApcVariable.APC_OIDC_CLIENT_ID, "apc"
-    }, {
       ApcVariable.APC_ACM_DIR, "/data/"
     }, {
       ApcVariable.APC_REDIS_HOST, "localhost"

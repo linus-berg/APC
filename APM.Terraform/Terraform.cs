@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.Json;
 using APC.Kernel.Exceptions;
 using APC.Kernel.Models;
 using APM.Terraform.Models;
@@ -20,8 +22,7 @@ public class Terraform : ITerraform {
     return artifact;
   }
 
-  private async Task ProcessArtifactVersions(Artifact artifact,
-                                             ProviderVersions? versions) {
+  private async Task ProcessArtifactVersions(Artifact artifact, ProviderVersions? versions) {
     if (versions?.versions == null) {
       return;
     }
@@ -37,7 +38,6 @@ public class Terraform : ITerraform {
       if (metadata == null) {
         continue;
       }
-
       ArtifactVersion version = new() {
         version = v.version
       };
@@ -50,8 +50,7 @@ public class Terraform : ITerraform {
 
   private async Task<ProviderVersions?> GetVersions(string id) {
     try {
-      return await client_.GetAsync<ProviderVersions>(
-               $"/v1/providers/{id}/versions");
+      return await client_.GetAsync<ProviderVersions>($"/v1/providers/{id}/versions");
     } catch (TimeoutException ex) {
       logger_.LogError("Timeout error: {Exception}", ex.ToString());
       throw new ArtifactTimeoutException($"{id} timed out!");
@@ -60,12 +59,9 @@ public class Terraform : ITerraform {
       throw new ArtifactMetadataException($"{id} metadata error!");
     }
   }
-
-  private async Task<ProviderVersionMetadata?> GetMetadata(
-    string id, string version) {
+  private async Task<ProviderVersionMetadata?> GetMetadata(string id, string version) {
     try {
-      return await client_.GetAsync<ProviderVersionMetadata>(
-               $"/v1/providers/{id}/{version}/download/linux/amd64");
+      return await client_.GetAsync<ProviderVersionMetadata>($"/v1/providers/{id}/{version}/download/linux/amd64");
     } catch (TimeoutException ex) {
       logger_.LogError("Timeout error: {Exception}", ex.ToString());
       throw new ArtifactTimeoutException($"{id} timed out!");

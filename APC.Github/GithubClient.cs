@@ -6,9 +6,11 @@ namespace APC.Github;
 
 public class GithubClient : IGithubClient {
   private const string C_API_ = "https://api.github.com";
-  private const int C_MAX_RELEASES_ = 100;
   private readonly RestClient client_ = new(C_API_);
-
+  
+  private const int C_PAGE_SIZE_ = 10;
+  private const int C_MAX_RELEASES_ = 100;
+  
   public GithubClient() {
     string? api_key =
       Environment.GetEnvironmentVariable("GITHUB_API_KEY");
@@ -21,17 +23,14 @@ public class GithubClient : IGithubClient {
   }
 
   public async Task<List<GithubRelease>> GetReleases(string repo) {
-    List<GithubRelease> releases = new();
+    List<GithubRelease> releases = new List<GithubRelease>();
     for (int page = 1; releases.Count < C_MAX_RELEASES_; page++) {
-      List<GithubRelease> page_releases = await GetReleasePage(repo, page);
+      List<GithubRelease> page_releases = await GetReleasePage(repo, page, C_PAGE_SIZE_);
       if (page_releases.Count == 0) {
         break;
       }
-
-      releases.AddRange(
-        page_releases.Where(release => !release.prerelease && !release.draft));
+      releases.AddRange(page_releases.Where(release => !release.prerelease && !release.draft));
     }
-
     return releases;
   }
 

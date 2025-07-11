@@ -28,14 +28,13 @@ public class ArtifactController : ControllerBase {
 
   // GET: api/Artifact
   [HttpGet("all")]
-  public async Task<IEnumerable<ArtifactOutput>> Get(
-    [FromQuery] string processor,
-    [FromQuery] bool only_roots) {
+  public async Task<IEnumerable<ArtifactOutput>> Get([FromQuery] string processor,
+                                               [FromQuery] bool only_roots) {
     IEnumerable<Artifact> artifacts =
       await database_.GetArtifacts(processor, only_roots);
-    List<ArtifactOutput> artifact_outputs = new();
+    List<ArtifactOutput> artifact_outputs = new List<ArtifactOutput>();
     foreach (Artifact artifact in artifacts) {
-      artifact_outputs.Add(new ArtifactOutput {
+      artifact_outputs.Add(new ArtifactOutput() {
         id = artifact.id,
         processor = artifact.processor,
         filter = artifact.filter,
@@ -45,20 +44,17 @@ public class ArtifactController : ControllerBase {
         config = artifact.config
       });
     }
-
     return artifact_outputs;
   }
-
+  
   // GET: api/Artifact
   [HttpGet]
-  public async Task<ActionResult<Artifact>> GetById(
-    [FromQuery] string processor,
-    [FromQuery] string id) {
+  public async Task<ActionResult<Artifact>> GetById([FromQuery] string processor,
+                                                    [FromQuery] string id) {
     Artifact? artifact = await database_.GetArtifact(id, processor);
     if (artifact == null) {
       return NotFound("Artifact not found");
     }
-
     return Ok(artifact);
   }
 
