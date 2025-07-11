@@ -1,3 +1,4 @@
+using System.Net;
 using APC.API;
 using APC.Infrastructure;
 using APC.Infrastructure.Services;
@@ -57,10 +58,10 @@ builder.Services.AddOidcAuthentication();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
+builder.Services.Configure<ForwardedHeadersOptions>(options => {
   options.ForwardedHeaders =
-    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto |
+    ForwardedHeaders.XForwardedHost;
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
