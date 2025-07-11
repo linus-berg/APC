@@ -26,6 +26,7 @@ public static class ConfigureAuthentication {
       options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
       options.ResponseType = OpenIdConnectResponseType.Code;
+
       options.Scope.Clear();
       options.Scope.Add("openid");
       options.Scope.Add("profile");
