@@ -3,7 +3,7 @@ name: Build and Publish
 on:
   # run it on push to the default repository branch
   push:
-    branches: [master]
+    branches: [master, development]
     paths-ignore:
       - '**/README.md'
       - '**/*.drawio.svg'
@@ -118,9 +118,10 @@ jobs:
           # Note: tags has to be all lower-case
           tags: |
             ghcr.io/linus-berg/apc/${{ matrix.services.name }}:latest
-            ghcr.io/linus-berg/apc/${{ matrix.services.name }}:${{ github.sha }}
+            ghcr.io/linus-berg/apc/${{ matrix.services.name }}:${{ github.ref_name }}-${{ github.sha }}
           # build on feature branches, push only on main branch
-          push: ${{ github.ref == 'refs/heads/master' }}
+          push: ${{ github.ref_name == 'master' || github.ref_name == 'development' }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+   
