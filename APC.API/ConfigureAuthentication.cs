@@ -24,14 +24,7 @@ public static class ConfigureAuthentication {
         Configuration.GetApcVar(ApcVariable.APC_OIDC_CLIENT_SECRET);
 
       options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-      options.Events = new OpenIdConnectEvents() {
-        OnRedirectToIdentityProvider = context => {
-          var builder = new UriBuilder(context.ProtocolMessage.RedirectUri);
-          builder.Scheme = "https";
-          context.ProtocolMessage.RedirectUri = builder.ToString();
-          return Task.FromResult(0);
-        }
-      };
+
       options.ResponseType = OpenIdConnectResponseType.Code;
       options.Scope.Clear();
       options.Scope.Add("openid");
