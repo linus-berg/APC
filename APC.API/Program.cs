@@ -51,7 +51,8 @@ builder.Services.AddSingleton<IApcCache, ApcCache>();
 builder.Services.AddScoped<IArtifactService, ArtifactService>();
 builder.Services.Configure<ForwardedHeadersOptions>(options => {
   options.ForwardedHeaders =
-    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto |
+    ForwardedHeaders.XForwardedFor |
+    ForwardedHeaders.XForwardedProto |
     ForwardedHeaders.XForwardedHost;
 });
 

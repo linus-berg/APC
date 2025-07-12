@@ -47,7 +47,7 @@ public static class Configuration {
     return has_otel_host;
   }
 
-  public static string? GetApcVar(ApcVariable variable) {
+  public static string GetApcVar(ApcVariable variable) {
     string? value = Environment.GetEnvironmentVariable(variable.ToString());
 
     /* If variable is set */
