@@ -10,13 +10,15 @@ registration.AddEndpoint("http");
 registration.AddEndpoint("https");
 
 IHost host = Host.CreateDefaultBuilder(args)
-                 .ConfigureServices(services => {
-                   services.AddTelemetry(registration);
-                   services.AddStorage();
-                   services.AddSingleton<FileSystem>();
-                   services.Register(registration);
-                   services.AddHostedService<Worker>();
-                 })
+                 .ConfigureServices(
+                   services => {
+                     services.AddTelemetry(registration);
+                     services.AddStorage();
+                     services.AddSingleton<FileSystem>();
+                     services.Register(registration);
+                     services.AddHostedService<Worker>();
+                   }
+                 )
                  .Build();
 
 await host.RunAsync();

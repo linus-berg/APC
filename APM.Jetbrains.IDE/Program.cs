@@ -7,12 +7,14 @@ using APM.Jetbrains.IDE;
 ModuleRegistration registration = new(ModuleType.APM, typeof(Processor));
 registration.AddEndpoint("jetbrains-ide");
 IHost host = Host.CreateDefaultBuilder(args)
-                 .ConfigureServices(services => {
-                   services.AddTelemetry(registration);
-                   services.AddSingleton<IJetbrains, Jetbrains>();
-                   services.Register(registration);
-                   services.AddHostedService<Worker>();
-                 })
+                 .ConfigureServices(
+                   services => {
+                     services.AddTelemetry(registration);
+                     services.AddSingleton<IJetbrains, Jetbrains>();
+                     services.Register(registration);
+                     services.AddHostedService<Worker>();
+                   }
+                 )
                  .Build();
 
 await host.RunAsync();

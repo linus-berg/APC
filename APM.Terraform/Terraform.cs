@@ -51,7 +51,8 @@ public class Terraform : ITerraform {
   private async Task<ProviderVersions?> GetVersions(string id) {
     try {
       return await client_.GetAsync<ProviderVersions>(
-               $"/v1/providers/{id}/versions");
+               $"/v1/providers/{id}/versions"
+             );
     } catch (TimeoutException ex) {
       logger_.LogError("Timeout error: {Exception}", ex.ToString());
       throw new ArtifactTimeoutException($"{id} timed out!");
@@ -65,7 +66,8 @@ public class Terraform : ITerraform {
     string id, string version) {
     try {
       return await client_.GetAsync<ProviderVersionMetadata>(
-               $"/v1/providers/{id}/{version}/download/linux/amd64");
+               $"/v1/providers/{id}/{version}/download/linux/amd64"
+             );
     } catch (TimeoutException ex) {
       logger_.LogError("Timeout error: {Exception}", ex.ToString());
       throw new ArtifactTimeoutException($"{id} timed out!");

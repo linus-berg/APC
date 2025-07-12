@@ -14,28 +14,34 @@ public static class HostBuilderExtensions {
       return builder;
     }
 
-    builder.ConfigureLogging(logs => {
-      logs.ClearProviders();
-      logs.AddOpenTelemetry(otel => {
-        otel.IncludeScopes = true;
-        ResourceBuilder resource_builder =
-          ResourceBuilder
-            .CreateDefault()
-            .AddService(registration.name);
-        otel.SetResourceBuilder(resource_builder)
-            .AddOtlpExporter(exporter => {
-              exporter.Endpoint =
-                new Uri(
+    builder.ConfigureLogging(
+      logs => {
+        logs.ClearProviders();
+        logs.AddOpenTelemetry(
+          otel => {
+            otel.IncludeScopes = true;
+            ResourceBuilder resource_builder =
+              ResourceBuilder
+                .CreateDefault()
+                .AddService(registration.name);
+            otel.SetResourceBuilder(resource_builder)
+                .AddOtlpExporter(
+                  exporter => {
+                    exporter.Endpoint =
+                      new Uri(
 #pragma warning disable CS8604 // Possible null reference argument.
-                  Configuration.GetApcVar(
-                    ApcVariable.APC_OTEL_HOST));
+                        Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST)
+                      );
 #pragma warning restore CS8604 // Possible null reference argument.
-              exporter.Protocol =
-                OtlpExportProtocol.Grpc;
-            })
-            .AddConsoleExporter();
-      });
-    });
+                    exporter.Protocol =
+                      OtlpExportProtocol.Grpc;
+                  }
+                )
+                .AddConsoleExporter();
+          }
+        );
+      }
+    );
     return builder;
   }
 }

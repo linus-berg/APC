@@ -15,12 +15,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Timeout;
 
-HttpClient hc = new(new HttpClientHandler {
-  /*Proxy = new WebProxy() {
-    Address = new Uri(Environment.GetEnvironmentVariable("HTTP_PROXY"))
-  },*/
-  AllowAutoRedirect = true
-});
+HttpClient hc = new(
+  new HttpClientHandler {
+    /*Proxy = new WebProxy() {
+      Address = new Uri(Environment.GetEnvironmentVariable("HTTP_PROXY"))
+    },*/
+    AllowAutoRedirect = true
+  }
+);
 hc.DefaultRequestHeaders.Add("User-Agent", "APC/1.0");
 /*HttpResponseMessage res = await hc.GetAsync(
                             "https://api.github.com/repos/Shardj/zf1-future/zipball/b87c1507cd10c01d9b3b1bc4a0cae32f6a9c6d6c");
@@ -32,16 +34,18 @@ HttpResponseMessage res2 =
 ServiceCollection services = new();
 services.AddStorage();
 // Define a resilience pipeline with the name "my-pipeline"
-services.AddResiliencePipeline<string, bool>("git-timeout",
-                                             builder => {
-                                               builder.AddTimeout(
-                                                 new
-                                                   TimeoutStrategyOptions {
-                                                     Timeout =
-                                                       TimeSpan.FromMinutes(
-                                                         10)
-                                                   });
-                                             });
+services.AddResiliencePipeline<string, bool>(
+  "git-timeout",
+  builder => {
+    builder.AddTimeout(
+      new
+        TimeoutStrategyOptions {
+          Timeout =
+            TimeSpan.FromMinutes(10)
+        }
+    );
+  }
+);
 
 services.AddLogging();
 services.AddSingleton<FileSystem>();
@@ -61,15 +65,19 @@ IGithubClient gh = sp.GetRequiredService<IGithubClient>();
 ITerraform tf = sp.GetRequiredService<ITerraform>();
 
 
-Artifact res = await tf.ProcessArtifact(new Artifact {
-  id = "vmware/vsphere"
-});
+Artifact res = await tf.ProcessArtifact(
+                 new Artifact {
+                   id = "vmware/vsphere"
+                 }
+               );
 
 FileSystem fs = sp.GetRequiredService<FileSystem>();
 IPhp hub = sp.GetRequiredService<IPhp>();
 SkopeoClient sk = sp.GetRequiredService<SkopeoClient>();
-await fs.CreateDeltaLink("docker-archive",
-                         "docker-archive://docker.io/docker_archive_test_1-2-3-4.tar");
+await fs.CreateDeltaLink(
+  "docker-archive",
+  "docker-archive://docker.io/docker_archive_test_1-2-3-4.tar"
+);
 //await sk.CopyToTar("docker://docker.io/nginx:latest");
 
 Artifact artifact = new() {

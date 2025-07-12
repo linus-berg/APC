@@ -29,7 +29,8 @@ public class GithubClient : IGithubClient {
       }
 
       releases.AddRange(
-        page_releases.Where(release => !release.prerelease && !release.draft));
+        page_releases.Where(release => !release.prerelease && !release.draft)
+      );
     }
 
     return releases;
@@ -42,7 +43,8 @@ public class GithubClient : IGithubClient {
                $"/repos/{repo}/releases?page={page}&per_page={page_size}",
                new {
                  page
-               });
+               }
+             );
     } catch (Exception e) {
       Console.WriteLine(e);
       throw;

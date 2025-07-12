@@ -15,9 +15,13 @@ public class RSync {
   }
 
   private async Task<bool> Archive(string remote, string bucket) {
-    return await Bin.Execute("rsync-os", args => {
-      args.Add(remote);
-      args.Add(bucket);
-    }, logger_);
+    return await Bin.Execute(
+             "rsync-os",
+             args => {
+               args.Add(remote);
+               args.Add(bucket);
+             },
+             logger_
+           );
   }
 }

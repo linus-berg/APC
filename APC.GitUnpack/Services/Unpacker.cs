@@ -16,44 +16,49 @@ public class Unpacker {
               throw new InvalidOperationException("GIT_BUNDLE_INPUT not set.");
     archive_dir_ = Environment.GetEnvironmentVariable("GIT_BUNDLE_ARCHIVE") ??
                    throw new InvalidOperationException(
-                     "GIT_BUNDLE_ARCHIVE not set.");
+                     "GIT_BUNDLE_ARCHIVE not set."
+                   );
     repo_dir_ = Environment.GetEnvironmentVariable("GIT_BUNDLE_REPOS") ??
                 throw new InvalidOperationException(
-                  "GIT_BUNDLE_REPOS not set.");
+                  "GIT_BUNDLE_REPOS not set."
+                );
   }
 
   public async Task<int> ProcessBundles(CancellationToken token) {
     IEnumerable<GitBundle> bundles =
       Directory.GetFiles(in_dir_, "*", SearchOption.AllDirectories)
-               .Select(f => {
-                 string relative_path = Path.GetRelativePath(in_dir_, f);
-                 string? directory = Path.GetDirectoryName(relative_path);
-                 if (string.IsNullOrEmpty(directory)) {
-                   throw new ArgumentException(
-                     $"Could not get directory of ${relative_path}");
+               .Select(
+                 f => {
+                   string relative_path = Path.GetRelativePath(in_dir_, f);
+                   string? directory = Path.GetDirectoryName(relative_path);
+                   if (string.IsNullOrEmpty(directory)) {
+                     throw new ArgumentException(
+                       $"Could not get directory of ${relative_path}"
+                     );
+                   }
+
+                   return new GitBundle(f, directory);
                  }
-
-                 return new GitBundle(f, directory);
-               });
+               );
 
 
-    await Parallel.ForEachAsync(bundles, token,
-                                async (git_bundle, cancellation_token) => {
-                                  /* Order by To date */
-                                  if (!Path.GetFileName(git_bundle.filepath)
-                                           .StartsWith("__IGNORE__")) {
-                                    try {
-                                      if (!await TryApplyBundle(
-                                             git_bundle, cancellation_token)) {
-                                        logger_.LogError(
-                                          $"Failed to apply {git_bundle.filepath}");
-                                      }
-                                    } catch (Exception e) {
-                                      logger_.LogError(
-                                        $"Failed to apply {git_bundle.filepath}: {e}");
-                                    }
-                                  }
-                                });
+    await Parallel.ForEachAsync(
+      bundles,
+      token,
+      async (git_bundle, cancellation_token) => {
+        /* Order by To date */
+        if (!Path.GetFileName(git_bundle.filepath)
+                 .StartsWith("__IGNORE__")) {
+          try {
+            if (!await TryApplyBundle(git_bundle, cancellation_token)) {
+              logger_.LogError($"Failed to apply {git_bundle.filepath}");
+            }
+          } catch (Exception e) {
+            logger_.LogError($"Failed to apply {git_bundle.filepath}: {e}");
+          }
+        }
+      }
+    );
 
     return 0;
   }
@@ -70,20 +75,30 @@ public class Unpacker {
     if (!Directory.Exists(bundle.repository_dir)) {
       string dir = Path.Join(repo_dir_, bundle.owner);
       Directory.CreateDirectory(dir);
-      success = await Bin.Execute("git", args => {
-        args.Add("clone");
-        args.Add("--mirror");
-        args.Add(bundle.filepath);
-        args.Add(bundle.repository);
-      }, logger_, dir, token: token);
+      success = await Bin.Execute(
+                  "git",
+                  args => {
+                    args.Add("clone");
+                    args.Add("--mirror");
+                    args.Add(bundle.filepath);
+                    args.Add(bundle.repository);
+                  },
+                  logger_,
+                  dir,
+                  token: token
+                );
     } else {
-      success = await Bin.Execute("git",
-                                  args => {
-                                    args.Add("remote");
-                                    args.Add("update");
-                                  },
-                                  logger_,
-                                  bundle.repository_dir, 0, token);
+      success = await Bin.Execute(
+                  "git",
+                  args => {
+                    args.Add("remote");
+                    args.Add("update");
+                  },
+                  logger_,
+                  bundle.repository_dir,
+                  0,
+                  token
+                );
     }
 
     if (success) {
@@ -102,11 +117,18 @@ public class Unpacker {
 
     /* If incremental bundle validate bundle */
     bool is_valid =
-      await Bin.Execute("git", args => {
-        args.Add("bundle");
-        args.Add("verify");
-        args.Add(bundle.filepath);
-      }, logger_, bundle.repository_dir, 0, token);
+      await Bin.Execute(
+        "git",
+        args => {
+          args.Add("bundle");
+          args.Add("verify");
+          args.Add(bundle.filepath);
+        },
+        logger_,
+        bundle.repository_dir,
+        0,
+        token
+      );
     return is_valid;
   }
 
@@ -121,17 +143,27 @@ public class Unpacker {
 
   private async Task UpdateServerInfo(GitBundle bundle,
                                       CancellationToken token = default) {
-    await Bin.Execute("git",
-                      args => { args.Add("update-server-info"); },
-                      logger_, bundle.repository_dir, 0,
-                      token);
+    await Bin.Execute(
+      "git",
+      args => { args.Add("update-server-info"); },
+      logger_,
+      bundle.repository_dir,
+      0,
+      token
+    );
   }
 
   private void MoveToArchive(GitBundle bundle) {
     string dir = Path.Join(archive_dir_, bundle.owner);
     Directory.CreateDirectory(dir);
-    File.Move(bundle.filepath,
-              Path.Join(archive_dir_, bundle.owner,
-                        Path.GetFileName(bundle.filepath)), true);
+    File.Move(
+      bundle.filepath,
+      Path.Join(
+        archive_dir_,
+        bundle.owner,
+        Path.GetFileName(bundle.filepath)
+      ),
+      true
+    );
   }
 }

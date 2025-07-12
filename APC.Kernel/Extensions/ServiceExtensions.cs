@@ -20,31 +20,42 @@ public static class ServiceExtensions {
     void ConfigureRsc(ResourceBuilder r) {
       r.AddService(
         registration.name,
-        serviceVersion: "master");
+        serviceVersion: "master"
+      );
       r.AddTelemetrySdk();
       r.AddEnvironmentVariableDetector();
     }
 
-    s.AddOpenTelemetry().ConfigureResource(ConfigureRsc)
-     .WithTracing(builder => {
-       builder.AddSource(DiagnosticHeaders.DefaultListenerName);
-       builder.AddHttpClientInstrumentation();
-       builder.AddRedisInstrumentation();
-       builder.AddOtlpExporter(cfg => {
-         cfg.Endpoint =
-           new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
-         cfg.Protocol = OtlpExportProtocol.Grpc;
-       });
-     }).WithMetrics(builder => {
-       builder.AddHttpClientInstrumentation();
-       builder.AddRuntimeInstrumentation();
-       builder.AddMeter(InstrumentationOptions.MeterName);
-       builder.AddOtlpExporter(cfg => {
-         cfg.Endpoint =
-           new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
-         cfg.Protocol = OtlpExportProtocol.Grpc;
-       });
-     });
+    s.AddOpenTelemetry()
+     .ConfigureResource(ConfigureRsc)
+     .WithTracing(
+       builder => {
+         builder.AddSource(DiagnosticHeaders.DefaultListenerName);
+         builder.AddHttpClientInstrumentation();
+         builder.AddRedisInstrumentation();
+         builder.AddOtlpExporter(
+           cfg => {
+             cfg.Endpoint =
+               new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
+             cfg.Protocol = OtlpExportProtocol.Grpc;
+           }
+         );
+       }
+     )
+     .WithMetrics(
+       builder => {
+         builder.AddHttpClientInstrumentation();
+         builder.AddRuntimeInstrumentation();
+         builder.AddMeter(InstrumentationOptions.MeterName);
+         builder.AddOtlpExporter(
+           cfg => {
+             cfg.Endpoint =
+               new Uri(Configuration.GetApcVar(ApcVariable.APC_OTEL_HOST));
+             cfg.Protocol = OtlpExportProtocol.Grpc;
+           }
+         );
+       }
+     );
     return s;
   }
 }

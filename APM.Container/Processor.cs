@@ -32,8 +32,10 @@ public class Processor : IProcessor {
         ArtifactVersion version = new() {
           version = tag
         };
-        version.AddFile($"{artifact.id}:{tag}",
-                        $"docker://{list_tags.Repository}:{tag}");
+        version.AddFile(
+          $"{artifact.id}:{tag}",
+          $"docker://{list_tags.Repository}:{tag}"
+        );
         artifact.AddVersion(version);
       }
     }

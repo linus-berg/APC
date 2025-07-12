@@ -23,8 +23,10 @@ public class IngestConsumer : IConsumer<ArtifactIngestRequest> {
     /* Run as init */
     ArtifactIngestRequest request = context.Message;
     await aps_.Process(request.artifact);
-    logger_.LogInformation("INGESTED:{ArtifactProcessor}:{ArtifactId}",
-                           request.artifact.processor,
-                           request.artifact.id);
+    logger_.LogInformation(
+      "INGESTED:{ArtifactProcessor}:{ArtifactId}",
+      request.artifact.processor,
+      request.artifact.id
+    );
   }
 }

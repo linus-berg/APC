@@ -11,27 +11,35 @@ namespace APC.API.Controllers;
 public class AuthController : ControllerBase {
   [HttpGet("login")]
   public IActionResult Login([FromQuery] string returnUrl = "/") {
-    return Challenge(new AuthenticationProperties {
-      RedirectUri = returnUrl
-    }, OpenIdConnectDefaults.AuthenticationScheme);
+    return Challenge(
+      new AuthenticationProperties {
+        RedirectUri = returnUrl
+      },
+      OpenIdConnectDefaults.AuthenticationScheme
+    );
   }
 
   [HttpGet("logout")]
   public IActionResult Logout() {
-    return SignOut(new AuthenticationProperties {
-                     RedirectUri = "/"
-                   }, CookieAuthenticationDefaults.AuthenticationScheme,
-                   OpenIdConnectDefaults.AuthenticationScheme);
+    return SignOut(
+      new AuthenticationProperties {
+        RedirectUri = "/"
+      },
+      CookieAuthenticationDefaults.AuthenticationScheme,
+      OpenIdConnectDefaults.AuthenticationScheme
+    );
   }
 
   [Authorize]
   [HttpGet("me")]
   public IActionResult Me() {
-    return Ok(new {
-      name = User.Identity?.Name,
-      roles = User.Claims
-                  .Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType)
-                  .Select(c => c.Value)
-    });
+    return Ok(
+      new {
+        name = User.Identity?.Name,
+        roles = User.Claims
+                    .Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType)
+                    .Select(c => c.Value)
+      }
+    );
   }
 }

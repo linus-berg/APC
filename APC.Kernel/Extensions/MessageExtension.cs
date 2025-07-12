@@ -11,17 +11,21 @@ public static class MessageExtension {
       location = location,
       module = processor
     };
-    await ctx.Send(new Uri($"queue:{request.GetCollectorModule()}"),
-                   request);
+    await ctx.Send(
+      new Uri($"queue:{request.GetCollectorModule()}"),
+      request
+    );
   }
 
   public static async Task ProcessorReply(
     this ConsumeContext<ArtifactProcessRequest> context,
     Artifact artifact) {
-    await context.Send(Endpoints.S_APC_INGEST_PROCESSED,
-                       new ArtifactProcessedRequest {
-                         context = context.Message.ctx,
-                         artifact = artifact
-                       });
+    await context.Send(
+      Endpoints.S_APC_INGEST_PROCESSED,
+      new ArtifactProcessedRequest {
+        context = context.Message.ctx,
+        artifact = artifact
+      }
+    );
   }
 }

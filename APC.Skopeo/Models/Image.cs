@@ -20,7 +20,9 @@ public class Image {
 
   private string GetRepository() {
     Uri uri = new(Uri);
-    return uri.GetComponents(UriComponents.Host | UriComponents.Path,
-                             UriFormat.Unescaped);
+    return uri.GetComponents(
+      UriComponents.Host | UriComponents.Path,
+      UriFormat.Unescaped
+    );
   }
 }

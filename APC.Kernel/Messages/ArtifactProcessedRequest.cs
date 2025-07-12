@@ -14,10 +14,12 @@ public class ArtifactProcessedRequest {
 
   public void AddCollectRequest(string location, string module,
                                 bool force = false) {
-    collect_requests.Add(new ArtifactCollectRequest {
-      module = module,
-      location = location,
-      force = force
-    });
+    collect_requests.Add(
+      new ArtifactCollectRequest {
+        module = module,
+        location = location,
+        force = force
+      }
+    );
   }
 }

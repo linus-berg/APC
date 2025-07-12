@@ -32,7 +32,9 @@ public class FileSystem {
   public async Task<PagedFileListResult> GetPagedFileList(
     string search_pattern, int page_size = 10000) {
     return await storage_backend_.GetPagedFileListAsync(
-             page_size, search_pattern);
+             page_size,
+             search_pattern
+           );
   }
 
   public async Task<bool> Delete(string path) {
@@ -55,15 +57,23 @@ public class FileSystem {
     return await storage_pipeline_.ExecuteAsync(
              static async (state, _) =>
                await state.storage_backend_.SaveFileAsync(
-                 state.path, state.content), (storage_backend_, path, content));
+                 state.path,
+                 state.content
+               ),
+             (storage_backend_, path, content)
+           );
   }
 
   public async Task<bool> PutFile(string path, Stream stream) {
     return await storage_pipeline_.ExecuteAsync(
              static async (state, token) =>
                await state.storage_backend_.SaveFileAsync(
-                 state.path, state.stream, token),
-             (storage_backend_, path, stream));
+                 state.path,
+                 state.stream,
+                 token
+               ),
+             (storage_backend_, path, stream)
+           );
   }
 
 
