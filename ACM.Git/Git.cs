@@ -165,6 +165,20 @@ public class Git {
         );
       }
     }
+    
+    /* Always delete git bundle at the end */
+    logger_.LogInformation("Deleting {BundleFilePath}", bundle_file_path);
+    if (File.Exists(bundle_file_path)) {
+      try {
+        File.Delete(bundle_file_path);
+      } catch (Exception ex) {
+        logger_.LogError(
+          ex,
+          "Could not delete {BundleFilePath}",
+          bundle_file_path
+        );
+      }
+    }
   }
 
   private async Task<bool> PushToStorage(string bundle_file_path) {
