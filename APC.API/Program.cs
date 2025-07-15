@@ -59,10 +59,14 @@ builder.Services.AddSingleton<IApcCache, ApcCache>();
 builder.Services.AddScoped<IArtifactService, ArtifactService>();
 builder.Services.Configure<ForwardedHeadersOptions>(
   options => {
+    /* Allow any proxy */
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
     options.ForwardedHeaders =
       ForwardedHeaders.XForwardedFor |
       ForwardedHeaders.XForwardedProto |
       ForwardedHeaders.XForwardedHost;
+    
   }
 );
 
