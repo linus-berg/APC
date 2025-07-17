@@ -8,7 +8,8 @@
       "applicationUrl": "https://localhost:4000;http://localhost:4001;http://localhost:8004",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "APC_OIDC_CLIENT_SECRET": "XHrsCr9wHfDp2YbWTyYp23wrgUHZlJiO",
+        "APC_API_CORS": "https://api.apc.se",
+        "APC_OIDC_CLIENT_SECRET": "4ohC3binRjjEvQNaHoNYRxUresknxUAM",
         "APC_RABBIT_MQ_HOST": "localhost",
         "APC_RABBIT_MQ_USER": "guest",
         "APC_RABBIT_MQ_PASS": "guest",
