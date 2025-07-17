@@ -14,38 +14,46 @@ using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTelemetry(
-  new ModuleRegistration(ModuleType.APC, typeof(IHost)));
+  new ModuleRegistration(ModuleType.APC, typeof(IHost))
+);
 
-builder.Host.UseSerilog((context, configuration) => {
-  configuration.Enrich.FromLogContext();
-  configuration.MinimumLevel.Override("Microsoft", LogEventLevel.Information);
-  configuration.WriteTo.Console();
-  configuration.WriteTo.File(
-    Path.Combine(
-      Environment.GetEnvironmentVariable("APC_LOGS"),
-      "apc_api.log"));
-});
+builder.Host.UseSerilog(
+  (context, configuration) => {
+    configuration.Enrich.FromLogContext();
+    configuration.MinimumLevel.Override("Microsoft", LogEventLevel.Information);
+    configuration.WriteTo.Console();
+    configuration.WriteTo.File(
+      Path.Combine(
+        Environment.GetEnvironmentVariable("APC_LOGS"),
+        "apc_api.log"
+      )
+    );
+  }
+);
 
 // Add services to the container.
-builder.Services.AddMassTransit(b => {
-  b.UsingRabbitMq((ctx, cfg) => {
-    cfg.Host(
-      Configuration.GetApcVar(
-        ApcVariable.APC_RABBIT_MQ_HOST), "/",
-      h => {
-        h.Username(
-          Configuration.GetApcVar(
-            ApcVariable.APC_RABBIT_MQ_USER));
-        h.Password(
-          Configuration.GetApcVar(
-            ApcVariable.APC_RABBIT_MQ_PASS));
-      });
-    cfg.ConfigureEndpoints(ctx);
-  });
-});
+builder.Services.AddMassTransit(
+  b => {
+    b.UsingRabbitMq(
+      (ctx, cfg) => {
+        cfg.Host(
+          Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_HOST),
+          "/",
+          h => {
+            h.Username(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_USER));
+            h.Password(Configuration.GetApcVar(ApcVariable.APC_RABBIT_MQ_PASS));
+          }
+        );
+        cfg.ConfigureEndpoints(ctx);
+      }
+    );
+  }
+);
 builder.Services.AddSingleton<IConnectionMultiplexer>(
   ConnectionMultiplexer.Connect(
-    Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)));
+    Configuration.GetApcVar(ApcVariable.APC_REDIS_HOST)
+  )
+);
 builder.Services.AddScoped<IApcDatabase, MongoDatabase>();
 builder.Services.AddSingleton<IApcCache, ApcCache>();
 builder.Services.AddScoped<IArtifactService, ArtifactService>();
@@ -53,10 +61,10 @@ builder.Services.AddScoped<IArtifactService, ArtifactService>();
 /* keycloak */
 builder.Host.ConfigureKeycloakConfigurationSource();
 
-builder.Services.AddKeycloakAuthentication(builder.Configuration,
-                                           o => {
-                                             o.RequireHttpsMetadata = false;
-                                           });
+builder.Services.AddKeycloakAuthentication(
+  builder.Configuration,
+  o => { o.RequireHttpsMetadata = false; }
+);
 builder.Services.AddKeycloakAuthorization(builder.Configuration);
 
 builder.Services.AddHttpContextAccessor();
@@ -73,11 +81,13 @@ if (app.Environment.IsDevelopment()) {
   app.UseSwaggerUI();
 }
 
-app.UseCors(b => {
-  b.AllowAnyOrigin();
-  b.AllowAnyHeader();
-  b.AllowAnyMethod();
-});
+app.UseCors(
+  b => {
+    b.AllowAnyOrigin();
+    b.AllowAnyHeader();
+    b.AllowAnyMethod();
+  }
+);
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();

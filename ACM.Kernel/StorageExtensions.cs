@@ -10,12 +10,16 @@ public static class StorageExtensions {
   public static IServiceCollection AddStorage(
     this IServiceCollection services) {
     services.AddResiliencePipeline<string, bool>(
-      "storage-pipeline", builder => {
-        builder.AddRetry(new RetryStrategyOptions<bool> {
-          Delay = TimeSpan.FromSeconds(5),
-          MaxRetryAttempts = 5
-        });
-      });
+      "storage-pipeline",
+      builder => {
+        builder.AddRetry(
+          new RetryStrategyOptions<bool> {
+            Delay = TimeSpan.FromSeconds(5),
+            MaxRetryAttempts = 5
+          }
+        );
+      }
+    );
     /* SETUP STORAGE */
     MinioConnectionBuilder connection = new();
 

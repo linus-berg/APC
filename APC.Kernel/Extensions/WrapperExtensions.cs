@@ -9,8 +9,9 @@ public static class WrapperExtensions {
     StringBuilder sb = new();
     StringBuilder sb_err = new();
     Command final_cmd =
-      cmd | (PipeTarget.ToStringBuilder(sb),
-             PipeTarget.ToStringBuilder(sb_err));
+      cmd |
+      (PipeTarget.ToStringBuilder(sb),
+       PipeTarget.ToStringBuilder(sb_err));
     try {
       await final_cmd.ExecuteAsync();
     } catch (Exception e) {

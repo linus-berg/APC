@@ -57,7 +57,9 @@ public class Maven : IMaven {
       List<string> files = search[version];
       foreach (string file in files) {
         artifact_version.AddFile(
-          file, GetFile(group_id, artifact.id, version, file));
+          file,
+          GetFile(group_id, artifact.id, version, file)
+        );
       }
 
       await AddDependencies(artifact, project, properties);
@@ -76,7 +78,8 @@ public class Maven : IMaven {
     int start = 0;
     do {
       MavenSearch search = await mvn_search_.GetJsonAsync<MavenSearch>(
-                             $"/solrsearch/select?q=g:{group}+AND+a:{id}&core=gav&rows=200&wt=json&start={start}");
+                             $"/solrsearch/select?q=g:{group}+AND+a:{id}&core=gav&rows=200&wt=json&start={start}"
+                           );
       count = search.response.docs.Count;
       start += 200;
 
@@ -114,8 +117,13 @@ public class Maven : IMaven {
 
   public string GetFile(string group, string id, string version,
                         string extension) {
-    return Path.Combine(C_MAVEN_, group, id, version,
-                        $"{id}-{version}{extension}");
+    return Path.Combine(
+      C_MAVEN_,
+      group,
+      id,
+      version,
+      $"{id}-{version}{extension}"
+    );
   }
 
   private async Task AddDependencies(Artifact artifact, Project project,
@@ -170,8 +178,11 @@ public class Maven : IMaven {
                                    Dictionary<string, string> properties) {
     string v = input;
     try {
-      v = Regex.Replace(input, @"\$\{(.+?)\}",
-                        m => properties[m.Groups[1].Value]);
+      v = Regex.Replace(
+        input,
+        @"\$\{(.+?)\}",
+        m => properties[m.Groups[1].Value]
+      );
     } catch {
       v = input;
     }
@@ -184,9 +195,11 @@ public class Maven : IMaven {
     T result = default;
     XmlSerializer serializer = new(typeof(T));
     using StreamReader sr = new(stream);
-    result = (T)serializer.Deserialize(new XmlTextReader(sr) {
-      Namespaces = ns
-    });
+    result = (T)serializer.Deserialize(
+      new XmlTextReader(sr) {
+        Namespaces = ns
+      }
+    );
     return result;
   }
 

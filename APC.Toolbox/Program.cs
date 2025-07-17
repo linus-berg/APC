@@ -24,7 +24,8 @@ internal class Program {
         async (CreateIndexOptions opts) => await tb.CreateIndex(opts.processor),
         async (DataGeneratorOptions opts) =>
           await tb.CreateFakeData(opts.processor, opts.files),
-        _ => MakeError());
+        _ => MakeError()
+      );
   }
 
   private static Task<int> MakeError() {

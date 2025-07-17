@@ -43,9 +43,12 @@ public class ArtifactService : IArtifactService {
   }
 
   public async Task Route(Artifact artifact) {
-    await SendRequest(Endpoints.S_APC_ACM_ROUTER, new ArtifactRouteRequest {
-      artifact = artifact
-    });
+    await SendRequest(
+      Endpoints.S_APC_ACM_ROUTER,
+      new ArtifactRouteRequest {
+        artifact = artifact
+      }
+    );
   }
 
   public async Task Collect(string location, string processor) {
@@ -57,15 +60,19 @@ public class ArtifactService : IArtifactService {
   }
 
   public async Task Collect(ArtifactCollectRequest request) {
-    await SendRequest(new Uri($"queue:{request.GetCollectorModule()}"),
-                      request);
+    await SendRequest(
+      new Uri($"queue:{request.GetCollectorModule()}"),
+      request
+    );
   }
 
   public async Task Ingest(Artifact artifact) {
-    await SendRequest(Endpoints.S_APC_INGEST_UNPROCESSED,
-                      new ArtifactIngestRequest {
-                        artifact = artifact
-                      });
+    await SendRequest(
+      Endpoints.S_APC_INGEST_UNPROCESSED,
+      new ArtifactIngestRequest {
+        artifact = artifact
+      }
+    );
   }
 
   public async Task Process(Artifact artifact, Guid? existing_ctx = null) {
@@ -74,11 +81,13 @@ public class ArtifactService : IArtifactService {
       await cache_.AddToCache(artifact.id, ctx);
     }
 
-    await SendRequest(new Uri($"queue:apm-{artifact.processor}"),
-                      new ArtifactProcessRequest {
-                        ctx = ctx,
-                        artifact = artifact
-                      });
+    await SendRequest(
+      new Uri($"queue:apm-{artifact.processor}"),
+      new ArtifactProcessRequest {
+        ctx = ctx,
+        artifact = artifact
+      }
+    );
   }
 
   public async Task<bool> Track(string id, string processor_id) {

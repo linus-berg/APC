@@ -23,10 +23,12 @@ public class StatusController : ControllerBase {
 
   [HttpGet("keycloak")]
   public ActionResult GetKeycloak() {
-    return Ok(new KeycloakOptions {
-      url = kc_opt_.AuthServerUrl,
-      realm = kc_opt_.Realm,
-      resource = kc_opt_.Resource
-    });
+    return Ok(
+      new KeycloakOptions {
+        url = kc_opt_.AuthServerUrl,
+        realm = kc_opt_.Realm,
+        resource = kc_opt_.Resource
+      }
+    );
   }
 }

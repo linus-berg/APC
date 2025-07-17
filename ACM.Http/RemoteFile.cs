@@ -19,10 +19,10 @@ public class RemoteFile {
     if (!response.IsSuccessStatusCode) {
       return false;
     }
-    
+
     try {
-      var body = await response.Content.ReadAsStreamAsync();
-      var result = await fs_.PutFile(path, body);
+      Stream? body = await response.Content.ReadAsStreamAsync();
+      bool result = await fs_.PutFile(path, body);
 
       if (!result) {
         await ClearFile(path);
@@ -34,7 +34,6 @@ public class RemoteFile {
       await ClearFile(path);
       throw;
     }
-    
   }
 
   private async Task<bool> ClearFile(string file) {

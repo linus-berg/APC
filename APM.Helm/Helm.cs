@@ -53,8 +53,11 @@ public class Helm {
   private void AddContainers(ArtifactVersion artifact_version,
                              IEnumerable<HelmChartContainerImage> images) {
     foreach (HelmChartContainerImage image in images) {
-      artifact_version.AddFile($"{image.image}", FixNaming(image.image),
-                               "container");
+      artifact_version.AddFile(
+        $"{image.image}",
+        FixNaming(image.image),
+        "container"
+      );
     }
   }
 
@@ -103,7 +106,8 @@ public class Helm {
 
     artifact.AddDependency(
       $"{chart.artifacthub_repository_name}/{chart.name}",
-      artifact.processor);
+      artifact.processor
+    );
     return true;
   }
 

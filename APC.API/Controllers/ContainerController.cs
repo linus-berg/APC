@@ -7,9 +7,11 @@ namespace APC.API.Controllers;
 [ApiController]
 public class ContainerController : ControllerBase {
   private readonly IArtifactService aps_;
+
   public ContainerController(IArtifactService aps) {
     aps_ = aps;
   }
+
   // GET
   [HttpGet("container")]
   public ActionResult GetContainer() {

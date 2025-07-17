@@ -17,9 +17,11 @@ public class ModuleRegistration {
   public List<Endpoint> endpoints { get; } = new();
 
   public void AddEndpoint(string name, int concurrency = 10) {
-    endpoints.Add(new Endpoint {
-      name = $"{prefix_}-{name}",
-      concurrency = concurrency
-    });
+    endpoints.Add(
+      new Endpoint {
+        name = $"{prefix_}-{name}",
+        concurrency = concurrency
+      }
+    );
   }
 }

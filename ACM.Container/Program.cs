@@ -10,12 +10,14 @@ registration.AddEndpoint("docker", 5);
 registration.AddEndpoint("oci", 5);
 
 IHost host = Host.CreateDefaultBuilder(args)
-                 .ConfigureServices(services => {
-                   services.AddTelemetry(registration);
-                   services.AddSingleton<SkopeoClient>();
-                   services.Register(registration);
-                   services.AddHostedService<Worker>();
-                 })
+                 .ConfigureServices(
+                   services => {
+                     services.AddTelemetry(registration);
+                     services.AddSingleton<SkopeoClient>();
+                     services.Register(registration);
+                     services.AddHostedService<Worker>();
+                   }
+                 )
                  .Build();
 
 await host.RunAsync();

@@ -19,14 +19,18 @@ public class Wget {
   }
 
   private async Task<bool> Archive(string remote) {
-    return await Bin.Execute("wget",
-                             args => {
-                               args.Add("--mirror");
-                               args.Add("-k");
-                               args.Add("-p");
-                               args.Add("-E");
-                               args.Add("--no-parent");
-                               args.Add(remote);
-                             }, logger_, wd_);
+    return await Bin.Execute(
+             "wget",
+             args => {
+               args.Add("--mirror");
+               args.Add("-k");
+               args.Add("-p");
+               args.Add("-E");
+               args.Add("--no-parent");
+               args.Add(remote);
+             },
+             logger_,
+             wd_
+           );
   }
 }

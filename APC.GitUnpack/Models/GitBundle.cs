@@ -16,7 +16,9 @@ public class GitBundle {
     repository = Path.GetFileName(filepath);
     repository_dir =
       Path.Join(
-        Environment.GetEnvironmentVariable("GIT_BUNDLE_REPOS"), owner,
-        repository);
+        Environment.GetEnvironmentVariable("GIT_BUNDLE_REPOS"),
+        owner,
+        repository
+      );
   }
 }

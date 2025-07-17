@@ -23,19 +23,28 @@ public class MinioConnectionBuilder {
 
   private void Parse(string connection_string) {
     foreach (string[] option in connection_string
-                                .Split(new[] {
-                                  ';'
-                                }, StringSplitOptions.RemoveEmptyEntries)
+                                .Split(
+                                  new[] {
+                                    ';'
+                                  },
+                                  StringSplitOptions.RemoveEmptyEntries
+                                )
                                 .Where(kvp => kvp.Contains('='))
-                                .Select(kvp => kvp.Split(new[] {
-                                  '='
-                                }, 2))) {
+                                .Select(
+                                  kvp => kvp.Split(
+                                    new[] {
+                                      '='
+                                    },
+                                    2
+                                  )
+                                )) {
       string option_key = option[0].Trim();
       string option_value = option[1].Trim();
       if (!ParseItem(option_key, option_value)) {
         throw new ArgumentException(
           $"The option '{option_key}' cannot be recognized in connection string.",
-          nameof(connection_string));
+          nameof(connection_string)
+        );
       }
     }
   }
@@ -44,8 +53,11 @@ public class MinioConnectionBuilder {
     if (string.Equals(key, "AccessKey", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(key, "Access Key", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(key, "AccessKeyId", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(key, "Access Key Id",
-                      StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(
+          key,
+          "Access Key Id",
+          StringComparison.OrdinalIgnoreCase
+        ) ||
         string.Equals(key, "Id", StringComparison.OrdinalIgnoreCase)) {
       access_key = value;
       return true;
@@ -53,10 +65,16 @@ public class MinioConnectionBuilder {
 
     if (string.Equals(key, "SecretKey", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(key, "Secret Key", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(key, "SecretAccessKey",
-                      StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(key, "Secret Access Key",
-                      StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(
+          key,
+          "SecretAccessKey",
+          StringComparison.OrdinalIgnoreCase
+        ) ||
+        string.Equals(
+          key,
+          "Secret Access Key",
+          StringComparison.OrdinalIgnoreCase
+        ) ||
         string.Equals(key, "Secret", StringComparison.OrdinalIgnoreCase)) {
       secret_key = value;
       return true;

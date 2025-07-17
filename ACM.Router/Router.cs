@@ -23,10 +23,12 @@ public class Router : IConsumer<ArtifactRouteRequest> {
       }
 
       foreach (KeyValuePair<string, ArtifactFile> file in kv.Value.files) {
-        await context.Collect(file.Value.uri,
-                              string.IsNullOrEmpty(file.Value.folder)
-                                ? artifact.processor
-                                : file.Value.folder);
+        await context.Collect(
+          file.Value.uri,
+          string.IsNullOrEmpty(file.Value.folder)
+            ? artifact.processor
+            : file.Value.folder
+        );
       }
     }
   }

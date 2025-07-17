@@ -19,8 +19,11 @@ public class Collector : ICollector {
     try {
       await git_.Mirror(location, context.CancellationToken);
     } catch (Exception e) {
-      logger_.LogError("{Location} failed with error {Error}", location,
-                       e.ToString());
+      logger_.LogError(
+        "{Location} failed with error {Error}",
+        location,
+        e.ToString()
+      );
       throw;
     }
   }

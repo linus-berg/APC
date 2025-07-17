@@ -41,10 +41,14 @@ public class OperatorHub : IOperatorHub {
     ArtifactVersion version = new() {
       version = version_str
     };
-    version.AddFile("containerImage",
-                    $"{FixNaming(op.containerImage)}");
-    version.AddFile("operator",
-                    $"https://operatorhub.io/install/{op.packageName}.yaml");
+    version.AddFile(
+      "containerImage",
+      $"{FixNaming(op.containerImage)}"
+    );
+    version.AddFile(
+      "operator",
+      $"https://operatorhub.io/install/{op.packageName}.yaml"
+    );
     artifact.AddVersion(version);
   }
 

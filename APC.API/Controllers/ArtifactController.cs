@@ -28,33 +28,39 @@ public class ArtifactController : ControllerBase {
 
   // GET: api/Artifact
   [HttpGet("all")]
-  public async Task<IEnumerable<ArtifactOutput>> Get([FromQuery] string processor,
-                                               [FromQuery] bool only_roots) {
+  public async Task<IEnumerable<ArtifactOutput>> Get(
+    [FromQuery] string processor,
+    [FromQuery] bool only_roots) {
     IEnumerable<Artifact> artifacts =
       await database_.GetArtifacts(processor, only_roots);
-    List<ArtifactOutput> artifact_outputs = new List<ArtifactOutput>();
+    List<ArtifactOutput> artifact_outputs = new();
     foreach (Artifact artifact in artifacts) {
-      artifact_outputs.Add(new ArtifactOutput() {
-        id = artifact.id,
-        processor = artifact.processor,
-        filter = artifact.filter,
-        root = artifact.root,
-        dependencies = artifact.dependencies.Count,
-        versions = artifact.versions.Count,
-        config = artifact.config
-      });
+      artifact_outputs.Add(
+        new ArtifactOutput {
+          id = artifact.id,
+          processor = artifact.processor,
+          filter = artifact.filter,
+          root = artifact.root,
+          dependencies = artifact.dependencies.Count,
+          versions = artifact.versions.Count,
+          config = artifact.config
+        }
+      );
     }
+
     return artifact_outputs;
   }
-  
+
   // GET: api/Artifact
   [HttpGet]
-  public async Task<ActionResult<Artifact>> GetById([FromQuery] string processor,
-                                                    [FromQuery] string id) {
+  public async Task<ActionResult<Artifact>> GetById(
+    [FromQuery] string processor,
+    [FromQuery] string id) {
     Artifact? artifact = await database_.GetArtifact(id, processor);
     if (artifact == null) {
       return NotFound("Artifact not found");
     }
+
     return Ok(artifact);
   }
 
@@ -66,21 +72,31 @@ public class ArtifactController : ControllerBase {
       throw new AuthenticationException("Unauthenticated user.");
     }
 
-    log_.Information("{IdentityName} added {InputId}", u.Identity.Name,
-                     input.id);
+    log_.Information(
+      "{IdentityName} added {InputId}",
+      u.Identity.Name,
+      input.id
+    );
     Artifact artifact =
       await database_.GetArtifact(input.id, input.processor);
     if (artifact == null) {
       artifact =
-        await aps_.AddArtifact(input.id, input.processor, input.filter,
-                               input.config, true);
+        await aps_.AddArtifact(
+          input.id,
+          input.processor,
+          input.filter,
+          input.config,
+          true
+        );
     } else if (!artifact.root) {
       artifact.root = true;
       await database_.UpdateArtifact(artifact);
     } else {
-      return Ok(new {
-        Message = $"{input.processor}/{input.id} already Exists!"
-      });
+      return Ok(
+        new {
+          Message = $"{input.processor}/{input.id} already Exists!"
+        }
+      );
     }
 
     Processor proc = await database_.GetProcessor(input.processor);
