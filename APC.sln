@@ -8,9 +8,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APM.Nuget", "APM.Nuget\APM.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Collectors", "Collectors", "{9AA32CFD-5F53-42A0-8463-9576C4CDB468}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Http", "ACM.Http\ACM.Http.csproj", "{0074BE06-09B4-4704-8DD7-E52ED605D738}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Http", "Collector.Http\Collector.Http.csproj", "{0074BE06-09B4-4704-8DD7-E52ED605D738}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Git", "ACM.Git\ACM.Git.csproj", "{9E61A88A-5D16-4DE8-BCB9-007EDE29D93A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Git", "Collector.Git\Collector.Git.csproj", "{9E61A88A-5D16-4DE8-BCB9-007EDE29D93A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Kernel", "ACM.Kernel\ACM.Kernel.csproj", "{2BBFE5C7-0E11-4EBF-AC95-90186DFB2978}"
 EndProject
@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.API", "APC.API\APC.API.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Services", "APC.Services\APC.Services.csproj", "{F247538C-E5D2-4F45-964F-FB048BD4B2B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Container", "ACM.Container\ACM.Container.csproj", "{E7FA5B91-D84B-491D-8298-080684AD3AAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Container", "Collector.Container\Collector.Container.csproj", "{E7FA5B91-D84B-491D-8298-080684AD3AAE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{B17B8DEA-9631-422D-B413-F5E280F10318}"
 EndProject
@@ -34,7 +34,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Tester", "APC.Tester\AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APM.Container", "APM.Container\APM.Container.csproj", "{68700140-AE4F-4FA9-AF07-FC54D476A0AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Router", "ACM.Router\ACM.Router.csproj", "{275827DD-9D7D-4FAA-811A-C0D864DD0516}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Router", "Collector.Router\Collector.Router.csproj", "{275827DD-9D7D-4FAA-811A-C0D864DD0516}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trackers", "Trackers", "{1C463E88-6718-4CAD-9385-F91AD0EC3358}"
 EndProject
@@ -56,9 +56,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APM.Github.Releases", "APM.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Github", "APC.Github\APC.Github.csproj", "{45215887-7CFC-4E33-8575-DFC56E2EECCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Rsync", "ACM.Rsync\ACM.Rsync.csproj", "{FD8432E9-E5EC-4547-843E-3557940E8719}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Rsync", "Collector.Rsync\Collector.Rsync.csproj", "{FD8432E9-E5EC-4547-843E-3557940E8719}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Wget", "ACM.Wget\ACM.Wget.csproj", "{BFD6062C-CFD4-4D77-9360-1F77945D7F64}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Wget", "Collector.Wget\Collector.Wget.csproj", "{BFD6062C-CFD4-4D77-9360-1F77945D7F64}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Toolbox", "APC.Toolbox\APC.Toolbox.csproj", "{5FC9F180-1E03-4110-9EE9-3301DDC422F0}"
 EndProject
@@ -70,7 +70,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APM.OperatorHub", "APM.Oper
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APM.Php", "APM.Php\APM.Php.csproj", "{94F7B9AD-D90F-4144-9AC6-4DE1DA884CE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.DockerArchive", "ACM.DockerArchive\ACM.DockerArchive.csproj", "{2B07095E-8865-43E3-B845-B5F5F1FF2C9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.DockerArchive", "Collector.DockerArchive\Collector.DockerArchive.csproj", "{2B07095E-8865-43E3-B845-B5F5F1FF2C9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APM.Terraform", "APM.Terraform\APM.Terraform.csproj", "{0DC534A4-1FF6-4959-BD27-12B1FC286B40}"
 EndProject

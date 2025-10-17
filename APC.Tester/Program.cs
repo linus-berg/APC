@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using ACM.Git;
-using ACM.Http;
+using Collector.Git;
 using ACM.Kernel;
 using ACM.Kernel.Storage.Minio;
 using APC.Github;
@@ -11,6 +10,7 @@ using APC.Skopeo;
 using APM.OperatorHub;
 using APM.Php;
 using APM.Terraform;
+using Collector.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Timeout;
