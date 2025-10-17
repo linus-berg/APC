@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace ACM.Kernel.Storage.Common;
+namespace Collector.Kernel.Storage.Common;
 
 public interface IHasNextPageFunc {
   Func<PagedFileListResult, Task<NextPageResult>> next_page_func { get; set; }

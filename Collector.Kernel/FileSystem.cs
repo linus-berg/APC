@@ -1,11 +1,11 @@
 using System.Text.RegularExpressions;
-using ACM.Kernel.Storage.Common;
-using ACM.Kernel.Storage.Minio;
 using APC.Kernel;
+using Collector.Kernel.Storage.Common;
+using Collector.Kernel.Storage.Minio;
 using Polly;
 using Polly.Registry;
 
-namespace ACM.Kernel;
+namespace Collector.Kernel;
 
 public class FileSystem {
   private readonly string? base_dir_ =

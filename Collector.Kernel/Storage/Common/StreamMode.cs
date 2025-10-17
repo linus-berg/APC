@@ -1,4 +1,4 @@
-namespace ACM.Kernel.Storage.Common;
+namespace Collector.Kernel.Storage.Common;
 
 /// <summary>
 ///   Tells what the stream will be used for

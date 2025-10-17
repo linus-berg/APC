@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ACM.Kernel\ACM.Kernel.csproj"/>
+        <ProjectReference Include="..\Collector.Kernel\Collector.Kernel.csproj" />
         <ProjectReference Include="..\APC.Kernel\APC.Kernel.csproj"/>
     </ItemGroup>
 </Project>

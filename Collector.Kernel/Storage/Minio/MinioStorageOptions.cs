@@ -1,4 +1,4 @@
-namespace ACM.Kernel.Storage.Minio;
+namespace Collector.Kernel.Storage.Minio;
 
 public class MinioStorageOptions {
   public string connection_string { get; set; }

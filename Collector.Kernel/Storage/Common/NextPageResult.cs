@@ -1,4 +1,4 @@
-namespace ACM.Kernel.Storage.Common;
+namespace Collector.Kernel.Storage.Common;
 
 public class NextPageResult {
   public bool success { get; set; }

@@ -1,4 +1,4 @@
-using ACM.Kernel;
+using Collector.Kernel;
 using APC.Kernel;
 
 namespace ACM.Wget;

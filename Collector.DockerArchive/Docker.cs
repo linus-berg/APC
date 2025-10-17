@@ -1,4 +1,4 @@
-using ACM.Kernel;
+using Collector.Kernel;
 using APC.Skopeo;
 using APC.Skopeo.Exceptions;
 using APC.Skopeo.Models;

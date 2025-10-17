@@ -1,13 +1,13 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using ACM.Kernel.Storage.Common;
+using Collector.Kernel.Storage.Common;
 using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel;
 using Minio.DataModel.Args;
 using Minio.Exceptions;
 
-namespace ACM.Kernel.Storage.Minio;
+namespace Collector.Kernel.Storage.Minio;
 
 public class MinioStorage : IDisposable {
   private readonly string bucket_;

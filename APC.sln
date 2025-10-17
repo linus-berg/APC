@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Http", "Collector
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Git", "Collector.Git\Collector.Git.csproj", "{9E61A88A-5D16-4DE8-BCB9-007EDE29D93A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACM.Kernel", "ACM.Kernel\ACM.Kernel.csproj", "{2BBFE5C7-0E11-4EBF-AC95-90186DFB2978}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collector.Kernel", "Collector.Kernel\Collector.Kernel.csproj", "{2BBFE5C7-0E11-4EBF-AC95-90186DFB2978}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APC.Kernel", "APC.Kernel\APC.Kernel.csproj", "{62EF99AA-CD3D-4AE0-898C-0D6813BED57D}"
 EndProject

@@ -1,10 +1,10 @@
-using ACM.Kernel.Storage.Minio;
 using APC.Kernel;
+using Collector.Kernel.Storage.Minio;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Retry;
 
-namespace ACM.Kernel;
+namespace Collector.Kernel;
 
 public static class StorageExtensions {
   public static IServiceCollection AddStorage(

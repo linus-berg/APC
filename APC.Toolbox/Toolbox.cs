@@ -1,5 +1,5 @@
-using ACM.Kernel;
-using ACM.Kernel.Storage.Common;
+using Collector.Kernel;
+using Collector.Kernel.Storage.Common;
 
 namespace APC.Toolbox;
 

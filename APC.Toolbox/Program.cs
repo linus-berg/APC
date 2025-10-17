@@ -1,4 +1,4 @@
-﻿using ACM.Kernel;
+﻿using Collector.Kernel;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 

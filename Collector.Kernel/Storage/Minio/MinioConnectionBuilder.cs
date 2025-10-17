@@ -1,4 +1,4 @@
-namespace ACM.Kernel.Storage.Minio;
+namespace Collector.Kernel.Storage.Minio;
 
 public class MinioConnectionBuilder {
   public MinioConnectionBuilder() {

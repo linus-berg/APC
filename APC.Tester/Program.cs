@@ -1,8 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Collector.Git;
-using ACM.Kernel;
-using ACM.Kernel.Storage.Minio;
+using Collector.Kernel;
+using Collector.Kernel.Storage.Minio;
 using APC.Github;
 using APC.Kernel;
 using APC.Kernel.Models;

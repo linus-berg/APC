@@ -1,4 +1,4 @@
-using ACM.Kernel;
+using Collector.Kernel;
 using ACM.Wget;
 using APC.Kernel;
 using APC.Kernel.Constants;
