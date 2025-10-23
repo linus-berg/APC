@@ -60,6 +60,9 @@ public static class RegistrationUtils {
         r.Immediate(5);
       }
     );
+
+    // Due to not handling *_error queues, discard faulting messages.
+    endpoint.DiscardFaultedMessages();
   }
 
   public static void SetupRabbitMq(this IRabbitMqBusFactoryConfigurator cfg) {
