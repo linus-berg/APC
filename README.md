@@ -1,5 +1,5 @@
-![](images/backpack-256.png)
-# Backpack
+<h1 align="center"><img src="images/backpack-256.png" alt="backpack"/></h1>
+
 :warning: Warning: This project is still under heavy development, to be considered a beta, at best.
 
 Backpack is used to collect and store a varied and large amounts of artifacts, for example npm, nuget...
