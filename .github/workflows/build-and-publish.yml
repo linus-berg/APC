@@ -18,71 +18,71 @@ jobs:
     strategy:
       matrix: 
         services:
-          - name: apm/rancher
-            directory: APM.Rancher
+          - name: processor/rancher
+            directory: Processor.Rancher
 
-          - name: api
-            directory: APC.API
+          - name: integration/api
+            directory: Integration.API
             
-          - name: scheduler
-            directory: APC.Scheduler
+          - name: tracker/scheduler
+            directory: Tracker.Scheduler
           
-          - name: ingestion
-            directory: APC.Ingestion
+          - name: core/gateway
+            directory: Core.Gateway
           
           - name: git-unpack
-            directory: APC.GitUnpack
+            directory: Backpack.GitUnpack
           
-          - name: apm/container
-            directory: APM.Container
+          - name: processor/container
+            directory: Processor.Container
 
-          - name: apm/npm
-            directory: APM.Npm
+          - name: processor/npm
+            directory: Processor.Npm
             
-          - name: apm/terraform
-            directory: APM.Terraform
+          - name: processor/terraform
+            directory: Processor.Terraform
           
-          - name: apm/php
-            directory: APM.Php
+          - name: processor/php
+            directory: Processor.Php
           
-          - name: apm/github/releases
-            directory: APM.Github.Releases
+          - name: processor/github-releases
+            directory: Processor.Github.Releases
 
-          - name: apm/jetbrains
-            directory: APM.Jetbrains
+          - name: processor/jetbrains-plugins
+            directory: Processor.Jetbrains.Plugins
 
-          - name: apm/jetbrains/ide
-            directory: APM.Jetbrains.IDE
+          - name: processor/jetbrains-ide
+            directory: Processor.Jetbrains.IDE
             
-          - name: apm/nuget
-            directory: APM.Nuget
+          - name: processor/nuget
+            directory: Processor.Nuget
             
-          - name: apm/maven
-            directory: APM.Maven
+          - name: processor/maven
+            directory: Processor.Maven
             
-          - name: apm/pypi
-            directory: APM.Pypi
+          - name: processor/pypi
+            directory: Processor.Pypi
 
-          - name: apm/helm
-            directory: APM.Helm
+          - name: processor/helm
+            directory: Processor.Helm
 
-          - name: acm/http
-            directory: ACM.Http
+          - name: collector/http
+            directory: Collector.Http
             
-          - name: acm/docker-archive
-            directory: ACM.DockerArchive
+          - name: collector/docker-archive
+            directory: Collector.DockerArchive
             
-          - name: acm/git
-            directory: ACM.Git
+          - name: collector/git
+            directory: Collector.Git
             
-          - name: acm/wget
-            directory: ACM.Wget
+          - name: collector/wget
+            directory: Collector.Wget
             
-          - name: acm/router
-            directory: ACM.Router
+          - name: collector/router
+            directory: Collector.Router
             
-          - name: acm/container
-            directory: ACM.Container
+          - name: collector/container
+            directory: Collector.Container
 
     name: Build Docker image and push to repositories
     # run only when code is compiling and tests are passing
@@ -117,8 +117,8 @@ jobs:
           file: ./${{ matrix.services.directory }}/Dockerfile
           # Note: tags has to be all lower-case
           tags: |
-            ghcr.io/linus-berg/apc/${{ matrix.services.name }}:latest
-            ghcr.io/linus-berg/apc/${{ matrix.services.name }}:${{ github.ref_name }}-${{ github.sha }}
+            ghcr.io/linus-berg/backpack/${{ matrix.services.name }}:latest
+            ghcr.io/linus-berg/backpack/${{ matrix.services.name }}:${{ github.ref_name }}-${{ github.sha }}
           # build on feature branches, push only on main branch
           push: ${{ github.ref_name == 'master' || github.ref_name == 'development' }}
 
