@@ -4,18 +4,18 @@ WORKDIR /app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
-COPY ["ACM.Http/ACM.Http.csproj", "ACM.Http/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-RUN dotnet restore "ACM.Http/ACM.Http.csproj"
+COPY ["Collector.Http/Collector.Http.csproj", "Collector.Http/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
+RUN dotnet restore "Collector.Http/Collector.Http.csproj"
 COPY . .
-WORKDIR "/src/ACM.Http"
-RUN dotnet build "ACM.Http.csproj" -a $TARGETARCH -c Release -o /app/build
+WORKDIR "/src/Collector.Http"
+RUN dotnet build "Collector.Http.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
 ARG TARGETARCH
-RUN dotnet publish "ACM.Http.csproj" -a $TARGETARCH -c Release -o /app/publish
+RUN dotnet publish "Collector.Http.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ACM.Http.dll"]
+ENTRYPOINT ["dotnet", "Collector.Http.dll"]

@@ -1,5 +1,5 @@
 using Collector.Kernel;
-using APC.Kernel;
+using Core.Kernel;
 using Minio.Exceptions;
 using Polly;
 using Polly.Registry;

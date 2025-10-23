@@ -1,13 +1,13 @@
 using Collector.Git;
 using Collector.Kernel;
-using APC.Kernel;
-using APC.Kernel.Constants;
-using APC.Kernel.Extensions;
-using APC.Kernel.Registrations;
+using Core.Kernel;
+using Core.Kernel.Constants;
+using Core.Kernel.Extensions;
+using Core.Kernel.Registrations;
 using Polly;
 using Polly.Timeout;
 
-ModuleRegistration registration = new(ModuleType.ACM, typeof(Consumer));
+ModuleRegistration registration = new(ModuleType.COLLECTOR, typeof(Consumer));
 registration.AddEndpoint("git");
 
 IHost host = Host.CreateDefaultBuilder(args)

@@ -1,10 +1,10 @@
 using Collector.Rsync;
-using APC.Kernel;
-using APC.Kernel.Constants;
-using APC.Kernel.Extensions;
-using APC.Kernel.Registrations;
+using Core.Kernel;
+using Core.Kernel.Constants;
+using Core.Kernel.Extensions;
+using Core.Kernel.Registrations;
 
-ModuleRegistration registration = new(ModuleType.ACM, typeof(Consumer));
+ModuleRegistration registration = new(ModuleType.COLLECTOR, typeof(Consumer));
 registration.AddEndpoint("rsync");
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(

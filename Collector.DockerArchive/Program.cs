@@ -1,14 +1,14 @@
 using Collector.DockerArchive;
 using Collector.Kernel;
-using APC.Kernel;
-using APC.Kernel.Constants;
-using APC.Kernel.Extensions;
-using APC.Kernel.Registrations;
 using APC.Skopeo;
+using Core.Kernel;
+using Core.Kernel.Constants;
+using Core.Kernel.Extensions;
+using Core.Kernel.Registrations;
 using Polly;
 using Polly.Retry;
 
-ModuleRegistration registration = new(ModuleType.ACM, typeof(Consumer));
+ModuleRegistration registration = new(ModuleType.COLLECTOR, typeof(Consumer));
 registration.AddEndpoint("docker-archive", 1);
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTelemetry(registration);

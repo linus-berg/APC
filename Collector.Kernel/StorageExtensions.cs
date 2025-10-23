@@ -1,5 +1,5 @@
-using APC.Kernel;
 using Collector.Kernel.Storage.Minio;
+using Core.Kernel;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Retry;
@@ -23,13 +23,13 @@ public static class StorageExtensions {
     /* SETUP STORAGE */
     MinioConnectionBuilder connection = new();
 
-    connection.region = Configuration.GetApcVar(ApcVariable.ACM_S3_REGION);
+    connection.region = Configuration.GetApcVar(CoreVariables.ACM_S3_REGION);
     connection.access_key =
-      Configuration.GetApcVar(ApcVariable.ACM_S3_ACCESS_KEY);
+      Configuration.GetApcVar(CoreVariables.ACM_S3_ACCESS_KEY);
     connection.secret_key =
-      Configuration.GetApcVar(ApcVariable.ACM_S3_SECRET_KEY);
-    connection.end_point = Configuration.GetApcVar(ApcVariable.ACM_S3_ENDPOINT);
-    connection.bucket = Configuration.GetApcVar(ApcVariable.ACM_S3_BUCKET);
+      Configuration.GetApcVar(CoreVariables.ACM_S3_SECRET_KEY);
+    connection.end_point = Configuration.GetApcVar(CoreVariables.ACM_S3_ENDPOINT);
+    connection.bucket = Configuration.GetApcVar(CoreVariables.ACM_S3_BUCKET);
 
     MinioStorageOptions minio_options = new() {
       auto_create_bucket = true,

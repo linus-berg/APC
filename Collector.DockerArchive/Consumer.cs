@@ -1,5 +1,5 @@
-using APC.Kernel;
-using APC.Kernel.Messages;
+using Core.Kernel;
+using Core.Kernel.Messages;
 using MassTransit;
 using Polly;
 using Polly.Registry;

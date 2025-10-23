@@ -4,21 +4,21 @@ WORKDIR /app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
-COPY ["ACM.Container/ACM.Container.csproj", "ACM.Container/"]
+COPY ["Collector.Container/Collector.Container.csproj", "Collector.Container/"]
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-COPY ["ACM.Kernel/ACM.Kernel.csproj", "ACM.Kernel/"]
+COPY ["Collector.Kernel/Collector.Kernel.csproj", "Collector.Kernel/"]
 COPY ["APC.Skopeo/APC.Skopeo.csproj", "APC.Skopeo/"]
-RUN dotnet restore "ACM.Container/ACM.Container.csproj"
+RUN dotnet restore "Collector.Container/Collector.Container.csproj"
 COPY . .
-WORKDIR "/src/ACM.Container"
-RUN dotnet build "ACM.Container.csproj" -a $TARGETARCH -c Release -o /app/build
+WORKDIR "/src/Collector.Container"
+RUN dotnet build "Collector.Container.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
 ARG TARGETARCH
-RUN dotnet publish "ACM.Container.csproj" -a $TARGETARCH -c Release -o /app/publish
+RUN dotnet publish "Collector.Container.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 RUN apt-get -y update && apt-get install -y skopeo
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ACM.Container.dll"]
+ENTRYPOINT ["dotnet", "Collector.Container.dll"]

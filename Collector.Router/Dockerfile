@@ -4,18 +4,18 @@ WORKDIR /app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
-COPY ["ACM.Router/ACM.Router.csproj", "ACM.Router/"]
+COPY ["Collector.Router/Collector.Router.csproj", "Collector.Router/"]
 COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-RUN dotnet restore "ACM.Router/ACM.Router.csproj"
+RUN dotnet restore "Collector.Router/Collector.Router.csproj"
 COPY . .
-WORKDIR "/src/ACM.Router"
-RUN dotnet build "ACM.Router.csproj" -a $TARGETARCH -c Release -o /app/build
+WORKDIR "/src/Collector.Router"
+RUN dotnet build "Collector.Router.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
 ARG TARGETARCH
-RUN dotnet publish "ACM.Router.csproj" -a $TARGETARCH -c Release -o /app/publish
+RUN dotnet publish "Collector.Router.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ACM.Router.dll"]
+ENTRYPOINT ["dotnet", "Collector.Router.dll"]

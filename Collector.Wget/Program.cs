@@ -1,11 +1,11 @@
 using Collector.Kernel;
 using ACM.Wget;
-using APC.Kernel;
-using APC.Kernel.Constants;
-using APC.Kernel.Registrations;
+using Core.Kernel;
+using Core.Kernel.Constants;
+using Core.Kernel.Registrations;
 using Foundatio.Storage;
 
-ModuleRegistration registration = new(ModuleType.ACM, typeof(Consumer));
+ModuleRegistration registration = new(ModuleType.COLLECTOR, typeof(Consumer));
 registration.AddEndpoint("wget");
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(
@@ -14,7 +14,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                        new FolderFileStorage(
                          b => {
                            b.Folder(
-                             Configuration.GetApcVar(ApcVariable.APC_ACM_DIR)
+                             Configuration.GetApcVar(CoreVariables.APC_ACM_DIR)
                            );
                            return b;
                          }

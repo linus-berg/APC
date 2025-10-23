@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using APC.Kernel;
 using Collector.Kernel.Storage.Common;
 using Collector.Kernel.Storage.Minio;
+using Core.Kernel;
 using Polly;
 using Polly.Registry;
 
@@ -9,7 +9,7 @@ namespace Collector.Kernel;
 
 public class FileSystem {
   private readonly string? base_dir_ =
-    Configuration.GetApcVar(ApcVariable.APC_ACM_DIR);
+    Configuration.GetApcVar(CoreVariables.APC_ACM_DIR);
 
   private readonly MinioStorage storage_backend_;
   private readonly ResiliencePipeline<bool> storage_pipeline_;

@@ -1,4 +1,4 @@
-using APC.Kernel;
+using Core.Kernel;
 
 namespace Collector.Rsync;
 

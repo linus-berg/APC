@@ -1,6 +1,6 @@
 using Collector.Kernel;
-using APC.Kernel;
-using APC.Kernel.Messages;
+using Core.Kernel;
+using Core.Kernel.Messages;
 using MassTransit;
 
 namespace Collector.Http;
@@ -12,8 +12,8 @@ public class Consumer : ICollector {
 
   public Consumer(FileSystem fs) {
     fs_ = fs;
-    delta_ = Configuration.GetApcVar(ApcVariable.ACM_HTTP_DELTA) == "true";
-    forward_ = Configuration.GetApcVar(ApcVariable.ACM_HTTP_MODE) == "forward";
+    delta_ = Configuration.GetApcVar(CoreVariables.ACM_HTTP_DELTA) == "true";
+    forward_ = Configuration.GetApcVar(CoreVariables.ACM_HTTP_MODE) == "forward";
   }
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {

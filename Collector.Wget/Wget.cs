@@ -1,5 +1,5 @@
 using Collector.Kernel;
-using APC.Kernel;
+using Core.Kernel;
 
 namespace ACM.Wget;
 

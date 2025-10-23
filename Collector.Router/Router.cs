@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using APC.Kernel.Extensions;
-using APC.Kernel.Messages;
-using APC.Kernel.Models;
+using Core.Kernel.Extensions;
+using Core.Kernel.Messages;
+using Core.Kernel.Models;
 using MassTransit;
 using Semver;
 
