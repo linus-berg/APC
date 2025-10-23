@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "APM.Jetbrains": {
+    "Processor.Jetbrains.Plugins": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {

@@ -10,7 +10,6 @@ public class RemoteFile {
   public RemoteFile(string url, FileSystem fs) {
     url_ = url;
     fs_ = fs;
-    //S_CLIENT_.DefaultRequestHeaders.Add("User-Agent", "APC/1.0");
   }
 
   public async Task<bool> Get(string path) {

@@ -1,14 +1,14 @@
 ﻿{
   "profiles": {
-    "APM.Npm": {
+    "Processor.Npm": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
-        "APC_RABBIT_MQ_HOST": "localhost",
-        "APC_RABBIT_MQ_USER": "guest",
-        "APC_RABBIT_MQ_PASS": "guest",
-        "APC_REDIS_HOST": "localhost"
+        "BP_RABBIT_MQ_HOST": "localhost",
+        "BP_RABBIT_MQ_USER": "guest",
+        "BP_RABBIT_MQ_PASS": "guest",
+        "BP_REDIS_HOST": "localhost"
       }
     }
   }

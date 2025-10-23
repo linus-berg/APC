@@ -1,11 +1,11 @@
 ﻿{
   "profiles": {
-    "ACM.Container": {
+    "Collector.Container": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
-        "ACM_CONTAINER_REGISTRY": "localhost:6000"
+        "BP_COLLECTOR_CONTAINER_REGISTRY": "localhost:6000"
       }
     }
   }

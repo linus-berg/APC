@@ -130,13 +130,13 @@ public class Maven : IMaven {
                                      Dictionary<string, string> properties) {
     foreach (Dependency dep in project.Dependencies) {
       string id = ReplaceProperties(dep.ArtifactId, properties);
-      ArtifactDependency apc_dep =
+      ArtifactDependency dependency =
         artifact.AddDependency(id, "maven");
       if (dep.GroupId.Contains("${project.groupId}")) {
-        apc_dep.config["group"] = project.GroupId ?? project.Parent.GroupId;
+        dependency.config["group"] = project.GroupId ?? project.Parent.GroupId;
       } else {
         string gid = ReplaceProperties(dep.GroupId, properties);
-        apc_dep.config["group"] = gid;
+        dependency.config["group"] = gid;
       }
     }
   }
@@ -150,13 +150,12 @@ public class Maven : IMaven {
 
     foreach (Plugin plugin in project.Build.Plugins) {
       string id = ReplaceProperties(plugin.ArtifactId, properties);
-      ArtifactDependency apc_dep =
-        artifact.AddDependency(id, "maven");
+      ArtifactDependency dependency = artifact.AddDependency(id, "maven");
       if (plugin.GroupId.Contains("${project.groupId}")) {
-        apc_dep.config["group"] = project.GroupId ?? project.Parent.GroupId;
+        dependency.config["group"] = project.GroupId ?? project.Parent.GroupId;
       } else {
         string gid = ReplaceProperties(plugin.GroupId, properties);
-        apc_dep.config["group"] = gid;
+        dependency.config["group"] = gid;
       }
     }
   }

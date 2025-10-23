@@ -18,7 +18,7 @@ public class StatusController : ControllerBase {
 
   [HttpGet("status")]
   public ActionResult GetStatus() {
-    return Ok("APC is OK.");
+    return Ok("Backpack is OK.");
   }
 
   [HttpGet("keycloak")]

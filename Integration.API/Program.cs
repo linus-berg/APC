@@ -24,8 +24,8 @@ builder.Host.UseSerilog(
     configuration.WriteTo.Console();
     configuration.WriteTo.File(
       Path.Combine(
-        Environment.GetEnvironmentVariable("APC_LOGS"),
-        "apc_api.log"
+        Environment.GetEnvironmentVariable("BP_LOGS"),
+        "backpack_api.log"
       )
     );
   }

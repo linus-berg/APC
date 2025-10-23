@@ -6,14 +6,14 @@ using MongoDB.Driver;
 namespace Core.Infrastructure;
 
 public class MongoDatabase : ICoreDatabase {
-  private const string C_PROCESSOR_COLLECTION_ = "apc-processors";
+  private const string C_PROCESSOR_COLLECTION_ = "backpack-processors";
   private readonly MongoClient client_;
   private readonly IMongoDatabase database_;
 
   public MongoDatabase() {
     string? c_str = Configuration.GetBackpackVariable(CoreVariables.BP_MONGO_STR);
     client_ = new MongoClient(c_str);
-    database_ = client_.GetDatabase("apc");
+    database_ = client_.GetDatabase("backpack");
   }
 
   public async Task AddArtifact(Artifact artifact) {
