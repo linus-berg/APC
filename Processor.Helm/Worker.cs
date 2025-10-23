@@ -1,4 +1,4 @@
-namespace APM.Helm;
+namespace Processor.Helm;
 
 public class Worker : BackgroundService {
   private readonly ILogger<Worker> logger_;

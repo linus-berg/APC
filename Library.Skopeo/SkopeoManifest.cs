@@ -1,4 +1,4 @@
-namespace APC.Skopeo;
+namespace Library.Skopeo;
 
 public class SkopeoManifest {
   private string working_dir_;

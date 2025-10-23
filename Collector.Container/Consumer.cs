@@ -1,9 +1,9 @@
-using APC.Skopeo;
 using Core.Kernel;
 using Core.Kernel.Messages;
+using Library.Skopeo;
 using MassTransit;
 
-namespace ACM.Container;
+namespace Collector.Container;
 
 public class Consumer : ICollector {
   private readonly SkopeoClient skopeo_;

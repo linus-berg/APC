@@ -2,15 +2,15 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using APM.Maven.Models;
 using Core.Kernel.Exceptions;
 using Core.Kernel.Models;
 using MavenNet;
 using MavenNet.Models;
+using Processor.Maven.Models;
 using RestSharp;
 using Artifact = Core.Kernel.Models.Artifact;
 
-namespace APM.Maven;
+namespace Processor.Maven;
 
 public class Maven : IMaven {
   private const string C_MAVEN_ = "https://repo1.maven.org/maven2";

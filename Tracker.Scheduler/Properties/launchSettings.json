@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "APC.Scheduler": {
+    "Tracker.Scheduler": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {

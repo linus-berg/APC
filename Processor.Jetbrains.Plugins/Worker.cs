@@ -1,4 +1,4 @@
-namespace APM.Jetbrains;
+namespace Processor.Jetbrains.Plugins;
 
 public class Worker : BackgroundService {
   private readonly ILogger<Worker> logger_;

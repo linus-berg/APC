@@ -1,8 +1,8 @@
-using APC.API.Output;
+using Integration.API.Output;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
-namespace APC.API.Controllers;
+namespace Integration.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

@@ -3,11 +3,11 @@
 using Collector.Git;
 using Collector.Kernel;
 using Collector.Kernel.Storage.Minio;
-using APC.Skopeo;
 using Collector.Http;
 using Core.Kernel;
 using Core.Kernel.Models;
 using Library.Github;
+using Library.Skopeo;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Timeout;
@@ -23,7 +23,7 @@ HttpClient hc = new(
     AllowAutoRedirect = true
   }
 );
-hc.DefaultRequestHeaders.Add("User-Agent", "APC/1.0");
+hc.DefaultRequestHeaders.Add("User-Agent", "Backpack/1.0");
 /*HttpResponseMessage res = await hc.GetAsync(
                             "https://api.github.com/repos/Shardj/zf1-future/zipball/b87c1507cd10c01d9b3b1bc4a0cae32f6a9c6d6c");
 
@@ -101,13 +101,13 @@ RemoteFile file = new(url, fs);
 // DEBUG MINIO
 MinioConnectionBuilder connection = new();
 
-connection.region = Configuration.GetApcVar(CoreVariables.ACM_S3_REGION);
+connection.region = Configuration.GetBackpackVariable(CoreVariables.BP_S3_REGION);
 connection.access_key =
-  Configuration.GetApcVar(CoreVariables.ACM_S3_ACCESS_KEY);
+  Configuration.GetBackpackVariable(CoreVariables.BP_S3_ACCESS_KEY);
 connection.secret_key =
-  Configuration.GetApcVar(CoreVariables.ACM_S3_SECRET_KEY);
-connection.end_point = Configuration.GetApcVar(CoreVariables.ACM_S3_ENDPOINT);
-connection.bucket = Configuration.GetApcVar(CoreVariables.ACM_S3_BUCKET);
+  Configuration.GetBackpackVariable(CoreVariables.BP_S3_SECRET_KEY);
+connection.end_point = Configuration.GetBackpackVariable(CoreVariables.BP_S3_ENDPOINT);
+connection.bucket = Configuration.GetBackpackVariable(CoreVariables.BP_S3_BUCKET);
 
 //await st.SaveFileAsync("debug/empty-file", remote_stream);
 //await file.Get("list");

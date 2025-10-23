@@ -1,9 +1,9 @@
-using APM.Pypi.Models;
 using Core.Kernel.Exceptions;
 using Core.Kernel.Models;
+using Processor.Pypi.Models;
 using RestSharp;
 
-namespace APM.Pypi;
+namespace Processor.Pypi;
 
 public class Pypi : IPypi {
   private const string C_REGISTRY_ = "https://pypi.org/";

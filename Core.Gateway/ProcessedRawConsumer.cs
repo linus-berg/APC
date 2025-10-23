@@ -7,12 +7,12 @@ namespace Core.Gateway;
 
 public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
   private readonly IArtifactService aps_;
-  private readonly IApcCache cache_;
-  private readonly IApcDatabase db_;
+  private readonly ICoreCache cache_;
+  private readonly ICoreDatabase db_;
   private readonly ILogger<ProcessedRawConsumer> logger_;
 
-  public ProcessedRawConsumer(IArtifactService aps, IApcDatabase db,
-                              IApcCache cache,
+  public ProcessedRawConsumer(IArtifactService aps, ICoreDatabase db,
+                              ICoreCache cache,
                               ILogger<ProcessedRawConsumer> logger) {
     db_ = db;
     cache_ = cache;
@@ -20,7 +20,7 @@ public class ProcessedRawConsumer : IConsumer<ArtifactProcessedRequest> {
     logger_ = logger;
   }
 
-  /* On APM returning processed artifact */
+  /* On Processor returning processed artifact */
   public async Task Consume(ConsumeContext<ArtifactProcessedRequest> context) {
     ArtifactProcessedRequest request = context.Message;
     Artifact artifact = request.artifact;

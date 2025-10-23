@@ -1,7 +1,7 @@
 using Collector.Kernel;
-using APC.Skopeo;
-using APC.Skopeo.Exceptions;
-using APC.Skopeo.Models;
+using Library.Skopeo;
+using Library.Skopeo.Exceptions;
+using Library.Skopeo.Models;
 using Minio.Exceptions;
 
 namespace Collector.DockerArchive;

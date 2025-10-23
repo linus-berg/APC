@@ -1,6 +1,6 @@
 using CommandLine;
 
-namespace APC.Toolbox;
+namespace Backpack.Toolbox;
 
 [Verb("create-data")]
 public class DataGeneratorOptions {

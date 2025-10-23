@@ -1,4 +1,3 @@
-using APM.Jetbrains;
 using Core.Kernel;
 using Core.Kernel.Constants;
 using Core.Kernel.Extensions;

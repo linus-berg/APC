@@ -1,6 +1,6 @@
 using Core.Kernel.Models;
 
-namespace APM.Pypi;
+namespace Processor.Pypi;
 
 public interface IPypi {
   public Task<Artifact> ProcessArtifact(Artifact artifact);

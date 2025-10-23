@@ -7,9 +7,9 @@ using MassTransit;
 namespace Processor.Helm;
 
 public class Consumer : IProcessor {
-  private readonly APM.Helm.Helm helm_;
+  private readonly Helm helm_;
 
-  public Consumer(APM.Helm.Helm helm) {
+  public Consumer(Helm helm) {
     helm_ = helm;
   }
 

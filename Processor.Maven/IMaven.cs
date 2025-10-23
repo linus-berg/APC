@@ -1,7 +1,7 @@
 using MavenNet.Models;
 using Artifact = Core.Kernel.Models.Artifact;
 
-namespace APM.Maven;
+namespace Processor.Maven;
 
 public interface IMaven {
   public Task<Artifact> ProcessArtifact(Artifact artifact);

@@ -1,4 +1,4 @@
-namespace APC.Skopeo.Models;
+namespace Library.Skopeo.Models;
 
 public class SkopeoArchive {
   public SkopeoArchive(string remote_image, string target_dir) {

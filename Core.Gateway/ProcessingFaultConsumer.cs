@@ -6,9 +6,9 @@ namespace Core.Gateway;
 
 public class
   ProcessingFaultConsumer : IConsumer<Fault<ArtifactProcessRequest>> {
-  private readonly IApcDatabase db_;
+  private readonly ICoreDatabase db_;
 
-  public ProcessingFaultConsumer(IApcDatabase db) {
+  public ProcessingFaultConsumer(ICoreDatabase db) {
     db_ = db;
   }
 

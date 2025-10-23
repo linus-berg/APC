@@ -1,4 +1,4 @@
-namespace APC.GitUnpack.Models;
+namespace Backpack.GitUnpack.Models;
 
 public class GitBundle {
   public GitBundle(string filepath, string owner) {

@@ -1,4 +1,4 @@
-namespace APM.Github.Releases;
+namespace Processor.Github.Releases;
 
 public class Worker : BackgroundService {
   private readonly ILogger<Worker> logger_;

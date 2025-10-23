@@ -5,8 +5,8 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY ["Processor.Rancher/Processor.Rancher.csproj", "Processor.Rancher/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-COPY ["APC.Github/APC.Github.csproj", "APC.Github/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
+COPY ["Library.Github/Library.Github.csproj", "Library.Github/"]
 RUN dotnet restore "Processor.Rancher/Processor.Rancher.csproj"
 COPY . .
 WORKDIR "/src/Processor.Rancher"

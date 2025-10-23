@@ -2,7 +2,7 @@ using Core.Kernel.Models;
 
 namespace Core.Services;
 
-public interface IApcDatabase {
+public interface ICoreDatabase {
   public Task AddProcessor(Processor processor);
   public Task AddArtifact(Artifact artifact);
   public Task<bool> UpdateArtifact(Artifact artifact);

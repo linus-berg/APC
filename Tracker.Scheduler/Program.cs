@@ -49,11 +49,11 @@ IHost host = Host.CreateDefaultBuilder(args)
                      );
                      services.AddSingleton<IConnectionMultiplexer>(
                        ConnectionMultiplexer.Connect(
-                         Configuration.GetApcVar(CoreVariables.APC_REDIS_HOST)
+                         Configuration.GetBackpackVariable(CoreVariables.BP_REDIS_HOST)
                        )
                      );
-                     services.AddScoped<IApcDatabase, MongoDatabase>();
-                     services.AddSingleton<IApcCache, ApcCache>();
+                     services.AddScoped<ICoreDatabase, MongoDatabase>();
+                     services.AddSingleton<ICoreCache, CoreCache>();
                      services.AddScoped<IArtifactService, ArtifactService>();
 
                      services.AddQuartz(

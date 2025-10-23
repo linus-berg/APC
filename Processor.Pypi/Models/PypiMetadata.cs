@@ -1,4 +1,4 @@
-namespace APM.Pypi.Models;
+namespace Processor.Pypi.Models;
 
 public class PypiMetadata {
   public PypiInfo info { get; set; }

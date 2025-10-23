@@ -6,7 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-APM.Jetbrains.IDE-6B85FB70-8CAF-4942-B10F-A4284B08C54B</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>APM.Jetbrains.IDE</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

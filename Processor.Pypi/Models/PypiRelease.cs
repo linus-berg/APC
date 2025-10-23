@@ -1,4 +1,4 @@
-namespace APM.Pypi.Models;
+namespace Processor.Pypi.Models;
 
 public class PypiRelease {
   public string filename { get; set; }

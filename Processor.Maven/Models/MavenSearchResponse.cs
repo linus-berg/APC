@@ -1,4 +1,4 @@
-namespace APM.Maven.Models;
+namespace Processor.Maven.Models;
 
 public class MavenSearchResponse {
   public int numFound { get; set; }

@@ -6,7 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-ACM.Container-B6A48763-F18F-4367-ABA4-C918BA1E00F1</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>ACM.Container</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "APC.Toolbox": {
+    "Backpack.Toolbox": {
       "commandName": "Project",
       "commandLineArgs": "create-data --processor test --files 10000",
       "environmentVariables": {

@@ -1,4 +1,3 @@
-using APM.Maven;
 using Core.Kernel;
 using Core.Kernel.Constants;
 using Core.Kernel.Extensions;

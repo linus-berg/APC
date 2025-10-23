@@ -37,11 +37,11 @@ builder.Services.AddMassTransit(
     b.UsingRabbitMq(
       (ctx, cfg) => {
         cfg.Host(
-          Configuration.GetApcVar(CoreVariables.APC_RABBIT_MQ_HOST),
+          Configuration.GetBackpackVariable(CoreVariables.BP_RABBIT_MQ_HOST),
           "/",
           h => {
-            h.Username(Configuration.GetApcVar(CoreVariables.APC_RABBIT_MQ_USER));
-            h.Password(Configuration.GetApcVar(CoreVariables.APC_RABBIT_MQ_PASS));
+            h.Username(Configuration.GetBackpackVariable(CoreVariables.BP_RABBIT_MQ_USER));
+            h.Password(Configuration.GetBackpackVariable(CoreVariables.BP_RABBIT_MQ_PASS));
           }
         );
         cfg.ConfigureEndpoints(ctx);
@@ -51,11 +51,11 @@ builder.Services.AddMassTransit(
 );
 builder.Services.AddSingleton<IConnectionMultiplexer>(
   ConnectionMultiplexer.Connect(
-    Configuration.GetApcVar(CoreVariables.APC_REDIS_HOST)
+    Configuration.GetBackpackVariable(CoreVariables.BP_REDIS_HOST)
   )
 );
-builder.Services.AddScoped<IApcDatabase, MongoDatabase>();
-builder.Services.AddSingleton<IApcCache, ApcCache>();
+builder.Services.AddScoped<ICoreDatabase, MongoDatabase>();
+builder.Services.AddSingleton<ICoreCache, CoreCache>();
 builder.Services.AddScoped<IArtifactService, ArtifactService>();
 
 /* keycloak */

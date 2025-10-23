@@ -7,8 +7,8 @@ ARG BUILD_CONFIGURATION=Release
 ARG TARGETARCH
 WORKDIR /src
 COPY ["Processor.Php/Processor.Php.csproj", "Processor.Php/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
+COPY ["Core.Infrastructure/Core.Infrastructure.csproj", "Core.Infrastructure/"]
 RUN dotnet restore "Processor.Php/Processor.Php.csproj"
 COPY . .
 WORKDIR "/src/Processor.Php"

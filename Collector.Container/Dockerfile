@@ -5,9 +5,9 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY ["Collector.Container/Collector.Container.csproj", "Collector.Container/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
 COPY ["Collector.Kernel/Collector.Kernel.csproj", "Collector.Kernel/"]
-COPY ["APC.Skopeo/APC.Skopeo.csproj", "APC.Skopeo/"]
+COPY ["Library.Skopeo/Library.Skopeo.csproj", "Library.Skopeo/"]
 RUN dotnet restore "Collector.Container/Collector.Container.csproj"
 COPY . .
 WORKDIR "/src/Collector.Container"

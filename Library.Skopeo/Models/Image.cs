@@ -1,4 +1,4 @@
-namespace APC.Skopeo.Models;
+namespace Library.Skopeo.Models;
 
 public class Image {
   // Input is in form of docker://docker.io/library/nginx:1.2.3

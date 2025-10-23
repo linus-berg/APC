@@ -1,10 +1,10 @@
 using Collector.DockerArchive;
 using Collector.Kernel;
-using APC.Skopeo;
 using Core.Kernel;
 using Core.Kernel.Constants;
 using Core.Kernel.Extensions;
 using Core.Kernel.Registrations;
+using Library.Skopeo;
 using Polly;
 using Polly.Retry;
 

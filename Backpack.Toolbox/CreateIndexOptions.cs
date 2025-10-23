@@ -1,7 +1,6 @@
-using Backpack.Toolbox;
 using CommandLine;
 
-namespace APC.Toolbox;
+namespace Backpack.Toolbox;
 
 [Verb("create-index")]
 public class CreateIndexOptions : IOptions {

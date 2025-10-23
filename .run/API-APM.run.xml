@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="API-APM" type="CompoundRunConfigurationType">
-    <toRun name="APC.API" type="LaunchSettings" />
-    <toRun name="APC.Ingestion" type="LaunchSettings" />
     <toRun name="APM.Php" type="LaunchSettings" />
+    <toRun name="Core.Gateway" type="LaunchSettings" />
+    <toRun name="Integration.API" type="LaunchSettings" />
     <method v="2" />
   </configuration>
 </component>

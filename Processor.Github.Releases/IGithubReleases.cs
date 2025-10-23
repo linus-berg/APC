@@ -1,6 +1,6 @@
 using Core.Kernel.Models;
 
-namespace APM.Github.Releases;
+namespace Processor.Github.Releases;
 
 public interface IGithubReleases {
   public Task<Artifact> ProcessArtifact(Artifact artifact);

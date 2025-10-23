@@ -5,8 +5,8 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY ["Processor.Maven/Processor.Maven.csproj", "Processor.Maven/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
+COPY ["Core.Infrastructure/Core.Infrastructure.csproj", "Core.Infrastructure/"]
 RUN dotnet restore "Processor.Maven/Processor.Maven.csproj"
 COPY . .
 WORKDIR "/src/Processor.Maven"

@@ -2,7 +2,7 @@
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace APC.Toolbox;
+namespace Backpack.Toolbox;
 
 internal class Program {
   private static async Task Main(string[] args) {

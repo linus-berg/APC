@@ -36,7 +36,7 @@ public static class ServiceExtensions {
          builder.AddOtlpExporter(
            cfg => {
              cfg.Endpoint =
-               new Uri(Configuration.GetApcVar(CoreVariables.APC_OTEL_HOST));
+               new Uri(Configuration.GetBackpackVariable(CoreVariables.BP_OTEL_HOST));
              cfg.Protocol = OtlpExportProtocol.Grpc;
            }
          );
@@ -50,7 +50,7 @@ public static class ServiceExtensions {
          builder.AddOtlpExporter(
            cfg => {
              cfg.Endpoint =
-               new Uri(Configuration.GetApcVar(CoreVariables.APC_OTEL_HOST));
+               new Uri(Configuration.GetBackpackVariable(CoreVariables.BP_OTEL_HOST));
              cfg.Protocol = OtlpExportProtocol.Grpc;
            }
          );

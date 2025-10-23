@@ -1,4 +1,4 @@
-namespace APM.Jetbrains.Models;
+namespace Processor.Jetbrains.Plugins.Models;
 
 public record JetbrainsPluginUpdate {
   public int id { get; init; }

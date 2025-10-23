@@ -4,7 +4,7 @@ using Core.Kernel.Messages;
 using Core.Kernel.Models;
 using MassTransit;
 
-namespace APM.Pypi;
+namespace Processor.Pypi;
 
 public class Consumer : IProcessor {
   private readonly IPypi pypi_;

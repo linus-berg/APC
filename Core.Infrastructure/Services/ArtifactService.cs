@@ -9,11 +9,11 @@ namespace Core.Infrastructure.Services;
 
 public class ArtifactService : IArtifactService {
   private readonly ISendEndpointProvider bus_;
-  private readonly IApcCache cache_;
-  private readonly IApcDatabase db_;
+  private readonly ICoreCache cache_;
+  private readonly ICoreDatabase db_;
   private readonly ILogger<ArtifactService> logger_;
 
-  public ArtifactService(IApcCache cache, IApcDatabase db,
+  public ArtifactService(ICoreCache cache, ICoreDatabase db,
                          ISendEndpointProvider bus,
                          ILogger<ArtifactService> logger) {
     cache_ = cache;
@@ -44,7 +44,7 @@ public class ArtifactService : IArtifactService {
 
   public async Task Route(Artifact artifact) {
     await SendRequest(
-      Endpoints.S_APC_ACM_ROUTER,
+      Endpoints.S_COLLECTOR_ROUTER,
       new ArtifactRouteRequest {
         artifact = artifact
       }
@@ -68,7 +68,7 @@ public class ArtifactService : IArtifactService {
 
   public async Task Ingest(Artifact artifact) {
     await SendRequest(
-      Endpoints.S_APC_INGEST_UNPROCESSED,
+      Endpoints.S_GATEWAY_INGEST_UNPROCESSED,
       new ArtifactIngestRequest {
         artifact = artifact
       }
@@ -82,7 +82,7 @@ public class ArtifactService : IArtifactService {
     }
 
     await SendRequest(
-      new Uri($"queue:apm-{artifact.processor}"),
+      new Uri($"queue:processor-{artifact.processor}"),
       new ArtifactProcessRequest {
         ctx = ctx,
         artifact = artifact

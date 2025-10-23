@@ -1,4 +1,4 @@
-namespace ACM.Container;
+namespace Collector.Container;
 
 public class Worker : BackgroundService {
   private readonly ILogger<Worker> logger_;

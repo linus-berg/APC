@@ -1,4 +1,3 @@
-using APM.Github.Releases;
 using Core.Kernel;
 using Core.Kernel.Extensions;
 using Core.Kernel.Messages;

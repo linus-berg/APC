@@ -1,4 +1,4 @@
-namespace APC.API.Output;
+namespace Integration.API.Output;
 
 public class ProcessorOutput {
   public string id { get; set; }

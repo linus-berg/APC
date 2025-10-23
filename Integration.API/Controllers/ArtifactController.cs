@@ -1,25 +1,25 @@
 using System.Security.Authentication;
 using System.Security.Claims;
-using APC.API.Input;
-using APC.API.Output;
 using Core.Kernel.Messages;
 using Core.Kernel.Models;
 using Core.Services;
+using Integration.API.Input;
+using Integration.API.Output;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ILogger = Serilog.ILogger;
 
-namespace APC.API.Controllers;
+namespace Integration.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
 public class ArtifactController : ControllerBase {
   private readonly IArtifactService aps_;
-  private readonly IApcDatabase database_;
+  private readonly ICoreDatabase database_;
   private readonly ILogger log_;
 
-  public ArtifactController(IArtifactService aps, IApcDatabase database,
+  public ArtifactController(IArtifactService aps, ICoreDatabase database,
                             ILogger log) {
     database_ = database;
     aps_ = aps;

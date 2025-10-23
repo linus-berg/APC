@@ -6,7 +6,7 @@ ARG TARGETARCH
 WORKDIR /src
 COPY ["Collector.Git/Collector.Git.csproj", "Collector.Git/"]
 COPY ["Collector.Kernel/Collector.Kernel.csproj", "Collector.Kernel/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
 RUN dotnet restore "Collector.Git/Collector.Git.csproj"
 COPY . .
 WORKDIR "/src/Collector.Git"

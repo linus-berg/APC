@@ -5,7 +5,7 @@ namespace Core.Gateway;
 
 public class ProcessedDefinition : ConsumerDefinition<ProcessedConsumer> {
   public ProcessedDefinition() {
-    EndpointName = Endpoints.S_APC_INGEST_PROCESSED.ToString()
+    EndpointName = Endpoints.S_GATEWAY_INGEST_PROCESSED.ToString()
                             .Replace("queue:", "");
     ConcurrentMessageLimit = 10;
   }

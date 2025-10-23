@@ -1,4 +1,4 @@
-namespace APM.Helm.Models;
+namespace Processor.Helm.Models;
 
 public class HelmChartVersion {
   public string version { get; set; }

@@ -1,4 +1,4 @@
-namespace APM.Pypi;
+namespace Processor.Pypi;
 
 public class Worker : BackgroundService {
   private readonly ILogger<Worker> logger_;

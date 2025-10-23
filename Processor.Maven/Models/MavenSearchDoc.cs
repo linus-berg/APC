@@ -1,4 +1,4 @@
-namespace APM.Maven.Models;
+namespace Processor.Maven.Models;
 
 public class MavenSearchDoc {
   public string id { get; set; }

@@ -1,12 +1,12 @@
 ﻿using System.Text;
-using APC.Skopeo.Exceptions;
-using APC.Skopeo.Models;
 using CliWrap;
 using Core.Kernel;
 using Core.Kernel.Extensions;
+using Library.Skopeo.Exceptions;
+using Library.Skopeo.Models;
 using Microsoft.Extensions.Logging;
 
-namespace APC.Skopeo;
+namespace Library.Skopeo;
 
 public class SkopeoClient {
   private readonly ILogger<SkopeoClient> logger_;
@@ -18,7 +18,7 @@ public class SkopeoClient {
   public async Task<bool> CopyToRegistry(string remote_image) {
     Image image = new(remote_image);
     string? registry =
-      Configuration.GetApcVar(CoreVariables.ACM_CONTAINER_REGISTRY);
+      Configuration.GetBackpackVariable(CoreVariables.BP_COLLECTOR_CONTAINER_REGISTRY);
 
     string internal_image = $"docker://{registry}/{image.Repository}";
     StringBuilder std_out = new();
@@ -112,7 +112,7 @@ public class SkopeoClient {
   public async Task<SkopeoManifest?> ImageExists(string input) {
     Image image = new(input);
     string? registry =
-      Configuration.GetApcVar(CoreVariables.ACM_CONTAINER_REGISTRY);
+      Configuration.GetBackpackVariable(CoreVariables.BP_COLLECTOR_CONTAINER_REGISTRY);
     Command cmd = Cli.Wrap("skopeo")
                      .WithArguments(
                        args => {

@@ -1,7 +1,7 @@
 using Collector.Kernel;
 using Core.Kernel;
 
-namespace ACM.Wget;
+namespace Collector.Wget;
 
 public class Wget {
   private readonly FileSystem fs_;

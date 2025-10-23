@@ -2,7 +2,7 @@ using Core.Kernel;
 using Core.Kernel.Messages;
 using MassTransit;
 
-namespace ACM.Wget;
+namespace Collector.Wget;
 
 public class Consumer : ICollector {
   private readonly Wget wget_;

@@ -1,4 +1,4 @@
-namespace ACM.Wget;
+namespace Collector.Wget;
 
 public class Worker : BackgroundService {
   public Worker(ILogger<Worker> logger) {

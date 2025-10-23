@@ -1,4 +1,4 @@
-namespace APC.API.Input;
+namespace Integration.API.Input;
 
 public class ArtifactValidationInput {
   public string id { get; set; }

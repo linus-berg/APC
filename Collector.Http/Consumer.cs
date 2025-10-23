@@ -12,8 +12,8 @@ public class Consumer : ICollector {
 
   public Consumer(FileSystem fs) {
     fs_ = fs;
-    delta_ = Configuration.GetApcVar(CoreVariables.ACM_HTTP_DELTA) == "true";
-    forward_ = Configuration.GetApcVar(CoreVariables.ACM_HTTP_MODE) == "forward";
+    delta_ = Configuration.GetBackpackVariable(CoreVariables.BP_COLLECTOR_HTTP_DELTA) == "true";
+    forward_ = Configuration.GetBackpackVariable(CoreVariables.BP_COLLECTOR_HTTP_MODE) == "forward";
   }
 
   public async Task Consume(ConsumeContext<ArtifactCollectRequest> context) {

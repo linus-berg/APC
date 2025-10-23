@@ -6,7 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-ACM.Wget-FAEBED47-D401-4DBD-AE35-38DA2D2A9F5A</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>ACM.Wget</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

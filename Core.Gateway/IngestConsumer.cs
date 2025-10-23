@@ -7,11 +7,11 @@ namespace Core.Gateway;
 public class IngestConsumer : IConsumer<ArtifactIngestRequest> {
   private readonly IArtifactService aps_;
   private readonly IBus bus_;
-  private readonly IApcCache cache_;
+  private readonly ICoreCache cache_;
   private readonly ILogger<IngestConsumer> logger_;
 
   public IngestConsumer(ILogger<IngestConsumer> logger, IBus bus,
-                        IApcCache cache,
+                        ICoreCache cache,
                         IArtifactService aps) {
     logger_ = logger;
     bus_ = bus;

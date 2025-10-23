@@ -5,20 +5,20 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 ARG TARGETARCH
 WORKDIR /src
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-COPY ["APC.GitUnpack/APC.GitUnpack.csproj", "APC.GitUnpack/"]
-RUN dotnet restore "APC.GitUnpack/APC.GitUnpack.csproj"
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
+COPY ["Backpack.GitUnpack/Backpack.GitUnpack.csproj", "Backpack.GitUnpack/"]
+RUN dotnet restore "Backpack.GitUnpack/Backpack.GitUnpack.csproj"
 COPY . .
-WORKDIR "/src/APC.GitUnpack"
-RUN dotnet build "APC.GitUnpack.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Backpack.GitUnpack"
+RUN dotnet build "Backpack.GitUnpack.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG TARGETARCH
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "APC.GitUnpack.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Backpack.GitUnpack.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 RUN apt-get -y update && apt-get install -y git
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "APC.GitUnpack.dll"]
+ENTRYPOINT ["dotnet", "Backpack.GitUnpack.dll"]

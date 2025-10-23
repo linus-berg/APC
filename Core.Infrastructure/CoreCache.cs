@@ -3,10 +3,10 @@ using StackExchange.Redis;
 
 namespace Core.Infrastructure;
 
-public class ApcCache : IApcCache {
+public class CoreCache : ICoreCache {
   private readonly IConnectionMultiplexer redis_;
 
-  public ApcCache(IConnectionMultiplexer redis) {
+  public CoreCache(IConnectionMultiplexer redis) {
     redis_ = redis;
   }
 

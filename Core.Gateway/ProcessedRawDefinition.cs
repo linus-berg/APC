@@ -6,7 +6,7 @@ namespace Core.Gateway;
 /* Endpoint for messages not using the standard MT format. */
 public class ProcessedRawDefinition : ConsumerDefinition<ProcessedRawConsumer> {
   public ProcessedRawDefinition() {
-    EndpointName = Endpoints.S_APC_INGEST_PROCESSED_RAW.ToString()
+    EndpointName = Endpoints.S_GATEWAY_INGEST_PROCESSED_RAW.ToString()
                             .Replace("queue:", "");
     ConcurrentMessageLimit = 10;
   }

@@ -1,9 +1,9 @@
 using System.Text.RegularExpressions;
-using APM.Helm.Models;
 using Core.Kernel.Models;
+using Processor.Helm.Models;
 using RestSharp;
 
-namespace APM.Helm;
+namespace Processor.Helm;
 
 public class Helm {
   private const string C_API_ = "https://artifacthub.io/api/v1/packages/helm";

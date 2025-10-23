@@ -4,7 +4,7 @@ using Core.Kernel.Messages;
 using Core.Kernel.Models;
 using MassTransit;
 
-namespace APM.Jetbrains.IDE;
+namespace Processor.Jetbrains.IDE;
 
 public class Consumer : IProcessor {
   private readonly IJetbrains jetbrains_;

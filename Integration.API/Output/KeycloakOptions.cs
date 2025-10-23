@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace APC.API.Output;
+namespace Integration.API.Output;
 
 public class KeycloakOptions {
   [JsonPropertyName("auth-server-url")]

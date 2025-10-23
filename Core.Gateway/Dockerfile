@@ -4,19 +4,19 @@ WORKDIR /app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
-COPY ["APC.Ingestion/APC.Ingestion.csproj", "APC.Ingestion/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-COPY ["APC.Infrastructure/APC.Infrastructure.csproj", "APC.Infrastructure/"]
-RUN dotnet restore "APC.Ingestion/APC.Ingestion.csproj"
+COPY ["Core.Gateway/Core.Gateway.csproj", "Core.Gateway/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
+COPY ["Core.Infrastructure/Core.Infrastructure.csproj", "Core.Infrastructure/"]
+RUN dotnet restore "Core.Gateway/Core.Gateway.csproj"
 COPY . .
-WORKDIR "/src/APC.Ingestion"
-RUN dotnet build "APC.Ingestion.csproj" -a $TARGETARCH -c Release -o /app/build
+WORKDIR "/src/Core.Gateway"
+RUN dotnet build "Core.Gateway.csproj" -a $TARGETARCH -c Release -o /app/build
 
 FROM build AS publish
 ARG TARGETARCH
-RUN dotnet publish "APC.Ingestion.csproj" -a $TARGETARCH -c Release -o /app/publish
+RUN dotnet publish "Core.Gateway.csproj" -a $TARGETARCH -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "APC.Ingestion.dll"]
+ENTRYPOINT ["dotnet", "Core.Gateway.dll"]

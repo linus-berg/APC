@@ -6,8 +6,8 @@ ARG TARGETARCH
 WORKDIR /src
 COPY ["Collector.DockerArchive/Collector.DockerArchive.csproj", "Collector.DockerArchive/"]
 COPY ["Collector.Kernel/Collector.Kernel.csproj", "Collector.Kernel/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
-COPY ["APC.Skopeo/APC.Skopeo.csproj", "APC.Skopeo/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
+COPY ["Library.Skopeo/Library.Skopeo.csproj", "Library.Skopeo/"]
 RUN dotnet restore "Collector.DockerArchive/Collector.DockerArchive.csproj"
 COPY . .
 WORKDIR "/src/Collector.DockerArchive"

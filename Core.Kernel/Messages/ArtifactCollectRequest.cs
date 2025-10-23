@@ -9,6 +9,6 @@ public class ArtifactCollectRequest {
   public string GetCollectorModule() {
     Uri uri = new(location);
     string scheme = uri.Scheme;
-    return $"acm-{scheme}";
+    return $"collector-{scheme}";
   }
 }

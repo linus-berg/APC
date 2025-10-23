@@ -23,13 +23,13 @@ public static class StorageExtensions {
     /* SETUP STORAGE */
     MinioConnectionBuilder connection = new();
 
-    connection.region = Configuration.GetApcVar(CoreVariables.ACM_S3_REGION);
+    connection.region = Configuration.GetBackpackVariable(CoreVariables.BP_S3_REGION);
     connection.access_key =
-      Configuration.GetApcVar(CoreVariables.ACM_S3_ACCESS_KEY);
+      Configuration.GetBackpackVariable(CoreVariables.BP_S3_ACCESS_KEY);
     connection.secret_key =
-      Configuration.GetApcVar(CoreVariables.ACM_S3_SECRET_KEY);
-    connection.end_point = Configuration.GetApcVar(CoreVariables.ACM_S3_ENDPOINT);
-    connection.bucket = Configuration.GetApcVar(CoreVariables.ACM_S3_BUCKET);
+      Configuration.GetBackpackVariable(CoreVariables.BP_S3_SECRET_KEY);
+    connection.end_point = Configuration.GetBackpackVariable(CoreVariables.BP_S3_ENDPOINT);
+    connection.bucket = Configuration.GetBackpackVariable(CoreVariables.BP_S3_BUCKET);
 
     MinioStorageOptions minio_options = new() {
       auto_create_bucket = true,

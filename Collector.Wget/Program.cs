@@ -1,5 +1,5 @@
 using Collector.Kernel;
-using ACM.Wget;
+using Collector.Wget;
 using Core.Kernel;
 using Core.Kernel.Constants;
 using Core.Kernel.Registrations;
@@ -14,7 +14,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                        new FolderFileStorage(
                          b => {
                            b.Folder(
-                             Configuration.GetApcVar(CoreVariables.APC_ACM_DIR)
+                             Configuration.GetBackpackVariable(CoreVariables.BP_COLLECTOR_DIRECTORY)
                            );
                            return b;
                          }

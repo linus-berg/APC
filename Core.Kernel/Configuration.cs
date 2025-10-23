@@ -5,27 +5,27 @@ namespace Core.Kernel;
 public static class Configuration {
   private static readonly Dictionary<CoreVariables, string> S_DEFAULTS_ = new() {
     {
-      CoreVariables.APC_API_HOST, "http://localhost:4001"
+      CoreVariables.BP_API_HOST, "http://localhost:4001"
     }, {
-      CoreVariables.APC_ACM_DIR, "/data/"
+      CoreVariables.BP_COLLECTOR_DIRECTORY, "/data/"
     }, {
-      CoreVariables.APC_REDIS_HOST, "localhost"
+      CoreVariables.BP_REDIS_HOST, "localhost"
     }, {
-      CoreVariables.APC_REDIS_USER, ""
+      CoreVariables.BP_REDIS_USER, ""
     }, {
-      CoreVariables.APC_REDIS_PASS, ""
+      CoreVariables.BP_REDIS_PASS, ""
     }, {
-      CoreVariables.APC_RABBIT_MQ_HOST, "localhost"
+      CoreVariables.BP_RABBIT_MQ_HOST, "localhost"
     }, {
-      CoreVariables.APC_RABBIT_MQ_USER, "guest"
+      CoreVariables.BP_RABBIT_MQ_USER, "guest"
     }, {
-      CoreVariables.APC_RABBIT_MQ_PASS, "guest"
+      CoreVariables.BP_RABBIT_MQ_PASS, "guest"
     }, {
-      CoreVariables.APC_OTEL_HOST, "http://localhost:4318"
+      CoreVariables.BP_OTEL_HOST, "http://localhost:4318"
     }, {
-      CoreVariables.ACM_HTTP_DELTA, "true" // Create daily deltas
+      CoreVariables.BP_COLLECTOR_HTTP_DELTA, "true" // Create daily deltas
     }, {
-      CoreVariables.ACM_HTTP_MODE, "lake" // lake, forward 
+      CoreVariables.BP_COLLECTOR_HTTP_MODE, "lake" // lake, forward 
     }
   };
 
@@ -33,7 +33,7 @@ public static class Configuration {
     bool has_otel_host = false;
     try {
       has_otel_host =
-        !string.IsNullOrEmpty(GetApcVar(CoreVariables.APC_OTEL_HOST));
+        !string.IsNullOrEmpty(GetBackpackVariable(CoreVariables.BP_OTEL_HOST));
     } catch {
       has_otel_host = false;
     }
@@ -41,7 +41,7 @@ public static class Configuration {
     return has_otel_host;
   }
 
-  public static string? GetApcVar(CoreVariables variable) {
+  public static string? GetBackpackVariable(CoreVariables variable) {
     string? value = Environment.GetEnvironmentVariable(variable.ToString());
 
     /* If variable is set */

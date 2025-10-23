@@ -1,8 +1,8 @@
-using APC.Skopeo;
 using Core.Kernel;
 using Core.Kernel.Constants;
 using Core.Kernel.Extensions;
 using Core.Kernel.Registrations;
+using Library.Skopeo;
 using Processor.Container;
 
 ModuleRegistration registration = new(ModuleType.PROCESSOR, typeof(Consumer));

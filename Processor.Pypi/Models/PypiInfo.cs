@@ -1,4 +1,4 @@
-namespace APM.Pypi.Models;
+namespace Processor.Pypi.Models;
 
 public class PypiInfo {
   public List<string>? requires_dist { get; set; }

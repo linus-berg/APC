@@ -5,7 +5,7 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY ["Collector.Router/Collector.Router.csproj", "Collector.Router/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
 RUN dotnet restore "Collector.Router/Collector.Router.csproj"
 COPY . .
 WORKDIR "/src/Collector.Router"

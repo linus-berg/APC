@@ -1,9 +1,9 @@
-using ACM.Container;
-using APC.Skopeo;
+using Collector.Container;
 using Core.Kernel;
 using Core.Kernel.Constants;
 using Core.Kernel.Extensions;
 using Core.Kernel.Registrations;
+using Library.Skopeo;
 
 ModuleRegistration registration = new(ModuleType.COLLECTOR, typeof(Consumer));
 registration.AddEndpoint("docker", 5);

@@ -1,8 +1,8 @@
-using APM.Pypi;
 using Core.Kernel;
 using Core.Kernel.Constants;
 using Core.Kernel.Extensions;
 using Core.Kernel.Registrations;
+using Processor.Pypi;
 
 ModuleRegistration registration = new(ModuleType.PROCESSOR, typeof(Consumer));
 registration.AddEndpoint("pypi");

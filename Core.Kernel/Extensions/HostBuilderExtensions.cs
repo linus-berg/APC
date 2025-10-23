@@ -30,7 +30,7 @@ public static class HostBuilderExtensions {
                     exporter.Endpoint =
                       new Uri(
 #pragma warning disable CS8604 // Possible null reference argument.
-                        Configuration.GetApcVar(CoreVariables.APC_OTEL_HOST)
+                        Configuration.GetBackpackVariable(CoreVariables.BP_OTEL_HOST)
                       );
 #pragma warning restore CS8604 // Possible null reference argument.
                     exporter.Protocol =

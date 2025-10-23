@@ -1,9 +1,9 @@
-using APM.Jetbrains.Models;
 using Core.Kernel.Exceptions;
 using Core.Kernel.Models;
+using Processor.Jetbrains.Plugins.Models;
 using RestSharp;
 
-namespace APM.Jetbrains;
+namespace Processor.Jetbrains.Plugins;
 
 public class Jetbrains : IJetbrains {
   private const string C_API_ = "https://plugins.jetbrains.com";

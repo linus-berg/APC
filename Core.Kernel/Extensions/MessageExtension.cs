@@ -21,7 +21,7 @@ public static class MessageExtension {
     this ConsumeContext<ArtifactProcessRequest> context,
     Artifact artifact) {
     await context.Send(
-      Endpoints.S_APC_INGEST_PROCESSED,
+      Endpoints.S_GATEWAY_INGEST_PROCESSED,
       new ArtifactProcessedRequest {
         context = context.Message.ctx,
         artifact = artifact

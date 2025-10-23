@@ -2,37 +2,38 @@ namespace Core.Kernel;
 
 public enum CoreVariables {
   // RabbitMQ message bus
-  APC_RABBIT_MQ_HOST,
-  APC_RABBIT_MQ_USER,
-  APC_RABBIT_MQ_PASS,
+  BP_RABBIT_MQ_HOST,
+  BP_RABBIT_MQ_USER,
+  BP_RABBIT_MQ_PASS,
 
   // Redis cache
-  APC_REDIS_HOST,
-  APC_REDIS_USER,
-  APC_REDIS_PASS,
+  BP_REDIS_HOST,
+  BP_REDIS_USER,
+  BP_REDIS_PASS,
 
   // OTEL collector telemetry
-  APC_OTEL_HOST,
+  BP_OTEL_HOST,
 
-  APC_API_HOST,
+  BP_API_HOST,
 
-  // LEGACY: Place on disk to store artifacts, only required for ACM.Git
-  APC_ACM_DIR,
+  // LEGACY: Place on disk to store artifacts, only required for Collector.Git
+  BP_COLLECTOR_DIRECTORY,
 
   // MongoDb connection string
-  APC_MONGO_STR,
-
-  // ACM.Http configuration
-  ACM_HTTP_DELTA,
-  ACM_HTTP_MODE,
+  BP_MONGO_STR,
 
   // S3
-  ACM_S3_ACCESS_KEY,
-  ACM_S3_SECRET_KEY,
-  ACM_S3_REGION,
-  ACM_S3_ENDPOINT,
-  ACM_S3_BUCKET,
+  BP_S3_ACCESS_KEY,
+  BP_S3_SECRET_KEY,
+  BP_S3_REGION,
+  BP_S3_ENDPOINT,
+  BP_S3_BUCKET,
 
+  // Collector.Http configuration
+  BP_COLLECTOR_HTTP_DELTA,
+  BP_COLLECTOR_HTTP_MODE,
+
+    
   // Registry proxy for S3 
-  ACM_CONTAINER_REGISTRY
+  BP_COLLECTOR_CONTAINER_REGISTRY
 }

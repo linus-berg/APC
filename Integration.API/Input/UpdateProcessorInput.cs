@@ -1,4 +1,4 @@
-namespace APC.API.Input;
+namespace Integration.API.Input;
 
 public class UpdateProcessorInput {
   public string processor_id { get; set; }

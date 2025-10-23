@@ -6,7 +6,7 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY ["Processor.Terraform/Processor.Terraform.csproj", "Processor.Terraform/"]
-COPY ["APC.Kernel/APC.Kernel.csproj", "APC.Kernel/"]
+COPY ["Core.Kernel/Core.Kernel.csproj", "Core.Kernel/"]
 RUN dotnet restore "Processor.Terraform/Processor.Terraform.csproj"
 COPY . .
 WORKDIR "/src/Processor.Terraform"

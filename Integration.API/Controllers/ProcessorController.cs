@@ -1,21 +1,21 @@
-using APC.API.Input;
-using APC.API.Output;
 using Core.Kernel.Models;
 using Core.Services;
+using Integration.API.Input;
+using Integration.API.Output;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
-namespace APC.API.Controllers;
+namespace Integration.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
 public class ProcessorController : ControllerBase {
   private readonly IArtifactService aps_;
-  private readonly IApcDatabase database_;
+  private readonly ICoreDatabase database_;
 
-  public ProcessorController(IArtifactService aps, IApcDatabase database) {
+  public ProcessorController(IArtifactService aps, ICoreDatabase database) {
     database_ = database;
     aps_ = aps;
   }

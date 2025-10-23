@@ -1,4 +1,4 @@
-namespace APM.Maven;
+namespace Processor.Maven;
 
 public class Worker : BackgroundService {
   private readonly ILogger<Worker> logger_;

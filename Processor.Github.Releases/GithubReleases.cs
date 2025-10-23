@@ -3,7 +3,7 @@ using Core.Kernel.Models;
 using Library.Github;
 using Library.Github.Models;
 
-namespace APM.Github.Releases;
+namespace Processor.Github.Releases;
 
 public class GithubReleases : IGithubReleases {
   private readonly IGithubClient gh_;

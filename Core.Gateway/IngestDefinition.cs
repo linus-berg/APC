@@ -5,7 +5,7 @@ namespace Core.Gateway;
 
 public class IngestDefinition : ConsumerDefinition<IngestConsumer> {
   public IngestDefinition() {
-    EndpointName = Endpoints.S_APC_INGEST_UNPROCESSED.ToString()
+    EndpointName = Endpoints.S_GATEWAY_INGEST_UNPROCESSED.ToString()
                             .Replace("queue:", "");
     ConcurrentMessageLimit = 10;
   }

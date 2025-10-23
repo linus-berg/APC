@@ -1,7 +1,7 @@
 using Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace APC.API.Controllers;
+namespace Integration.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

@@ -1,4 +1,4 @@
-namespace APM.Helm.Models;
+namespace Processor.Helm.Models;
 
 public class HelmChartDependency {
   public string name { get; set; }
