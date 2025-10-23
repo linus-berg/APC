@@ -27,12 +27,12 @@ See the `values.examples.yaml` file for configuration.
 The auxiliary services such as mongodb still needs to be provided by the administrator.
 
 ## Recommended minimum requirements (single node)
-| Resource | Req                              |
-|----------|----------------------------------|
-| RAM      | 16GB                             |
-| CPU      | 8 cores                          |
-| Storage  | 2TB * APM (depending on usage)   |
-| Network  | >= 1 Gbps                        |
+| Resource | Req                                  |
+|----------|--------------------------------------|
+| RAM      | 16GB                                 |
+| CPU      | 8 cores                              |
+| Storage  | 2TB * Collector (depending on usage) |
+| Network  | >= 1 Gbps                            |
 
 Backpack is designed to be horizontally scalable and suitable for kubernetes, however, kubernetes deployments have not been tested thoroughly.
 
@@ -40,18 +40,18 @@ The following services are required to run the complete suite of Backpack capabi
 A batteries included starter pack is included under /examples and /Compose, however, these are not production ready configurations, and are only intended as an development/test environment.
 
 
-| Service                 | Requirement                            |
-|-------------------------|--------------------------------------|
-| Keycloak                | Required (only for API and GUI)        |
-| RabbitMq                | Required                               |
-| Minio                   | Required                               |
-| MongoDb                 | Required                               |
-| Redis                   | Required                               |
-| Container Registry      | Required (only for ACM.Container)      |
-| OpenTelemetry Collector | Recommended but required for Telemetry | 
-| Grafana                 | Recommended                            | 
-| Prometheus              | Recommended                            | 
-| Tempo                   | Recommended                            | 
+| Service                 | Requirement                             |
+|-------------------------|-----------------------------------------|
+| Keycloak                | Required (only for API and GUI)         |
+| RabbitMq                | Required                                |
+| Minio                   | Required                                |
+| MongoDb                 | Required                                |
+| Redis                   | Required                                |
+| Container Registry      | Required (only for Collector.Container) |
+| OpenTelemetry Collector | Recommended but required for Telemetry  | 
+| Grafana                 | Recommended                             | 
+| Prometheus              | Recommended                             | 
+| Tempo                   | Recommended                             | 
 
 
 ## Modules
@@ -62,24 +62,24 @@ A batteries included starter pack is included under /examples and /Compose, howe
 | Collector | Artifact Collector Module   | Handles the collection of artifact-types based on standard protocols. |
 
 ## Environment Variables
-| Name                            | Default   | Modules               |
-|---------------------------------|-----------|-----------------------|
-| BP_OTEL_HOST                    | -         | Ingest, API, APM, ACM |
-| BP_RABBIT_MQ_HOST               | localhost | Ingest, API, APM, ACM |
-| BP_RABBIT_MQ_USER               | guest     | Ingest, API, APM, ACM |
-| BP_RABBIT_MQ_PASS               | guest     | Ingest, API, APM, ACM |
-| BP_REDIS_HOST                   | localhost | Ingest, API           |
-| BP_REDIS_USER                   | -         | Ingest, API           |
-| BP_REDIS_PASS                   | -         | Ingest, API           |
-| BP_MONGO_STR                    | -         | Ingest, API           |
-| BP_API_HOST                     | localhost | GUI, ATM, API         |
-| BP_API_PORT                     | 4000      | GUI, ATM, API         |
-| BP_S3_ACCESS_KEY                | -         | ACM                   |
-| BP_S3_SECRET_KEY                | -         | ACM                   |
-| BP_S3_REGION                    | -         | ACM                   |
-| BP_S3_ENDPOINT                  | -         | ACM                   |
-| BP_S3_BUCKET                    | -         | ACM                   |
-| BP_COLLECTOR_DIRECTORY          | /data/    | ACM.Git               |
-| BP_COLLECTOR_HTTP_DELTA         | true      | ACM.Http              |
-| BP_COLLECTOR_HTTP_MODE          | lake      | ACM.Http              |
-| BP_COLLECTOR_CONTAINER_REGISTRY | -         | ACM.Container         |
+| Name                            | Default   | Modules                            |
+|---------------------------------|-----------|------------------------------------|
+| BP_OTEL_HOST                    | -         | Gateway, API, Processor, Collector |
+| BP_RABBIT_MQ_HOST               | localhost | Gateway, API, Processor, Collector |
+| BP_RABBIT_MQ_USER               | guest     | Gateway, API, Processor, Collector |
+| BP_RABBIT_MQ_PASS               | guest     | Gateway, API, Processor, Collector |
+| BP_REDIS_HOST                   | localhost | Gateway, API                       |
+| BP_REDIS_USER                   | -         | Gateway, API                       |
+| BP_REDIS_PASS                   | -         | Gateway, API                       |
+| BP_MONGO_STR                    | -         | Gateway, API                       |
+| BP_API_HOST                     | localhost | GUI, Tracker, API                  |
+| BP_API_PORT                     | 4000      | GUI, Tracker, API                  |
+| BP_S3_ACCESS_KEY                | -         | Collector                          |
+| BP_S3_SECRET_KEY                | -         | Collector                          |
+| BP_S3_REGION                    | -         | Collector                          |
+| BP_S3_ENDPOINT                  | -         | Collector                          |
+| BP_S3_BUCKET                    | -         | Collector                          |
+| BP_COLLECTOR_DIRECTORY          | /data/    | Collector.Git                      |
+| BP_COLLECTOR_HTTP_DELTA         | true      | Collector.Http                     |
+| BP_COLLECTOR_HTTP_MODE          | lake      | Collector.Http                     |
+| BP_COLLECTOR_CONTAINER_REGISTRY | -         | Collector.Container                |
