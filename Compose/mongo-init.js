@@ -1,8 +1,8 @@
-db = db.getSiblingDB('apc');
+db = db.getSiblingDB('backpack');
 
-db.createCollection('apc-processors');
+db.createCollection('backpack-processors');
 
-db["apc-processors"].insertMany([
+db["backpack-processors"].insertMany([
   {
     _id: 'npm',
     config: {},
