@@ -5,7 +5,7 @@ using Core.Kernel.Registrations;
 using Processor.Jetbrains.Plugins;
 
 ModuleRegistration registration = new(ModuleType.PROCESSOR, typeof(Consumer));
-registration.AddEndpoint("jetbrains");
+registration.AddEndpoint("jetbrains-plugins");
 
 IHost host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices(
