@@ -21,6 +21,10 @@ public class TrackingJob : IJob {
     }
 
     logger_.LogInformation("Tracking {Processor}", processor);
-    await aps_.Track(processor);
+    try {
+      await aps_.Track(processor);
+    } catch (Exception e) {
+      logger_.LogCritical(e.ToString());
+    }
   }
 }

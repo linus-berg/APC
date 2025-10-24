@@ -128,7 +128,11 @@ public class ArtifactService : IArtifactService {
   public async Task Validate(Processor processor) {
     IEnumerable<Artifact>
       artifacts = await db_.GetArtifacts(processor.id, false);
-    logger_.LogInformation($"Validating> {processor}={artifacts.Count()}");
+    logger_.LogInformation(
+      "[{processor}] Validating {artifacts} artifacts",
+      processor,
+      artifacts.Count()
+    );
     foreach (Artifact artifact in artifacts) {
       await Validate(artifact, processor);
     }
@@ -159,9 +163,24 @@ public class ArtifactService : IArtifactService {
   }
 
   public async Task Track(Processor processor) {
+    logger_.LogInformation("[{processor}] Start tracking...", processor.id);
     IEnumerable<Artifact> artifacts = await db_.GetArtifacts(processor.id);
     foreach (Artifact artifact in artifacts) {
-      await Track(artifact, processor);
+      try {
+        logger_.LogDebug(
+          "[{processor}] {artifact}",
+          processor.id,
+          artifact.id
+        );
+        await Track(artifact, processor);
+      } catch (Exception e) {
+        logger_.LogError(
+          "[{processor}] Failed tracking {artifact} {exception}",
+          processor.id,
+          artifact.id,
+          e
+        );
+      }
     }
   }
 
