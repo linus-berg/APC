@@ -2,6 +2,7 @@ namespace Core.Kernel;
 
 public enum CoreVariables {
   // RabbitMQ message bus
+  BP_RABBIT_MQ_API,
   BP_RABBIT_MQ_HOST,
   BP_RABBIT_MQ_USER,
   BP_RABBIT_MQ_PASS,

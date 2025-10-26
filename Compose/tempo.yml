@@ -23,7 +23,7 @@ metrics_generator:
   storage:
     path: /tmp/tempo/generator/wal
     remote_write:
-      - url: http://apc-telemetry-prometheus:9090/api/v1/write
+      - url: http://bp-telemetry-prometheus:9090/api/v1/write
         send_exemplars: true
 
 storage:

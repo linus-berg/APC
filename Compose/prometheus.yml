@@ -11,14 +11,14 @@ scrape_configs:
     metrics_path: /minio/v2/metrics/cluster
     scheme: http
     static_configs:
-      - targets: [apc-minio:9000]
+      - targets: [bp-minio:9000]
   
   - job_name: 'otel'
     scrape_interval: 5s
     static_configs:
-      - targets: [ 'apc-telemetry-otel:8889' ]
-      - targets: [ 'apc-telemetry-otel:8888' ]
+      - targets: [ 'bp-telemetry-otel:8889' ]
+      - targets: [ 'bp-telemetry-otel:8888' ]
 
   - job_name: 'tempo'
     static_configs:
-      - targets: [ 'apc-telemetry-tempo:3200' ]
+      - targets: [ 'bp-telemetry-tempo:3200' ]

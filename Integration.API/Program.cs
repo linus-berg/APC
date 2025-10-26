@@ -57,6 +57,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(
 builder.Services.AddScoped<ICoreDatabase, MongoDatabase>();
 builder.Services.AddSingleton<ICoreCache, CoreCache>();
 builder.Services.AddScoped<IArtifactService, ArtifactService>();
+builder.Services.AddSingleton<IStatusService, RabbitMqStatusService>();
 
 /* keycloak */
 builder.Host.ConfigureKeycloakConfigurationSource();

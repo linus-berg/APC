@@ -8,7 +8,7 @@ exporters:
   logging:
     loglevel: debug
   otlp:
-    endpoint: apc-telemetry-tempo:4317
+    endpoint: bp-telemetry-tempo:4317
     tls:
       insecure: true
   prometheus:

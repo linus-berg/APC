@@ -6,7 +6,7 @@ datasources:
   uid: prometheus
   access: proxy
   orgId: 1
-  url: http://apc-telemetry-prometheus:9090
+  url: http://bp-telemetry-prometheus:9090
   basicAuth: false
   isDefault: false
   version: 1
@@ -17,7 +17,7 @@ datasources:
   type: tempo
   access: proxy
   orgId: 1
-  url: http://apc-telemetry-tempo:3200
+  url: http://bp-telemetry-tempo:3200
   basicAuth: false
   isDefault: true
   version: 1

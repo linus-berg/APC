@@ -2,7 +2,7 @@ version: "3.8"
 services:
 # Infrastructure
   # required to run container syncs
-  apc-prometheus:
+  bp-prometheus:
     image: prom/prometheus:latest
     command:
       - --config.file=/etc/prometheus.yaml
@@ -13,14 +13,14 @@ services:
     volumes:
       - "./prometheus.yml:/etc/prometheus.yaml:Z"
   
-  apc-telemetry-otel:
+  bp-telemetry-otel:
     image: otel/opentelemetry-collector-contrib:0.79.0
     command: [ "--config=/etc/otel-collector.yaml" ]
     volumes:
       - "./otel.yml:/etc/otel-collector.yaml:Z"
     extra_hosts: ["host.docker.internal:host-gateway"]
 
-  apc-minio:
+  bp-minio:
     image: minio/minio
     restart: always
     ports:
@@ -31,27 +31,27 @@ services:
     environment:
       MINIO_ROOT_USER: minio-dev
       MINIO_ROOT_PASSWORD: minio-dev
-      MINIO_PROMETHEUS_URL: http://apc-prometheus:9090
+      MINIO_PROMETHEUS_URL: http://bp-prometheus:9090
       MINIO_PROMETHEUS_JOB_ID: minio-job
       MINIO_PROMETHEUS_AUTH_TYPE: public
     command: server --console-address ":9001" /data
   
-  apc-internal-registry:
+  bp-internal-registry:
     image: registry:2.8
     restart: always
     ports:
       - "6000:5000"
     environment:
       REGISTRY_STORAGE: s3
-      REGISTRY_STORAGE_S3_ACCESSKEY: minio-apc
-      REGISTRY_STORAGE_S3_SECRETKEY: minio-apc
-      REGISTRY_STORAGE_S3_REGIONENDPOINT: http://apc-minio:9000
+      REGISTRY_STORAGE_S3_ACCESSKEY: minio-bp
+      REGISTRY_STORAGE_S3_SECRETKEY: minio-bp
+      REGISTRY_STORAGE_S3_REGIONENDPOINT: http://bp-minio:9000
       REGISTRY_STORAGE_S3_BUCKET: docker-registry
       REGISTRY_STORAGE_S3_SECURE: "false"
       REGISTRY_STORAGE_S3_region: ignored-for-minio
       REGISTRY_STORAGE_REDIRECT_DISABLE: "true"
     
-  apc-mongo:
+  bp-mongo:
     image: mongo
     restart: always
     ports:
@@ -63,7 +63,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
 
-  apc-keycloak-db:
+  bp-keycloak-db:
     image: postgres:13
     volumes:
       - "./volumes/kc_db:/var/lib/postgresql/data:Z"
@@ -72,13 +72,13 @@ services:
       POSTGRES_USER: pg
       POSTGRES_PASSWORD: pg123
 
-  apc-keycloak:
+  bp-keycloak:
     image: quay.io/keycloak/keycloak:20.0.3
     restart: always
     depends_on:
-     - apc-keycloak-db
+     - bp-keycloak-db
     command:
-      - start --proxy edge --hostname-strict=false --hostname-url=http://localhost:8090 --db postgres --db-url-host apc-keycloak-db --db-username pg --db-password pg123
+      - start --proxy edge --hostname-strict=false --hostname-url=http://localhost:8090 --db postgres --db-url-host bp-keycloak-db --db-username pg --db-password pg123
     ports:
       - 8090:8080
     volumes:
@@ -88,7 +88,7 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
 
-  apc-mongo-express:
+  bp-mongo-express:
     image: mongo-express
     restart: always
     ports:
@@ -96,21 +96,21 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@apc-mongo:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@bp-mongo:27017/
 
 
-  apc-ingest-redis:
+  bp-ingest-redis:
     image: redis/redis-stack:6.2.6-v9
-    container_name: apc-ingest-redis
+    container_name: bp-ingest-redis
     volumes:
       - "./volumes/redis_data:/data:Z"
     ports:
       - 6379:6379
       - 8001:8001
 
-  apc-rabbitmq:
+  bp-rabbitmq:
     image: masstransit/rabbitmq
-    container_name: apc-rabbitmq
+    container_name: bp-rabbitmq
     ports:
       - 15672:15672
       - 5672:5672
