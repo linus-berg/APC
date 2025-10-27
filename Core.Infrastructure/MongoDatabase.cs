@@ -1,6 +1,8 @@
+using Core.Infrastructure.Models;
 using Core.Kernel;
 using Core.Kernel.Models;
 using Core.Services;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Core.Infrastructure;
@@ -11,7 +13,8 @@ public class MongoDatabase : ICoreDatabase {
   private readonly IMongoDatabase database_;
 
   public MongoDatabase() {
-    string? c_str = Configuration.GetBackpackVariable(CoreVariables.BP_MONGO_STR);
+    string? c_str =
+      Configuration.GetBackpackVariable(CoreVariables.BP_MONGO_STR);
     client_ = new MongoClient(c_str);
     database_ = client_.GetDatabase("backpack");
   }
@@ -71,6 +74,65 @@ public class MongoDatabase : ICoreDatabase {
       await GetCollection<Artifact>(processor)
         .FindAsync(a => a.root || !only_roots);
     return await cursor.ToListAsync();
+  }
+
+  public async Task<IEnumerable<ArtifactSummary>> GetArtifactSummaries(
+    string processor, bool only_roots = true) {
+    IMongoCollection<Artifact> collection = GetCollection<Artifact>(processor);
+
+    FilterDefinition<Artifact>? filter =
+      Builders<Artifact>.Filter.Eq("root", true);
+    BsonDocument project_stage = new BsonDocument {
+      {
+        "$project", new BsonDocument {
+          {
+            "_id", 1
+          }, {
+            "processor", 1
+          }, {
+            "root", 1
+          }, {
+            "config", 1
+          }, {
+            "filter", 1
+          },
+          {
+            "versions", new BsonDocument {
+              {
+                "$size", new BsonDocument {
+                  {
+                    "$objectToArray", new BsonDocument {
+                      {
+                        "$ifNull", new BsonArray {
+                          "$versions",
+                          new BsonDocument()
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }, {
+            "dependencies", new BsonDocument {
+              {
+                "$size", "$dependencies"
+              }
+            }
+          }
+        }
+      }
+    };
+
+    return await collection.Aggregate()
+                           /* Match only roots if only_roots is checked */
+                           .Match(
+                             only_roots
+                               ? filter
+                               : FilterDefinition<Artifact>.Empty
+                           )
+                           .AppendStage<ArtifactSummary>(project_stage)
+                           .ToListAsync();
   }
 
   public async Task<bool> DeleteArtifact(Artifact artifact) {

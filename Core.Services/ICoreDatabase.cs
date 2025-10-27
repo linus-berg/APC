@@ -1,3 +1,4 @@
+using Core.Infrastructure.Models;
 using Core.Kernel.Models;
 
 namespace Core.Services;
@@ -12,6 +13,8 @@ public interface ICoreDatabase {
   public Task<Artifact> GetArtifact(string name, string processor);
 
   public Task<IEnumerable<Artifact>> GetArtifacts(
+    string processor, bool only_roots = true);
+  public Task<IEnumerable<ArtifactSummary>> GetArtifactSummaries(
     string processor, bool only_roots = true);
 
   public Task<bool> DeleteArtifact(Artifact artifact);

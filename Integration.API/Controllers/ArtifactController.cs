@@ -1,5 +1,6 @@
 using System.Security.Authentication;
 using System.Security.Claims;
+using Core.Infrastructure.Models;
 using Core.Kernel.Messages;
 using Core.Kernel.Models;
 using Core.Services;
@@ -28,27 +29,12 @@ public class ArtifactController : ControllerBase {
 
   // GET: api/Artifact
   [HttpGet("all")]
-  public async Task<IEnumerable<ArtifactOutput>> Get(
+  public async Task<IEnumerable<ArtifactSummary>> Get(
     [FromQuery] string processor,
     [FromQuery] bool only_roots) {
-    IEnumerable<Artifact> artifacts =
-      await database_.GetArtifacts(processor, only_roots);
-    List<ArtifactOutput> artifact_outputs = new();
-    foreach (Artifact artifact in artifacts) {
-      artifact_outputs.Add(
-        new ArtifactOutput {
-          id = artifact.id,
-          processor = artifact.processor,
-          filter = artifact.filter,
-          root = artifact.root,
-          dependencies = artifact.dependencies.Count,
-          versions = artifact.versions.Count,
-          config = artifact.config
-        }
-      );
-    }
-
-    return artifact_outputs;
+    IEnumerable<ArtifactSummary> artifacts =
+      await database_.GetArtifactSummaries(processor, only_roots);
+    return artifacts;
   }
 
   // GET: api/Artifact
