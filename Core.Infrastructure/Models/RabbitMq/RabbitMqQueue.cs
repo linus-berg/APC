@@ -32,5 +32,5 @@ public class RabbitMqQueue
     
     public string type { get; set; }
 
-    public BackingQueueStatus? backing_queue_status { get; set; }
+    public RabbitMqQueueStats message_stats { get; set; }
 }
