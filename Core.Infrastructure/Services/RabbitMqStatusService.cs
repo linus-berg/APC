@@ -42,8 +42,8 @@ public class RabbitMqStatusService : IStatusService {
         name = queue.name,
         consumers = queue.consumers,
         messages = queue.messages,
-        avg_egress_rate = queue.message_stats.ack_details?.rate,
-        avg_ingress_rate = queue.message_stats.publish_details?.rate
+        avg_egress_rate = queue.message_stats?.ack_details?.rate ?? 0,
+        avg_ingress_rate = queue.message_stats?.publish_details?.rate ?? 0
       });
     }
     return queue_statuses;
