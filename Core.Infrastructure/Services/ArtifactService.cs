@@ -130,7 +130,7 @@ public class ArtifactService : IArtifactService {
       artifacts = await db_.GetArtifacts(processor.id, false);
     logger_.LogInformation(
       "[{processor}] Validating {artifacts} artifacts",
-      processor,
+      processor.id,
       artifacts.Count()
     );
     foreach (Artifact artifact in artifacts) {
